@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Drogopolex</string>
+    <string name="login_button">Zaloguj się</string>
+    <string name="register_button">Zarejestruj się</string>
+    <string name="go_back_button">Wróć</string>
+    <string name="login">Login</string>
+    <string name="password">Hasło</string>
+    <string name="password_repeat">Powtórz hasło</string>
+    <string name="email">Email</string>
+</resources>
