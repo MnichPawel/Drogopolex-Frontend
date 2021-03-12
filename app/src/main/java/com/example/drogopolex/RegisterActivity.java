@@ -9,6 +9,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+
 public class RegisterActivity extends AppCompatActivity {
     Button goToMainActivity;
     Button registerButton;
@@ -45,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+
     private void registerRequest() {
 
         String name = nameInput.getText().toString();
@@ -55,12 +65,34 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this.getApplicationContext(),name,Toast.LENGTH_LONG).show();
             return;
         }
-        else
-        {
-            Toast.makeText(this.getApplicationContext(),email,Toast.LENGTH_LONG).show();
+    /*
+        URL url = null;
+        try {
+            url = new URL("10.0.2.2:5000");
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
+            String jsonInputString = "{\"name\": 'Upendra', 'job': \"Programmer\"}";
+            OutputStream os = con.getOutputStream();
+            byte[] input = jsonInputString.getBytes("utf-8");
+            os.write(input, 0, input.length);
+
+            try(BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                System.out.println(response.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-
+*/
 
     }
     private void goToMainActivity() {
