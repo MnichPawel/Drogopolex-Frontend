@@ -1,6 +1,7 @@
 package com.example.drogopolex;
 
 import androidx.appcompat.app.AppCompatActivity;
+//import retrofit.RestAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +27,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -25,11 +38,13 @@ public class RegisterActivity extends AppCompatActivity {
     EditText emailInput;
     EditText passwordInput;
     EditText passwordRepeatInput;
-
+    RequestQueue rq;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        rq= Volley.newRequestQueue(this);
 
         goToMainActivity = (Button) findViewById(R.id.go_back_register);
         registerButton = (Button) findViewById(R.id.registerButton);
@@ -65,34 +80,34 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this.getApplicationContext(),name,Toast.LENGTH_LONG).show();
             return;
         }
-    /*
+
         URL url = null;
         try {
-            url = new URL("10.0.2.2:5000");
-            HttpURLConnection con = (HttpURLConnection)url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json; utf-8");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoOutput(true);
-            String jsonInputString = "{\"name\": 'Upendra', 'job': \"Programmer\"}";
-            OutputStream os = con.getOutputStream();
-            byte[] input = jsonInputString.getBytes("utf-8");
-            os.write(input, 0, input.length);
 
-            try(BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), "utf-8"))) {
-                StringBuilder response = new StringBuilder();
-                String responseLine = null;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
+            //wrzucenie podanych danych do jsona
+            JSONObject jo = new JSONObject();
+            jo.put("name",name);
+            jo.put("email",email);
+            jo.put("password",pass1);
+
+            String urelel= "http://10.0.2.2:5000/register";
+            JsonObjectRequest sr =new JsonObjectRequest(Request.Method.POST, urelel,jo, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Toast.makeText(getApplicationContext(),"dobrze",Toast.LENGTH_LONG).show();
                 }
-                System.out.println(response.toString());
-            }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(),"errorrze",Toast.LENGTH_LONG).show();
+                }
+            });
+            rq.add(sr);
 
-        } catch (IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-*/
+
 
     }
     private void goToMainActivity() {
