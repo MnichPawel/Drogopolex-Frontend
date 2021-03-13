@@ -19,12 +19,20 @@ public class LoginActivity extends AppCompatActivity {
 
         goToMainActivity = (Button) findViewById(R.id.go_back_login);
 
+        //emailInput = (EditText) findViewById(R.id.)
+
         goToMainActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToMainActivity();
             }
         });
+    }
+
+    private void loginRequest() {
+        String email = emailInput.getText().toString();
+        String pass = passwordInput.getText().toString();
+
     }
 
     private void goToMainActivity() {

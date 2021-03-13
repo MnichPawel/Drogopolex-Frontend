@@ -30,7 +30,6 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-
 public class RegisterActivity extends AppCompatActivity {
     Button goToMainActivity;
     Button registerButton;
@@ -81,7 +80,6 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        URL url = null;
         try {
 
             //wrzucenie podanych danych do jsona
@@ -90,19 +88,34 @@ public class RegisterActivity extends AppCompatActivity {
             jo.put("email",email);
             jo.put("password",pass1);
 
-            String urelel= "http://10.0.2.2:5000/register";
-            JsonObjectRequest sr =new JsonObjectRequest(Request.Method.POST, urelel,jo, new Response.Listener<JSONObject>() {
+            String url= "http://10.0.2.2:5000/register";
+            JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Toast.makeText(getApplicationContext(),"dobrze",Toast.LENGTH_LONG).show();
+                    Boolean isSuccess = false;
+                    String stringError = "";
+
+                    try {
+                        isSuccess = response.getBoolean("success");
+                        stringError = response.getString("errorString");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(isSuccess){
+                        Toast.makeText(getApplicationContext(),"Konto utworzone",Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(),stringError,Toast.LENGTH_LONG).show();
+                    }
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(),"errorrze",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
                 }
             });
-            rq.add(sr);
+
+            RequestSingleton.getInstance(this).addToRequestQueue(sr);
 
         } catch (JSONException e) {
             e.printStackTrace();
