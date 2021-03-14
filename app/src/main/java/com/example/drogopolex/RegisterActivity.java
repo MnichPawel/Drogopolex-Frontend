@@ -102,8 +102,10 @@ public class RegisterActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                    //Jesli uda sie zarejestrowac, uzytkownik przenoszony jest do ekranu logowania
                     if(isSuccess){
                         Toast.makeText(getApplicationContext(),"Konto utworzone",Toast.LENGTH_LONG).show();
+                        goToLoginActivity();
                     }else{
                         Toast.makeText(getApplicationContext(),stringError,Toast.LENGTH_LONG).show();
                     }
@@ -122,6 +124,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
 
+    }
+    private void goToLoginActivity() {
+        Intent goToLoginActivityIntent = new Intent(this, LoginActivity.class);
+        startActivity(goToLoginActivityIntent);
     }
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
