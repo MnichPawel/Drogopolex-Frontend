@@ -47,6 +47,11 @@ public class LoginActivity extends AppCompatActivity {
                 loginRequest();
             }
         });
+
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        if(sp.getBoolean("loggedIn", false)){
+            goToLoggedInMenuActivity();
+        }
     }
 
     private void loginRequest() {
@@ -63,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
             JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Boolean isSuccess = false;
+                    boolean isSuccess = false;
                     String stringError = "";
                     String token="";
 
@@ -71,19 +76,21 @@ public class LoginActivity extends AppCompatActivity {
                         isSuccess = response.getBoolean("success");
                         stringError = response.getString("errorString");
                         token = response.getString("token");
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     if(isSuccess){
                         Toast.makeText(getApplicationContext(),"Zalogowano",Toast.LENGTH_LONG).show();
+
                         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
                         SharedPreferences.Editor speditor = sp.edit();
                         speditor.putString("token",token);
                         speditor.putString("email",email);
-                        //Toast.makeText(getApplicationContext(),sp.getString("token",token),Toast.LENGTH_LONG).show();
+                        speditor.putBoolean("loggedIn",true);
+                        speditor.apply();
 
+                        goToLoggedInMenuActivity();
                     }else{
                         Toast.makeText(getApplicationContext(),stringError,Toast.LENGTH_LONG).show();
                     }
@@ -105,5 +112,10 @@ public class LoginActivity extends AppCompatActivity {
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(goToMainActivityIntent);
+    }
+
+    private void goToLoggedInMenuActivity() {
+        Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
+        startActivity(goToLoggedInMenuActivityIntent);
     }
 }

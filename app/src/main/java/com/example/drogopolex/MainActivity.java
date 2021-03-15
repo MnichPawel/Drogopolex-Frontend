@@ -2,8 +2,11 @@ package com.example.drogopolex;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
@@ -32,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
                 goToRegisterActivity();
             }
         });
+
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        if(sp.getBoolean("loggedIn", false)){
+            goToLoggedInMenuActivity();
+        }
     }
 
     private void goToLoginActivity() {
@@ -42,5 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private void goToRegisterActivity() {
         Intent goToRegisterActivityIntent = new Intent(this, RegisterActivity.class);
         startActivity(goToRegisterActivityIntent);
+    }
+
+    private void goToLoggedInMenuActivity() {
+        Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
+        startActivity(goToLoggedInMenuActivityIntent);
     }
 }

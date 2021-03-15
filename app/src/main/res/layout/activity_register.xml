@@ -10,9 +10,10 @@
         android:id="@+id/registerButton"
         android:layout_width="361dp"
         android:layout_height="124dp"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="447dp"
         android:text="@string/register_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,51 +31,55 @@
         android:id="@+id/editTextTextPersonName"
         android:layout_width="360dp"
         android:layout_height="50dp"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="233dp"
         android:ems="10"
         android:hint="@string/name"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextTextPassword2"
         android:layout_width="360dp"
         android:layout_height="50dp"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="383dp"
         android:ems="10"
         android:hint="@string/password_repeat"
+        android:importantForAutofill="no"
         android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextTextPassword3"
         android:layout_width="360dp"
         android:layout_height="50dp"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="333dp"
         android:ems="10"
         android:hint="@string/password"
+        android:importantForAutofill="no"
         android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextTextEmailAddress"
         android:layout_width="360dp"
         android:layout_height="50dp"
-        android:layout_marginStart="25dp"
         android:layout_marginTop="283dp"
         android:ems="10"
         android:hint="@string/email"
+        android:importantForAutofill="no"
         android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
