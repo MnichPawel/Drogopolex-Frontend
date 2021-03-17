@@ -76,7 +76,7 @@ public class NewEventActivity extends AppCompatActivity {
             jsonObject.put("coordinates", coordinates);
             jsonObject.put("type", eventType);
 
-            String url = "http://10.0.2.2:5000/addReport";
+            String url = "http://10.0.2.2:5000/addEvent";
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {

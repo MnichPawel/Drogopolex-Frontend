@@ -8,6 +8,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class EventsActivity extends AppCompatActivity {
     Button goToLoggedInMenuActivity;
@@ -29,6 +38,32 @@ public class EventsActivity extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
+        }
+    }
+
+    //TODO
+    private void getAllEventsRequest() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
+
+            String url = "http://10.0.2.2:5000/getAllEvents";
+            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                }
+            });
+
+            RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
