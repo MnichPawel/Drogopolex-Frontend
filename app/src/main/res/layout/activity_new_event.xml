@@ -7,6 +7,16 @@
     tools:context=".NewEventActivity">
 
     <Button
+        android:id="@+id/addNewEventButton"
+        android:layout_width="361dp"
+        android:layout_height="124dp"
+        android:layout_marginTop="360dp"
+        android:text="@string/add_event"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/go_back_new_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,4 +25,33 @@
         android:text="@string/go_back_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextEventType"
+        android:layout_width="348dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="268dp"
+        android:ems="10"
+        android:hint="@string/event_type"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextLocalization"
+        android:layout_width="348dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="192dp"
+        android:ems="10"
+        android:hint="@string/localization"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

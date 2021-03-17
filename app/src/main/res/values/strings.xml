@@ -11,4 +11,7 @@
     <string name="events_button">Zdarzenia</string>
     <string name="subscriptions_button">Subskrypcje</string>
     <string name="logout_button">Wyloguj</string>
+    <string name="add_event">Dodaj zdarzenie</string>
+    <string name="localization">Lokalizacja</string>
+    <string name="event_type">Typ zdarzenia</string>
 </resources>
