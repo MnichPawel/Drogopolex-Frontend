@@ -1,7 +1,5 @@
 package com.example.drogopolex;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,13 +10,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
     Button goToMainActivity;
@@ -84,11 +83,11 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Zalogowano",Toast.LENGTH_LONG).show();
 
                         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor speditor = sp.edit();
-                        speditor.putString("token",token);
-                        speditor.putString("email",email);
-                        speditor.putBoolean("loggedIn",true);
-                        speditor.apply();
+                        SharedPreferences.Editor spEditor = sp.edit();
+                        spEditor.putString("token",token);
+                        spEditor.putString("email",email);
+                        spEditor.putBoolean("loggedIn",true);
+                        spEditor.apply();
 
                         goToLoggedInMenuActivity();
                     }else{
