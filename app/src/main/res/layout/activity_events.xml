@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventsListView"
         android:layout_width="343dp"
         android:layout_height="620dp"
         android:layout_marginTop="95dp"
