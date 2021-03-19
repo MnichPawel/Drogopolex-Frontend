@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EventsActivity">
+    tools:context=".EventsByLocalizationActivity">
 
     <Button
-        android:id="@+id/go_back_events"
+        android:id="@+id/go_back_events_by_localization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -17,17 +17,30 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/eventsListView"
-        android:layout_width="343dp"
-        android:layout_height="620dp"
-        android:layout_marginTop="95dp"
+        android:id="@+id/eventsByLocalizationListView"
+        android:layout_width="344dp"
+        android:layout_height="580dp"
+        android:layout_marginTop="135dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/searchEventsByLocalizationInput"
+        android:layout_width="333dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="73dp"
+        android:ems="10"
+        android:hint="Lokalizacja"
+        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/goToEventsByLocalizationActivity"
+        android:id="@+id/search_events_by_localization_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -35,4 +48,5 @@
         android:text="Szukaj"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
