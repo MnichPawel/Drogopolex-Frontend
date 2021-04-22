@@ -52,10 +52,21 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/profile_button"
+        android:layout_width="316dp"
+        android:layout_height="83dp"
+        android:layout_marginTop="412dp"
+        android:text="@string/profil_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/logout_button"
         android:layout_width="316dp"
         android:layout_height="83dp"
-        android:layout_marginTop="413dp"
+        android:layout_marginTop="536dp"
         android:text="@string/logout_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"

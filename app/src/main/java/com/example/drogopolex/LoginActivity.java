@@ -69,12 +69,17 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(JSONObject response) {
                     boolean isSuccess = false;
                     String stringError = "";
+                    String user_id="";
                     String token="";
 
                     try {
                         isSuccess = response.getBoolean("success");
-                        stringError = response.getString("errorString");
-                        token = response.getString("token");
+                        if(!isSuccess) {
+                            stringError = response.getString("errorString");
+                        }else {
+                            user_id = response.getString("user_id");
+                            token = response.getString("token");
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -85,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
                         SharedPreferences.Editor spEditor = sp.edit();
                         spEditor.putString("token",token);
-                        spEditor.putString("email",email);
+                        spEditor.putString("user_id",user_id);
                         spEditor.putBoolean("loggedIn",true);
                         spEditor.apply();
 

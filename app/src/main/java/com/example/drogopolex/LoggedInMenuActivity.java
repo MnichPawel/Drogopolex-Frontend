@@ -22,6 +22,8 @@ public class LoggedInMenuActivity extends AppCompatActivity {
     Button goToNewEventActivity;
     Button goToEventsActivity;
     Button goToSubscriptionsActivity;
+    Button goToProfileActivity;
+
     Button logoutButton;
 
     @Override
@@ -32,6 +34,8 @@ public class LoggedInMenuActivity extends AppCompatActivity {
         goToNewEventActivity = (Button) findViewById(R.id.add_event_button);
         goToEventsActivity = (Button) findViewById(R.id.events_button);
         goToSubscriptionsActivity = (Button) findViewById(R.id.subscriptions_button);
+        goToProfileActivity = (Button) findViewById(R.id.profile_button);
+
         logoutButton = (Button) findViewById(R.id.logout_button);
 
         goToNewEventActivity.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +56,13 @@ public class LoggedInMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 goToSubscriptionsActivity();
+            }
+        });
+
+        goToProfileActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToProfileActivity();
             }
         });
 
@@ -83,6 +94,11 @@ public class LoggedInMenuActivity extends AppCompatActivity {
         startActivity(goToSubscriptionsActivityIntent);
     }
 
+    private void goToProfileActivity() {
+        Intent goToProfileActivityIntent = new Intent(this, ProfileActivity.class);
+        startActivity(goToProfileActivityIntent);
+    }
+
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(goToMainActivityIntent);
@@ -91,7 +107,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
     private void logout() {
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         boolean loggedIn = sp.getBoolean("loggedIn", false);
-        String email = sp.getString("email", "");
+        String user_id = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
         if(!loggedIn){
@@ -101,7 +117,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
         try {
             //wrzucenie podanych danych do jsona
             JSONObject jo = new JSONObject();
-            jo.put("email",email);
+            jo.put("user_id",user_id);
             jo.put("token",token);
 
             String url= "http://10.0.2.2:5000/logout";
@@ -113,7 +129,9 @@ public class LoggedInMenuActivity extends AppCompatActivity {
 
                     try {
                         isSuccess = response.getBoolean("success");
-                        stringError = response.getString("errorString");
+                        if(!isSuccess) {
+                            stringError = response.getString("errorString");
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -124,7 +142,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
                         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
                         SharedPreferences.Editor speditor = sp.edit();
                         speditor.putString("token","");
-                        speditor.putString("email","");
+                        speditor.putString("user_id","");
                         speditor.putBoolean("loggedIn",false);
                         speditor.apply();
 
@@ -135,7 +153,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
                         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
                         SharedPreferences.Editor speditor = sp.edit();
                         speditor.putString("token","");
-                        speditor.putString("email","");
+                        speditor.putString("user_id","");
                         speditor.putBoolean("loggedIn",false);
                         speditor.apply();
 

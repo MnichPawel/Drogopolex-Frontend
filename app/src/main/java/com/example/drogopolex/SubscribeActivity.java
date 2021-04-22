@@ -65,7 +65,7 @@ public class SubscribeActivity extends AppCompatActivity {
 
     private void addEventRequest() {
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String email = sp.getString("email", "");
+        String user_id = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
         String localization = localizationInput.getText().toString();
@@ -75,7 +75,7 @@ public class SubscribeActivity extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("localization", localization);
             jsonObject.put("coordinates", coordinates);
-            jsonObject.put("email", email);
+            jsonObject.put("user_id", user_id);
             jsonObject.put("token", token);
 
             String url = "http://10.0.2.2:5000/subscribe";
@@ -87,7 +87,9 @@ public class SubscribeActivity extends AppCompatActivity {
 
                     try {
                         isSuccess = response.getBoolean("success");
-                        stringError = response.getString("error");
+                        if(!isSuccess) {
+                            stringError = response.getString("errorString");
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

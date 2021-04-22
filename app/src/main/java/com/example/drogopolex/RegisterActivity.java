@@ -104,7 +104,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                     try {
                         isSuccess = response.getBoolean("success");
-                        stringError = response.getString("errorString");
+                        if(!isSuccess) {
+                            stringError = response.getString("errorString");
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

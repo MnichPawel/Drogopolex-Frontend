@@ -85,7 +85,9 @@ public class NewEventActivity extends AppCompatActivity {
 
                     try {
                         isSuccess = response.getBoolean("success");
-                        stringError = response.getString("error");
+                        if(!isSuccess) {
+                            stringError = response.getString("errorString");
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

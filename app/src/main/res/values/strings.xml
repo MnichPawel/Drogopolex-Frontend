@@ -16,4 +16,5 @@
     <string name="event_type">Typ zdarzenia</string>
     <string name="subscribe">Subskrybuj</string>
     <string name="dodajSubskrypcje">Dodaj</string>
+    <string name="profil_button">Profil</string>
 </resources>
