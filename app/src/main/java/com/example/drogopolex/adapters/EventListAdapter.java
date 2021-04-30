@@ -1,13 +1,16 @@
-package com.example.drogopolex;
+package com.example.drogopolex.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
+import com.example.drogopolex.R;
+import com.example.drogopolex.model.DrogopolexEvent;
 
 import java.util.ArrayList;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.ViewHolder> {
     private ArrayList<DrogopolexEvent> localDataSet;

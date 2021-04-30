@@ -1,8 +1,4 @@
-package com.example.drogopolex;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.example.drogopolex.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,13 +6,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.drogopolex.R;
+import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.adapters.EventListAdapter;
+import com.example.drogopolex.model.DrogopolexEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,10 +23,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class EventsByLocalizationActivity extends AppCompatActivity {
-    Button goToLoggedInMenuActivity;
-    Button searchEventsByLocalizationButton;
-    EditText searchEventsByLocalizationInput;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class SubscriptionsActivity extends AppCompatActivity {
+    Button goToLoggedInMenuActivityButton;
+    Button addSubscriptionButton;
+    RecyclerView subscribedEventsRecyclerView;
 
     EventListAdapter eventListAdapter;
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
@@ -35,29 +38,24 @@ public class EventsByLocalizationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_events_by_localization);
+        setContentView(R.layout.activity_subscriptions);
 
-        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events_by_localization);
-        searchEventsByLocalizationButton = (Button) findViewById(R.id.search_events_by_localization_button);
-        searchEventsByLocalizationInput = (EditText) findViewById(R.id.searchEventsByLocalizationInput);
+        goToLoggedInMenuActivityButton = (Button) findViewById(R.id.go_back_subscriptions);
+        addSubscriptionButton = (Button) findViewById(R.id.addSubscription);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsByLocalizationListView);
+        subscribedEventsRecyclerView = (RecyclerView) findViewById(R.id.subscribed_events_view);
 
-        eventListAdapter = new EventListAdapter(eventListData);
-        recyclerView.setAdapter(eventListAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        goToLoggedInMenuActivity.setOnClickListener(new View.OnClickListener() {
+        goToLoggedInMenuActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToLoggedInMenuActivity();
             }
         });
 
-        searchEventsByLocalizationButton.setOnClickListener(new View.OnClickListener() {
+        addSubscriptionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getEventsByLocalizationRequest();
+                goToSubscribeActivity();
             }
         });
 
@@ -65,16 +63,23 @@ public class EventsByLocalizationActivity extends AppCompatActivity {
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
         }
+
+
+        eventListAdapter = new EventListAdapter(eventListData);
+        subscribedEventsRecyclerView.setAdapter(eventListAdapter);
+        subscribedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        getAllEventsRequest();
     }
 
-    private void getEventsByLocalizationRequest() {
-        String localization = searchEventsByLocalizationInput.getText().toString();
+
+    private void getAllEventsRequest() {
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("localization", localization);
-            jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
+            jsonObject.put("token", "");
 
-            String url = "http://10.0.2.2:5000/getEventsByLocalization";
+            String url = "http://10.0.2.2:5000/getAllEvents";
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -107,6 +112,7 @@ public class EventsByLocalizationActivity extends AppCompatActivity {
         }
     }
 
+
     private void goToLoggedInMenuActivity() {
         Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
         startActivity(goToLoggedInMenuActivityIntent);
@@ -115,5 +121,10 @@ public class EventsByLocalizationActivity extends AppCompatActivity {
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(goToMainActivityIntent);
+    }
+
+    private void goToSubscribeActivity() {
+        Intent goToSubscribeActivityIntent = new Intent(this, SubscribeActivity.class);
+        startActivity(goToSubscribeActivityIntent);
     }
 }

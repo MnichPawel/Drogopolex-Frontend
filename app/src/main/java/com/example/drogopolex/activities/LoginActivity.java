@@ -1,7 +1,4 @@
-package com.example.drogopolex;
-
-import androidx.appcompat.app.AppCompatActivity;
-//import retrofit.RestAdapter;
+package com.example.drogopolex.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,59 +10,42 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.example.drogopolex.R;
+import com.example.drogopolex.RequestSingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class RegisterActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     Button goToMainActivity;
-    Button registerButton;
-    EditText nameInput;
     EditText emailInput;
     EditText passwordInput;
-    EditText passwordRepeatInput;
-    RequestQueue rq;
+    Button loginButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
 
-        rq= Volley.newRequestQueue(this);
-
-        goToMainActivity = (Button) findViewById(R.id.go_back_register);
-        registerButton = (Button) findViewById(R.id.registerButton);
-        nameInput = (EditText) findViewById(R.id.editTextTextPersonName);
-        emailInput = (EditText) findViewById(R.id.editTextTextEmailAddress);
-        passwordInput = (EditText) findViewById(R.id.editTextTextPassword3);
-        passwordRepeatInput = (EditText) findViewById(R.id.editTextTextPassword2);
-
-
+        goToMainActivity = (Button) findViewById(R.id.go_back_login);
+        loginButton = (Button) findViewById(R.id.button);
+        emailInput = (EditText) findViewById(R.id.editTextTextPersonName2);
+        passwordInput = (EditText) findViewById(R.id.editTextTextPassword);
         goToMainActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToMainActivity();
             }
         });
-        registerButton.setOnClickListener(new View.OnClickListener() {
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // goToMainActivity();
-                registerRequest();
+                // goToMainActivity();
+                loginRequest();
             }
         });
 
@@ -75,46 +55,48 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-
-    private void registerRequest() {
-
-        String name = nameInput.getText().toString();
+    private void loginRequest() {
         String email = emailInput.getText().toString();
-        String pass1 = passwordInput.getText().toString();
-        String pass2 = passwordRepeatInput.getText().toString();
-        if(!pass1.equals(pass2)){
-            Toast.makeText(this.getApplicationContext(),name,Toast.LENGTH_LONG).show();
-            return;
-        }
-
+        String pass = passwordInput.getText().toString();
         try {
 
             //wrzucenie podanych danych do jsona
             JSONObject jo = new JSONObject();
-            jo.put("name",name);
             jo.put("email",email);
-            jo.put("password",pass1);
+            jo.put("password",pass);
 
-            String url= "http://10.0.2.2:5000/register";
+            String url= "http://10.0.2.2:5000/login";
             JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Boolean isSuccess = false;
+                    boolean isSuccess = false;
                     String stringError = "";
+                    String user_id="";
+                    String token="";
 
                     try {
                         isSuccess = response.getBoolean("success");
                         if(!isSuccess) {
                             stringError = response.getString("errorString");
+                        }else {
+                            user_id = response.getString("user_id");
+                            token = response.getString("token");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    //Jesli uda sie zarejestrowac, uzytkownik przenoszony jest do ekranu logowania
                     if(isSuccess){
-                        Toast.makeText(getApplicationContext(),"Konto utworzone",Toast.LENGTH_LONG).show();
-                        goToLoginActivity();
+                        Toast.makeText(getApplicationContext(),"Zalogowano",Toast.LENGTH_LONG).show();
+
+                        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor spEditor = sp.edit();
+                        spEditor.putString("token",token);
+                        spEditor.putString("user_id",user_id);
+                        spEditor.putBoolean("loggedIn",true);
+                        spEditor.apply();
+
+                        goToLoggedInMenuActivity();
                     }else{
                         Toast.makeText(getApplicationContext(),stringError,Toast.LENGTH_LONG).show();
                     }
@@ -131,17 +113,13 @@ public class RegisterActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
-    private void goToLoginActivity() {
-        Intent goToLoginActivityIntent = new Intent(this, LoginActivity.class);
-        startActivity(goToLoginActivityIntent);
-    }
+
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(goToMainActivityIntent);
     }
+
     private void goToLoggedInMenuActivity() {
         Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
         startActivity(goToLoggedInMenuActivityIntent);

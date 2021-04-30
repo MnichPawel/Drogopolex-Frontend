@@ -1,12 +1,12 @@
-package com.example.drogopolex;
+package com.example.drogopolex.model;
 
 public class DrogopolexEvent {
     private String type;
     private String location;
 
-    public DrogopolexEvent(String typ, String locatio) {
-        type = typ;
-        location = locatio;
+    public DrogopolexEvent(String type, String location) {
+        this.type = type;
+        this.location = location;
     }
 
     public String GetType(){

@@ -1,23 +1,22 @@
-package com.example.drogopolex;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.example.drogopolex.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.drogopolex.R;
+import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.adapters.EventListAdapter;
+import com.example.drogopolex.model.DrogopolexEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,9 +24,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class EventsActivity extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class EventsByLocalizationActivity extends AppCompatActivity {
     Button goToLoggedInMenuActivity;
-    Button goToEventsByLocalizationActivity;
+    Button searchEventsByLocalizationButton;
+    EditText searchEventsByLocalizationInput;
 
     EventListAdapter eventListAdapter;
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
@@ -35,12 +39,13 @@ public class EventsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_events);
+        setContentView(R.layout.activity_events_by_localization);
 
-        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events);
-        goToEventsByLocalizationActivity = (Button) findViewById(R.id.goToEventsByLocalizationActivity);
+        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events_by_localization);
+        searchEventsByLocalizationButton = (Button) findViewById(R.id.search_events_by_localization_button);
+        searchEventsByLocalizationInput = (EditText) findViewById(R.id.searchEventsByLocalizationInput);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsListView);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsByLocalizationListView);
 
         eventListAdapter = new EventListAdapter(eventListData);
         recyclerView.setAdapter(eventListAdapter);
@@ -53,10 +58,10 @@ public class EventsActivity extends AppCompatActivity {
             }
         });
 
-        goToEventsByLocalizationActivity.setOnClickListener(new View.OnClickListener() {
+        searchEventsByLocalizationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToEventsByLocalizationActivity();
+                getEventsByLocalizationRequest();
             }
         });
 
@@ -64,16 +69,16 @@ public class EventsActivity extends AppCompatActivity {
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
         }
-
-        getAllEventsRequest();
     }
 
-    private void getAllEventsRequest() {
+    private void getEventsByLocalizationRequest() {
+        String localization = searchEventsByLocalizationInput.getText().toString();
         try {
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("localization", localization);
             jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
 
-            String url = "http://10.0.2.2:5000/getAllEvents";
+            String url = "http://10.0.2.2:5000/getEventsByLocalization";
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -109,11 +114,6 @@ public class EventsActivity extends AppCompatActivity {
     private void goToLoggedInMenuActivity() {
         Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
         startActivity(goToLoggedInMenuActivityIntent);
-    }
-
-    private void goToEventsByLocalizationActivity() {
-        Intent goToEventsByLocalizationActivityIntent = new Intent(this, EventsByLocalizationActivity.class);
-        startActivity(goToEventsByLocalizationActivityIntent);
     }
 
     private void goToMainActivity() {

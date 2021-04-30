@@ -1,17 +1,8 @@
-package com.example.drogopolex;
+package com.example.drogopolex.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,41 +13,27 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.drogopolex.R;
+import com.example.drogopolex.RequestSingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class NewEventActivity extends AppCompatActivity implements LocationListener {
-    Button goToLoggedInMenuActivity;
-    Button addEvent;
-    EditText localizationInput;
-    EditText eventTypeInput;
+import androidx.appcompat.app.AppCompatActivity;
 
-    LocationManager locationManager;
-    double latitude, longitude;
+public class SubscribeActivity extends AppCompatActivity {
+    Button goToLoggedInMenuActivity;
+    Button subscribe;
+    EditText localizationInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_event);
+        setContentView(R.layout.activity_subcribe);
 
-        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_new_event);
-        addEvent = (Button) findViewById(R.id.addNewEventButton);
-        localizationInput = (EditText) findViewById(R.id.editTextLocalization);
-        eventTypeInput = (EditText) findViewById(R.id.editTextEventType);
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_subscribe);
+        subscribe = (Button) findViewById(R.id.subscribeButton);
+        localizationInput = (EditText) findViewById(R.id.editTextLocalization2);
 
         goToLoggedInMenuActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +42,7 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
             }
         });
 
-        addEvent.setOnClickListener(new View.OnClickListener() {
+        subscribe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addEventRequest();
@@ -89,21 +66,25 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
     }
 
     private void addEventRequest() {
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+        String token = sp.getString("token", "");
+
         String localization = localizationInput.getText().toString();
-        String eventType = eventTypeInput.getText().toString();
+        String coordinates = "(200, 300)";
 
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("localization", localization);
-            jsonObject.put("longitude", longitude);
-            jsonObject.put("latitude", latitude);
-            jsonObject.put("type", eventType);
+            jsonObject.put("coordinates", coordinates);
+            jsonObject.put("user_id", user_id);
+            jsonObject.put("token", token);
 
-            String url = "http://10.0.2.2:5000/addEvent";
+            String url = "http://10.0.2.2:5000/subscribe";
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Boolean isSuccess = false;
+                    boolean isSuccess = false;
                     String stringError = "";
 
                     try {
@@ -116,7 +97,7 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
                     }
 
                     if (isSuccess) {
-                        Toast.makeText(getApplicationContext(), "Zgłoszenie zostało dodane", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Zasubskrybowano lokalizację", Toast.LENGTH_LONG).show();
                         goToLoggedInMenuActivity();
                     } else {
                         Toast.makeText(getApplicationContext(), stringError, Toast.LENGTH_LONG).show();
@@ -134,11 +115,5 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
     }
 }
