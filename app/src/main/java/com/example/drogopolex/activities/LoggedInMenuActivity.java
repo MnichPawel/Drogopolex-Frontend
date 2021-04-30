@@ -92,7 +92,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
     }
 
     private void goToSubscriptionsActivity() {
-        Intent goToSubscriptionsActivityIntent = new Intent(this, SubscriptionsActivity.class);
+        Intent goToSubscriptionsActivityIntent = new Intent(this, SubscribedEventsActivity.class);
         startActivity(goToSubscriptionsActivityIntent);
     }
 
