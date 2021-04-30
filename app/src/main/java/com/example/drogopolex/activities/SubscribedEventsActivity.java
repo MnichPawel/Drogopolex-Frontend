@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SubscribedEventsActivity extends AppCompatActivity {
     Button goToLoggedInMenuActivityButton;
     Button addSubscriptionButton;
+    Button goToSubscriptionListButton;
     RecyclerView subscribedEventsRecyclerView;
 
     EventListAdapter eventListAdapter;
@@ -41,10 +42,11 @@ public class SubscribedEventsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_subscriptions);
+        setContentView(R.layout.activity_subscribed_events);
 
-        goToLoggedInMenuActivityButton = (Button) findViewById(R.id.go_back_subscriptions);
+        goToLoggedInMenuActivityButton = (Button) findViewById(R.id.go_back_subscribed_events);
         addSubscriptionButton = (Button) findViewById(R.id.addSubscription);
+        goToSubscriptionListButton = (Button) findViewById(R.id.go_to_subscriptions_list);
 
         subscribedEventsRecyclerView = (RecyclerView) findViewById(R.id.subscribed_events_view);
 
@@ -62,6 +64,13 @@ public class SubscribedEventsActivity extends AppCompatActivity {
             }
         });
 
+        goToSubscriptionListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToSubscriptionsListActivity();
+            }
+        });
+
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
@@ -73,9 +82,6 @@ public class SubscribedEventsActivity extends AppCompatActivity {
         subscribedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         new getEventsFromSubscribed().execute();
-        //getSubscriptions();
-        //while(!subscriptionsUpdatedFlag);
-        //getAllEventsRequest();
     }
 
     private void getSubscriptions() {
@@ -99,7 +105,6 @@ public class SubscribedEventsActivity extends AppCompatActivity {
                         for (int i = 0; i < resp.length(); i++) {
                             JSONObject item = resp.getJSONObject(i);
                             String localization_str = item.getString("localization");
-                            Toast.makeText(getApplicationContext(), localization_str, Toast.LENGTH_LONG).show();
                             subscriptions.add(localization_str);
                         }
                         subscriptionsUpdatedFlag = true;
@@ -176,6 +181,11 @@ public class SubscribedEventsActivity extends AppCompatActivity {
     private void goToSubscribeActivity() {
         Intent goToSubscribeActivityIntent = new Intent(this, SubscribeActivity.class);
         startActivity(goToSubscribeActivityIntent);
+    }
+
+    private void goToSubscriptionsListActivity() {
+        Intent goToSubscriptionsListActivityIntent = new Intent(this, SubscriptionsActivity.class);
+        startActivity(goToSubscriptionsListActivityIntent);
     }
 
     private class getEventsFromSubscribed extends AsyncTask<Void, Void, Void> {

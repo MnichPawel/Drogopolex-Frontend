@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Drogopolex">
-        <activity android:name=".activities.ProfileActivity"></activity>
+        <activity android:name=".activities.ProfileActivity" />
         <activity android:name=".activities.EventsByLocalizationActivity" />
         <activity android:name=".activities.EventsActivity" />
         <activity android:name=".activities.SubscribedEventsActivity" />
@@ -27,6 +27,7 @@
         <activity android:name=".activities.SubscribeActivity" />
         <activity android:name=".activities.LoggedInMenuActivity" />
         <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.SubscriptionsActivity"/>
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name" />

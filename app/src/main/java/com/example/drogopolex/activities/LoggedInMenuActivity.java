@@ -57,7 +57,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
         goToSubscriptionsActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToSubscriptionsActivity();
+                goToSubscribedEventsActivity();
             }
         });
 
@@ -91,9 +91,9 @@ public class LoggedInMenuActivity extends AppCompatActivity {
         startActivity(goToEventsActivityIntent);
     }
 
-    private void goToSubscriptionsActivity() {
-        Intent goToSubscriptionsActivityIntent = new Intent(this, SubscribedEventsActivity.class);
-        startActivity(goToSubscriptionsActivityIntent);
+    private void goToSubscribedEventsActivity() {
+        Intent goToSubscribedEventsActivityIntent = new Intent(this, SubscribedEventsActivity.class);
+        startActivity(goToSubscribedEventsActivityIntent);
     }
 
     private void goToProfileActivity() {
