@@ -17,4 +17,10 @@
     <string name="subscribe">Subskrybuj</string>
     <string name="dodajSubskrypcje">Dodaj</string>
     <string name="profil_button">Profil</string>
+    <string name="szukaj">Szukaj</string>
+    <string name="lokalizacja">Lokalizacja</string>
+    <string name="change_userName">Zmień nazwę użytkownika</string>
+    <string name="change_email">Zmień adres email</string>
+    <string name="change_password">Zmień hasło</string>
+    <string name="subscriptions_list">Lista</string>
 </resources>

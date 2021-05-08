@@ -114,11 +114,6 @@ public class EventsActivity extends AppCompatActivity {
         startActivity(goToLoggedInMenuActivityIntent);
     }
 
-    private void goToEventsByLocalizationActivity() { //deprecated
-        Intent goToEventsByLocalizationActivityIntent = new Intent(this, EventsByLocalizationActivity.class);
-        startActivity(goToEventsByLocalizationActivityIntent);
-    }
-
     private void goToEventsSearchActivity() {
         Intent goToEventsSearchActivityIntent = new Intent(this, EventsSearchActivity.class);
         startActivity(goToEventsSearchActivityIntent);

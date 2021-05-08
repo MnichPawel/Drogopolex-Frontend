@@ -19,7 +19,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Drogopolex">
         <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.EventsByLocalizationActivity" />
         <activity android:name=".activities.EventsActivity" />
         <activity android:name=".activities.SubscribedEventsActivity" />
         <activity android:name=".activities.NewEventActivity" />
