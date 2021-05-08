@@ -126,7 +126,7 @@ public class EventsSearchActivity extends AppCompatActivity {
                     jsonObject.put("localization", localization);
                     jsonObject.put("type", wybranaAktywnosc);
                     jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
-                    url = "http://10.0.2.2:5000/getEventsByTypeAncLoc";
+                    url = "http://10.0.2.2:5000/getEventsByTypeAndLoc";
                 }
 
             }
