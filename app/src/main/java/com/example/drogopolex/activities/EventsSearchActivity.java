@@ -1,11 +1,16 @@
 package com.example.drogopolex.activities;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -27,9 +32,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class EventsActivity extends AppCompatActivity {
+public class EventsSearchActivity extends AppCompatActivity {
     Button goToLoggedInMenuActivity;
-    Button goToEventsByLocalizationActivity; //now it goes to EventsSearchActivity,  EventsByLocalizationActivity deprecated
+    Button searchEventsByLocalizationButton;
+    EditText searchEventsByLocalizationInput;
+    Spinner spinnerEvTyp;
+    String wybranaAktywnosc;
+
+    ArrayList<String> listaZdarzen = NewEventActivity.getListOfEventTypes();
 
     EventListAdapter eventListAdapter;
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
@@ -37,13 +47,16 @@ public class EventsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_events);
+        setContentView(R.layout.activity_events_search);
+        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+        listaZdarzen.add(0,"Dowolny typ");
 
-        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events);
-        goToEventsByLocalizationActivity = (Button) findViewById(R.id.goToEventsByLocalizationActivity);
+        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events_search);
+        searchEventsByLocalizationButton = (Button) findViewById(R.id.search_events_button);
+        searchEventsByLocalizationInput = (EditText) findViewById(R.id.searchEventsSearchLocalizationInput);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsListView);
-
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsSearchListView);
+        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
         eventListAdapter = new EventListAdapter(eventListData);
         recyclerView.setAdapter(eventListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,28 +68,68 @@ public class EventsActivity extends AppCompatActivity {
             }
         });
 
-        goToEventsByLocalizationActivity.setOnClickListener(new View.OnClickListener() {
+        searchEventsByLocalizationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //goToEventsByLocalizationActivity();
-                goToEventsSearchActivity();
+                getEventsRequest();
             }
         });
+        spinnerEvTyp= (Spinner) findViewById(R.id.spinnerEventSearch); //lista wyskakujaca
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listaZdarzen);
 
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinnerEvTyp.setAdapter(dataAdapter);
+        spinnerEvTyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                wybranaAktywnosc = listaZdarzen.get(i); //jak uzytkownik cos wybral to to ustaw
+                //tutaj poinformuj ze sie cale te, ale to chyba nie jest wymagane
+                //getEventsRequest();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                wybranaAktywnosc=""; //jak nie to nic nie ustawiaj
+            }
+        });
+        Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
         }
-
-        getAllEventsRequest();
     }
 
-    private void getAllEventsRequest() {
+    private void getEventsRequest() {
+        String localization = searchEventsByLocalizationInput.getText().toString();
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
+            String url ="";
+            if(listaZdarzen.get(0).equals(wybranaAktywnosc) || "".equals(wybranaAktywnosc)) { //wybrano tylko lokalizacje
+                jsonObject.put("localization", localization);
+                jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
 
-            String url = "http://10.0.2.2:5000/getAllEvents";
+                 url = "http://10.0.2.2:5000/getEventsByLocalization";
+            }
+            else{ //wybrano co najmniej typ
+                if("".equals(localization)){ //jesli wybrano wylacznie typ
+
+                    jsonObject.put("type", wybranaAktywnosc);
+                    jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
+
+                    url = "http://10.0.2.2:5000/getEventsByType";
+                }
+                else{ //zarowno po typie jak i po lokalizacyi
+                    jsonObject.put("localization", localization);
+                    jsonObject.put("type", wybranaAktywnosc);
+                    jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
+                    url = "http://10.0.2.2:5000/getEventsByTypeAncLoc";
+                }
+
+            }
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -112,16 +165,6 @@ public class EventsActivity extends AppCompatActivity {
     private void goToLoggedInMenuActivity() {
         Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
         startActivity(goToLoggedInMenuActivityIntent);
-    }
-
-    private void goToEventsByLocalizationActivity() { //deprecated
-        Intent goToEventsByLocalizationActivityIntent = new Intent(this, EventsByLocalizationActivity.class);
-        startActivity(goToEventsByLocalizationActivityIntent);
-    }
-
-    private void goToEventsSearchActivity() {
-        Intent goToEventsSearchActivityIntent = new Intent(this, EventsSearchActivity.class);
-        startActivity(goToEventsSearchActivityIntent);
     }
 
     private void goToMainActivity() {
