@@ -71,7 +71,7 @@ public class SubscribeActivity extends AppCompatActivity {
         String token = sp.getString("token", "");
 
         String localization = localizationInput.getText().toString();
-        String coordinates = "(200, 300)";
+        String coordinates = "(200, 300)"; //todo hardcoded value
 
         try {
             JSONObject jsonObject = new JSONObject();

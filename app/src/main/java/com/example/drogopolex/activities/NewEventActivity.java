@@ -2,7 +2,6 @@ package com.example.drogopolex.activities;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -32,10 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 public class NewEventActivity extends AppCompatActivity implements LocationListener {
 
@@ -105,7 +102,6 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "siekliklo1", Toast.LENGTH_LONG).show();
                 addEventRequest();
 
             }
@@ -118,10 +114,6 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
     }
     public static ArrayList<String> getListOfEventTypes(){
         ArrayList<String> lista = new ArrayList<String>(Arrays.asList("Wypadek","Korek","Patrol Policji","Roboty Drogowe"));
-        return lista;
-    }
-    public static String[] getListOfEventTypesDep(){
-        String[] lista = {"Wypadek","Korek","Patrol Policji","Roboty Drogowe"};
         return lista;
     }
 
@@ -137,7 +129,9 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
 
     private void addEventRequest() {
         String localization = localizationInput.getText().toString();
-        //String eventType = eventTypeInput.getText().toString();
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+        String token = sp.getString("token", "");
 
         if (listaZdarzen.get(0).equals(wybranaAktywnosc) || "".equals(wybranaAktywnosc)) {
             Toast.makeText(getApplicationContext(), "Wybierz typ zdarzenia", Toast.LENGTH_LONG).show();
@@ -149,19 +143,20 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
                 jsonObject.put("longitude", longitude);
                 jsonObject.put("latitude", latitude);
                 jsonObject.put("type", wybranaAktywnosc);
-                // jsonObject.put("type", eventType);
+                jsonObject.put("user_id", user_id);
+                jsonObject.put("token", token);
 
                 String url = "http://10.0.2.2:5000/addEvent";
                 JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Boolean isSuccess = false;
+                        boolean isSuccess = false;
                         String stringError = "";
 
                         try {
                             isSuccess = response.getBoolean("success");
                             if (!isSuccess) {
-                                stringError = response.getString("errorString");
+                                stringError = response.getString("error");
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
