@@ -53,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
         if(sp.getBoolean("loggedIn", false)){
             goToLoggedInMenuActivity();
         }
+
+        Toast.makeText(getApplicationContext(),"Toast testowy",Toast.LENGTH_LONG).show();
     }
 
     private void loginRequest() {

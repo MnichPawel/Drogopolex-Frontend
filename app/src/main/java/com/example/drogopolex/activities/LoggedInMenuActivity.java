@@ -113,7 +113,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
         String token = sp.getString("token", "");
 
         if(!loggedIn){
-            return;
+            goToMainActivity();
         }
 
         try {
@@ -148,7 +148,6 @@ public class LoggedInMenuActivity extends AppCompatActivity {
                         speditor.putBoolean("loggedIn",false);
                         speditor.apply();
 
-                        goToMainActivity();
                     }else{
                         Toast.makeText(getApplicationContext(),stringError,Toast.LENGTH_LONG).show();
 
@@ -159,13 +158,22 @@ public class LoggedInMenuActivity extends AppCompatActivity {
                         speditor.putBoolean("loggedIn",false);
                         speditor.apply();
 
-                        goToMainActivity();
                     }
+                    goToMainActivity();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+
+                    SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor speditor = sp.edit();
+                    speditor.putString("token","");
+                    speditor.putString("user_id","");
+                    speditor.putBoolean("loggedIn",false);
+                    speditor.apply();
+
+                    goToMainActivity();
                 }
             });
 
