@@ -15,7 +15,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
-import com.example.drogopolex.model.DrogopolexEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,11 +79,14 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
     }
 
     public void unsubscribeRequest(String idsub){
+        SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+        String token = sp.getString("token", "");
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id_to_del",idsub);
-            jsonObject.put("user_id","");
-            jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
+            jsonObject.put("user_id",user_id);
+            jsonObject.put("token", token);
 
 
             String url = "http://10.0.2.2:5000/unsubscribe";
@@ -125,22 +127,24 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
                 }
             });
 
+            RequestSingleton.getInstance(context).addToRequestQueue(objectRequest);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private  void resetSubscriptions() {
+    private void resetSubscriptions() {
         JSONObject jsonObject = new JSONObject();
         String url = "http://10.0.2.2:5000/subscriptions";
 
         //shared preferences nie widzial, user id przekazane z zewnatrz
-        //SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        //String user_id = sp.getString("user_id", "");
-        String user_id = spUserId;
+        SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+        String token = sp.getString("token", "");
 
         try {
-            jsonObject.put("token", "");
+            jsonObject.put("token", token);
             jsonObject.put("user_id", user_id);
 
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
