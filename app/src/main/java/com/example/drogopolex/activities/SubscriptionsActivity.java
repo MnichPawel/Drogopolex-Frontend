@@ -33,6 +33,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
     SubscriptionsListAdapter listAdapter;
 
     ArrayList<String> subscriptions = new ArrayList<>();
+    ArrayList<String> subscriptionIds = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
             goToMainActivity();
         }
 
-        listAdapter = new SubscriptionsListAdapter(subscriptions);
+        listAdapter = new SubscriptionsListAdapter(subscriptions,subscriptionIds,getApplicationContext(),sp.getString("user_id", ""));
         subscriptionsRecyclerView.setAdapter(listAdapter);
         subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -83,6 +84,8 @@ public class SubscriptionsActivity extends AppCompatActivity {
                             JSONObject item = resp.getJSONObject(i);
                             String localization_str = item.getString("localization");
                             subscriptions.add(localization_str);
+                            String sub_id_str = item.getString("id_sub");
+                            subscriptionIds.add(sub_id_str);
                         }
                         listAdapter.notifyDataSetChanged();
                     } catch (JSONException e) {
@@ -108,6 +111,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
         Intent goToSubscribedEventsActivityIntent = new Intent(this, SubscribedEventsActivity.class);
         startActivity(goToSubscribedEventsActivityIntent);
     }
+
 
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
