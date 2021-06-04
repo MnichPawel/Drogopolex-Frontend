@@ -23,4 +23,6 @@
     <string name="change_email">Zmień adres email</string>
     <string name="change_password">Zmień hasło</string>
     <string name="subscriptions_list">Lista</string>
+    <string name="upvote">+</string>
+    <string name="downvote">-</string>
 </resources>

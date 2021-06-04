@@ -23,6 +23,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.activities.main.LoggedInMenuActivity;
+import com.example.drogopolex.activities.main.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

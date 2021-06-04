@@ -27,22 +27,20 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
     private static ArrayList<String> localDataSet;
     private static ArrayList<String> localDataSetIds;
-    private static Context context;
-    private static String spUserId;
+    private final Context context;
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView subscriptionText;
-        private final Button unsubscribe;
 
 
         public ViewHolder(View view) {
             super(view);
 
             subscriptionText = (TextView) view.findViewById(R.id.subscription_row_text);
-            unsubscribe =(Button) view.findViewById(R.id.unsubBtn);
+            Button unsubscribe = (Button) view.findViewById(R.id.unsubBtn);
             unsubscribe.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    //                                      pozycja guzika hopefuly
                     unsubscribeRequest(localDataSetIds.get(getAdapterPosition()));
                 }
             });
@@ -53,11 +51,10 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         }
     }
 
-    public SubscriptionsListAdapter(ArrayList<String> dataSet, ArrayList<String> dataId,Context con,String userId) {
+    public SubscriptionsListAdapter(ArrayList<String> dataSet, ArrayList<String> dataId, Context context) {
         localDataSet = dataSet;
-        localDataSetIds =dataId;
-        context=con;
-        spUserId=userId;
+        localDataSetIds = dataId;
+        this.context = context;
     }
 
     @Override
@@ -78,14 +75,14 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         return localDataSet.size();
     }
 
-    public void unsubscribeRequest(String idsub){
+    public void unsubscribeRequest(String subId){
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String user_id = sp.getString("user_id", "");
+        String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id_to_del",idsub);
-            jsonObject.put("user_id",user_id);
+            jsonObject.put("id_to_del",subId);
+            jsonObject.put("user_id",userId);
             jsonObject.put("token", token);
 
 
@@ -95,17 +92,11 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
                 public void onResponse(JSONObject response) {
                     boolean isSuccess = false;
                     String stringError = "";
-                    //String user_id="";
-                    //String token="";
 
                     try {
                         isSuccess = response.getBoolean("success");
                         if(!isSuccess) {
                             stringError = response.getString("errorString");
-                        }else {
-                            //TODO zeby sie robil taki ladny reset listy
-                            //user_id = response.getString("user_id");
-                            //token = response.getString("token");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -117,7 +108,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
 
                     }else{
-                        Toast.makeText(context,stringError,Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, stringError, Toast.LENGTH_LONG).show();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -138,14 +129,13 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         JSONObject jsonObject = new JSONObject();
         String url = "http://10.0.2.2:5000/subscriptions";
 
-        //shared preferences nie widzial, user id przekazane z zewnatrz
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String user_id = sp.getString("user_id", "");
+        String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
         try {
             jsonObject.put("token", token);
-            jsonObject.put("user_id", user_id);
+            jsonObject.put("user_id", userId);
 
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override

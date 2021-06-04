@@ -1,4 +1,4 @@
-package com.example.drogopolex.activities;
+package com.example.drogopolex.activities.events;
 
 
 import android.content.Context;
@@ -19,6 +19,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.activities.NewEventActivity;
+import com.example.drogopolex.activities.main.LoggedInMenuActivity;
+import com.example.drogopolex.activities.main.MainActivity;
 import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.model.DrogopolexEvent;
 
@@ -57,7 +60,7 @@ public class EventsSearchActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsSearchListView);
         Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
-        eventListAdapter = new EventListAdapter(eventListData);
+        eventListAdapter = new EventListAdapter(eventListData, this);
         recyclerView.setAdapter(eventListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -140,7 +143,8 @@ public class EventsSearchActivity extends AppCompatActivity {
                             JSONObject item = resp.getJSONObject(i);
                             String type_str = item.getString("type");
                             String localization_str = item.getString("localization");
-                            eventListData.add(new DrogopolexEvent(type_str, localization_str));
+                            int eventId = Integer.parseInt(item.getString("id"));
+                            eventListData.add(new DrogopolexEvent(type_str, localization_str, eventId));
                         }
                         eventListAdapter.notifyDataSetChanged();
 

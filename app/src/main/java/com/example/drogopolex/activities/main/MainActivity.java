@@ -1,4 +1,4 @@
-package com.example.drogopolex.activities;
+package com.example.drogopolex.activities.main;
 
 import android.content.Context;
 import android.content.Intent;

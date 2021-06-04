@@ -1,4 +1,4 @@
-package com.example.drogopolex.activities;
+package com.example.drogopolex.activities.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.activities.NewEventActivity;
+import com.example.drogopolex.activities.ProfileActivity;
+import com.example.drogopolex.activities.events.EventsActivity;
+import com.example.drogopolex.activities.subcribe.SubscribedEventsActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

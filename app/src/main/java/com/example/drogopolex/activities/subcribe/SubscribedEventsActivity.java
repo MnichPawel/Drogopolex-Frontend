@@ -1,13 +1,9 @@
-package com.example.drogopolex.activities;
+package com.example.drogopolex.activities.subcribe;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +15,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.activities.main.LoggedInMenuActivity;
+import com.example.drogopolex.activities.main.MainActivity;
 import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.model.DrogopolexEvent;
 
@@ -28,61 +26,50 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class EventsActivity extends AppCompatActivity implements LocationListener {
-    Button goToLoggedInMenuActivity;
-    Button goToEventsByLocalizationActivity; //now it goes to EventsSearchActivity,  EventsByLocalizationActivity deprecated
+public class SubscribedEventsActivity extends AppCompatActivity {
+    Button goToLoggedInMenuActivityButton;
+    Button addSubscriptionButton;
+    Button goToSubscriptionListButton;
+    RecyclerView subscribedEventsRecyclerView;
 
     EventListAdapter eventListAdapter;
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
-
-    LocationManager locationManager;
-    private final int PERMISSIONS_REQUEST_LOCATION = 99;
-    double latitude, longitude;
+    ArrayList<String> subscriptions = new ArrayList<>();
+    boolean subscriptionsUpdatedFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_events);
+        setContentView(R.layout.activity_subscribed_events);
 
-        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events);
-        goToEventsByLocalizationActivity = (Button) findViewById(R.id.goToEventsByLocalizationActivity);
+        goToLoggedInMenuActivityButton = (Button) findViewById(R.id.go_back_subscribed_events);
+        addSubscriptionButton = (Button) findViewById(R.id.addSubscription);
+        goToSubscriptionListButton = (Button) findViewById(R.id.go_to_subscriptions_list);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsListView);
+        subscribedEventsRecyclerView = (RecyclerView) findViewById(R.id.subscribed_events_view);
 
-        eventListAdapter = new EventListAdapter(eventListData);
-        recyclerView.setAdapter(eventListAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[] {
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                    }, PERMISSIONS_REQUEST_LOCATION);
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 50, this);
-
-
-        goToLoggedInMenuActivity.setOnClickListener(new View.OnClickListener() {
+        goToLoggedInMenuActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToLoggedInMenuActivity();
             }
         });
 
-        goToEventsByLocalizationActivity.setOnClickListener(new View.OnClickListener() {
+        addSubscriptionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //goToEventsByLocalizationActivity();
-                goToEventsSearchActivity();
+                goToSubscribeActivity();
+            }
+        });
+
+        goToSubscriptionListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToSubscriptionsListActivity();
             }
         });
 
@@ -90,13 +77,62 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
         }
+
+
+        eventListAdapter = new EventListAdapter(eventListData, this);
+        subscribedEventsRecyclerView.setAdapter(eventListAdapter);
+        subscribedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        new getEventsFromSubscribed().execute();
     }
 
-    //Zastąpione pobieranien zdarzeń w lokacji
-    private void getAllEventsRequest() {
+    private void getSubscriptions() {
+        JSONObject jsonObject = new JSONObject();
+        String url = "http://10.0.2.2:5000/subscriptions";
+
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+
+        try {
+            jsonObject.put("token", "");
+            jsonObject.put("user_id", user_id);
+
+            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        JSONArray resp = response.getJSONArray("subscriptions");
+                        subscriptions.clear();
+                        subscriptionsUpdatedFlag = false;
+                        for (int i = 0; i < resp.length(); i++) {
+                            JSONObject item = resp.getJSONObject(i);
+                            String localization_str = item.getString("localization");
+                            subscriptions.add(localization_str);
+                        }
+                        subscriptionsUpdatedFlag = true;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                }
+            });
+
+            RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void getAllEventsRequest() { //todo: to bardziej workaround niż docelowe rozwiązanie. Ta funkcja jest duplikatem.
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("token", ""); //Na przyszłość jak będzie potrzebne
+            jsonObject.put("token", "");
 
             String url = "http://10.0.2.2:5000/getAllEvents";
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
@@ -109,7 +145,10 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
                             JSONObject item = resp.getJSONObject(i);
                             String type_str = item.getString("type");
                             String localization_str = item.getString("localization");
-                            eventListData.add(new DrogopolexEvent(type_str, localization_str));
+                            int eventId = Integer.parseInt(item.getString("id"));
+                            if(subscriptions.stream().anyMatch(sub -> sub.trim().equals(localization_str))) {
+                                eventListData.add(new DrogopolexEvent(type_str, localization_str, eventId));
+                            }
                         }
                         eventListAdapter.notifyDataSetChanged();
 
@@ -131,54 +170,10 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
         }
     }
 
-    private void getEventsFromUserAreaRequest() {
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("longitude", longitude);
-            jsonObject.put("latitude", latitude);
-
-            String url = "http://10.0.2.2:5000/getEventsFromUserArea";
-            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray resp = response.getJSONArray("events");
-
-                        eventListData.clear();
-                        for (int i = 0; i < resp.length(); i++) {
-                            JSONObject item = resp.getJSONObject(i);
-                            String type_str = item.getString("type");
-                            String localization_str = item.getString("localization");
-                            eventListData.add(new DrogopolexEvent(type_str, localization_str));
-                        }
-                        eventListAdapter.notifyDataSetChanged();
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void goToLoggedInMenuActivity() {
         Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
         startActivity(goToLoggedInMenuActivityIntent);
-    }
-
-    private void goToEventsSearchActivity() {
-        Intent goToEventsSearchActivityIntent = new Intent(this, EventsSearchActivity.class);
-        startActivity(goToEventsSearchActivityIntent);
     }
 
     private void goToMainActivity() {
@@ -186,19 +181,27 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
         startActivity(goToMainActivityIntent);
     }
 
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
-        getEventsFromUserAreaRequest();
+    private void goToSubscribeActivity() {
+        Intent goToSubscribeActivityIntent = new Intent(this, SubscribeActivity.class);
+        startActivity(goToSubscribeActivityIntent);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getApplicationContext(), "PERMISSION GRANTED", Toast.LENGTH_LONG).show();
-            }
+    private void goToSubscriptionsListActivity() {
+        Intent goToSubscriptionsListActivityIntent = new Intent(this, SubscriptionsActivity.class);
+        startActivity(goToSubscriptionsListActivityIntent);
+    }
+
+    private class getEventsFromSubscribed extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getSubscriptions();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            getAllEventsRequest();
         }
     }
 }

@@ -19,16 +19,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Drogopolex">
         <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.EventsActivity" />
-        <activity android:name=".activities.SubscribedEventsActivity" />
+        <activity android:name=".activities.events.EventsActivity" />
+        <activity android:name=".activities.subcribe.SubscribedEventsActivity" />
         <activity android:name=".activities.NewEventActivity" />
-        <activity android:name=".activities.SubscribeActivity" />
-        <activity android:name=".activities.LoggedInMenuActivity" />
-        <activity android:name=".activities.RegisterActivity" />
-        <activity android:name=".activities.SubscriptionsActivity"/>
-        <activity android:name=".activities.EventsSearchActivity"/>
+        <activity android:name=".activities.subcribe.SubscribeActivity" />
+        <activity android:name=".activities.main.LoggedInMenuActivity" />
+        <activity android:name=".activities.main.RegisterActivity" />
+        <activity android:name=".activities.subcribe.SubscriptionsActivity"/>
+        <activity android:name=".activities.events.EventsSearchActivity"/>
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.main.LoginActivity"
             android:label="@string/app_name" />
 
         <uses-library
@@ -42,7 +42,7 @@
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

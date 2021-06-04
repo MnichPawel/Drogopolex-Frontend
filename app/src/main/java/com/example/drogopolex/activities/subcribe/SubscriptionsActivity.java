@@ -1,4 +1,4 @@
-package com.example.drogopolex.activities;
+package com.example.drogopolex.activities.subcribe;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.activities.main.MainActivity;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
 
 import org.json.JSONArray;
@@ -56,7 +57,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
             goToMainActivity();
         }
 
-        listAdapter = new SubscriptionsListAdapter(subscriptions,subscriptionIds,getApplicationContext(),sp.getString("user_id", ""));
+        listAdapter = new SubscriptionsListAdapter(subscriptions,subscriptionIds,getApplicationContext());
         subscriptionsRecyclerView.setAdapter(listAdapter);
         subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 

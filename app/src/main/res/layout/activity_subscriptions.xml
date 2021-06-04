@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SubscriptionsActivity">
+    tools:context=".activities.subcribe.SubscriptionsActivity">
 
     <Button
         android:id="@+id/go_back_subscriptions"
