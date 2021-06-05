@@ -33,6 +33,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
@@ -100,7 +102,8 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
     }
 
     private void getEventsFromUserAreaRequest() {
-        List<Vote> votes = ServerUtils.getVotes(this);
+        CountDownLatch latch = new CountDownLatch(1);
+        List<Vote> votes = ServerUtils.getVotes(this, latch);
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         int userId = Integer.parseInt(sp.getString("user_id", ""));
         try {
@@ -145,9 +148,10 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
                 }
             });
 
+            latch.await(1000, TimeUnit.MILLISECONDS);
             RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
 
-        } catch (JSONException e) {
+        } catch (JSONException | InterruptedException e) {
             e.printStackTrace();
         }
     }

@@ -1,6 +1,7 @@
 package com.example.drogopolex;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -15,10 +16,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class ServerUtils {
 
-    public static List<Vote> getVotes(Context context) {
+    public static List<Vote> getVotes(Context context, CountDownLatch latch) {
+        Toast.makeText(context, "getvotes", Toast.LENGTH_SHORT).show();
         List<Vote> votes = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
 
@@ -26,6 +29,7 @@ public class ServerUtils {
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Toast.makeText(context, "getVotesOnResponse", Toast.LENGTH_SHORT).show();
                 try {
                     JSONArray resp = response.getJSONArray("votes");
                     for (int i = 0; i < resp.length(); i++) {
@@ -38,6 +42,10 @@ public class ServerUtils {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } finally {
+                    Log.d("FINALLY", "latch countdown getVotes");
+                    Toast.makeText(context, "getVotesOnResponseFinally", Toast.LENGTH_SHORT).show();
+                    latch.countDown();
                 }
             }
         }, new Response.ErrorListener() {
@@ -48,7 +56,6 @@ public class ServerUtils {
         });
 
         RequestSingleton.getInstance(context).addToRequestQueue(objectRequest);
-
         return votes;
     }
 }
