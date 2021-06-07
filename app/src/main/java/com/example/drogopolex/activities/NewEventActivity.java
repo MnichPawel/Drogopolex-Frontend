@@ -42,7 +42,7 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
 
 
     Button goToLoggedInMenuActivity;
-    Button addEvent;
+    Button addEvent, addEventGPS;
     EditText localizationInput;
     //EditText eventTypeInput; //Zastapione Spinnerem
     Spinner spinnerEvTyp;
@@ -59,6 +59,7 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
         listaZdarzen.add(0,"Wybierz typ"); //PAWEŁ NAWET TEGO NIE PRÓBUJ a tym bardziej Ty Kamil!!!
         goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_new_event);
         addEvent = (Button) findViewById(R.id.addNewEventButton);
+        addEventGPS = (Button) findViewById(R.id.addNewEventGPSButton);
         localizationInput = (EditText) findViewById(R.id.editTextLocalization);
         //eventTypeInput = (EditText) findViewById(R.id.editTextEventType);
         spinnerEvTyp= (Spinner) findViewById(R.id.spinnerEvent); //lista wyskakujaca
@@ -104,10 +105,18 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addEventRequest();
-
+                addEventByInputRequest();
             }
         });
+
+        addEventGPS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addEventByGPSRequest();
+            }
+        });
+
+
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
@@ -129,7 +138,7 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
         startActivity(goToMainActivityIntent);
     }
 
-    private void addEventRequest() {
+    private void addEventByInputRequest() {
         String localization = localizationInput.getText().toString();
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         String user_id = sp.getString("user_id", "");
@@ -141,7 +150,65 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
         } else {
             try {
                 JSONObject jsonObject = new JSONObject();
+                jsonObject.put("gps", false);
                 jsonObject.put("localization", localization);
+                jsonObject.put("longitude", "");
+                jsonObject.put("latitude", "");
+                jsonObject.put("type", wybranaAktywnosc);
+                jsonObject.put("user_id", user_id);
+                jsonObject.put("token", token);
+
+                String url = "http://10.0.2.2:5000/addEvent";
+                JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        boolean isSuccess = false;
+                        String stringError = "";
+
+                        try {
+                            isSuccess = response.getBoolean("success");
+                            if (!isSuccess) {
+                                stringError = response.getString("error");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (isSuccess) {
+                            Toast.makeText(getApplicationContext(), "Zgłoszenie zostało dodane", Toast.LENGTH_LONG).show();
+                            goToLoggedInMenuActivity();
+                        } else {
+                            Toast.makeText(getApplicationContext(), stringError, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addEventByGPSRequest() {
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+        String token = sp.getString("token", "");
+
+        if (listaZdarzen.get(0).equals(wybranaAktywnosc) || "".equals(wybranaAktywnosc)) {
+            Toast.makeText(getApplicationContext(), "Wybierz typ zdarzenia", Toast.LENGTH_LONG).show();
+
+        } else {
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("gps", true);
+                jsonObject.put("localization", "");
                 jsonObject.put("longitude", longitude);
                 jsonObject.put("latitude", latitude);
                 jsonObject.put("type", wybranaAktywnosc);
@@ -185,6 +252,7 @@ public class NewEventActivity extends AppCompatActivity implements LocationListe
             }
         }
     }
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
         longitude = location.getLongitude();
