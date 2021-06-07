@@ -58,7 +58,7 @@ public class EventsSearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_search);
-        Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
         listaZdarzen.add(0,"Dowolny typ");
 
         goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events_search);
@@ -66,7 +66,7 @@ public class EventsSearchActivity extends AppCompatActivity {
         searchEventsByLocalizationInput = (EditText) findViewById(R.id.searchEventsSearchLocalizationInput);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eventsSearchListView);
-        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_SHORT).show();
         eventListAdapter = new EventListAdapter(eventListData, this);
         recyclerView.setAdapter(eventListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -106,7 +106,7 @@ public class EventsSearchActivity extends AppCompatActivity {
                 wybranaAktywnosc=""; //jak nie to nic nie ustawiaj
             }
         });
-        Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "3", Toast.LENGTH_SHORT).show();
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
@@ -154,6 +154,7 @@ public class EventsSearchActivity extends AppCompatActivity {
                             JSONObject item = resp.getJSONObject(i);
                             String type_str = item.getString("type");
                             String localization_str = item.getString("localization");
+                            String street = item.getString("street");
                             int eventId = Integer.parseInt(item.getString("id"));
                             List<Vote> eventVotes = votes.stream()
                                     .filter(vote -> vote.getEventId() == eventId)
@@ -163,7 +164,7 @@ public class EventsSearchActivity extends AppCompatActivity {
                                     .findFirst()
                                     .map(Vote::getType)
                                     .orElse(VoteType.NO_VOTE);
-                            eventListData.add(new DrogopolexEvent(type_str, localization_str, eventId, eventVotes, userVoteType));
+                            eventListData.add(new DrogopolexEvent(type_str, localization_str, street, eventId, eventVotes, userVoteType));
                         }
                         eventListAdapter.notifyDataSetChanged();
 

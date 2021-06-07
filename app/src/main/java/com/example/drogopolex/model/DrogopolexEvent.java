@@ -5,22 +5,18 @@ import java.util.List;
 public class DrogopolexEvent {
     private String type;
     private String location;
+    private String street;
     private int id;
     private VoteType userVoteType;
     private List<Vote> votes;
 
-    public DrogopolexEvent(String type, String location, int id, List<Vote> votes, VoteType userVoteType) {
+    public DrogopolexEvent(String type, String location, String street, int id, List<Vote> votes, VoteType userVoteType) {
         this.type = type;
         this.location = location;
+        this.street = street;
         this.id = id;
         this.votes = votes;
         this.userVoteType = userVoteType;
-    }
-
-    public DrogopolexEvent(String type, String location, int id) {
-        this.type = type;
-        this.location = location;
-        this.id = id;
     }
 
     public String getType(){
@@ -29,6 +25,10 @@ public class DrogopolexEvent {
 
     public String getLocation(){
         return location;
+    }
+
+    public String getStreet() {
+        return street;
     }
 
     public int getId(){

@@ -138,7 +138,7 @@ public class SubscribedEventsActivity extends AppCompatActivity {
     }
 
     private void getAllEventsRequest() { //todo: Ta funkcja jest duplikatem.
-        Toast.makeText(this, "getAllevents", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "getAllevents", Toast.LENGTH_SHORT).show();
         CountDownLatch latch = new CountDownLatch(2);
         List<Vote> votes = ServerUtils.getVotes(this, latch);
         getSubscriptions(latch);
@@ -159,6 +159,7 @@ public class SubscribedEventsActivity extends AppCompatActivity {
                             JSONObject item = resp.getJSONObject(i);
                             String type_str = item.getString("type");
                             String localization_str = item.getString("localization");
+                            String street = item.getString("street");
                             int eventId = Integer.parseInt(item.getString("id"));
                             List<Vote> eventVotes = votes.stream()
                                     .filter(vote -> vote.getEventId() == eventId)
@@ -169,7 +170,7 @@ public class SubscribedEventsActivity extends AppCompatActivity {
                                     .map(Vote::getType)
                                     .orElse(VoteType.NO_VOTE);
                             if(subscriptions.stream().anyMatch(sub -> sub.trim().equals(localization_str))) {
-                                eventListData.add(new DrogopolexEvent(type_str, localization_str, eventId, eventVotes, userVoteType));
+                                eventListData.add(new DrogopolexEvent(type_str, localization_str, street, eventId, eventVotes, userVoteType));
                             }
                         }
                         eventListAdapter.notifyDataSetChanged();

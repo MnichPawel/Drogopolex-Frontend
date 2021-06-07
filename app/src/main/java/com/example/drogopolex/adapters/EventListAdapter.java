@@ -135,7 +135,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         DrogopolexEvent drogopolexEvent = localDataSet.get(position);
         viewHolder.getTypeTextView().setText(drogopolexEvent.getType());
-        viewHolder.getLocationTextView().setText(drogopolexEvent.getLocation());
+        viewHolder.getLocationTextView().setText(String.format("%s, %s", drogopolexEvent.getStreet(), drogopolexEvent.getLocation()));
         viewHolder.getVoteCounter().setText(String.valueOf(drogopolexEvent.getVotesCount()));
 
         if(drogopolexEvent.getUserVoteType() == VoteType.UPVOTED) {

@@ -123,6 +123,7 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
                             JSONObject item = resp.getJSONObject(i);
                             String type_str = item.getString("type");
                             String localization_str = item.getString("localization");
+                            String street = item.getString("street");
                             int eventId = Integer.parseInt(item.getString("id"));
                             List<Vote> eventVotes = votes.stream()
                                     .filter(vote -> vote.getEventId() == eventId)
@@ -133,7 +134,7 @@ public class EventsActivity extends AppCompatActivity implements LocationListene
                                     .findFirst()
                                     .map(Vote::getType)
                                     .orElse(VoteType.NO_VOTE);
-                            eventListData.add(new DrogopolexEvent(type_str, localization_str, eventId, eventVotes, userVoteType));
+                            eventListData.add(new DrogopolexEvent(type_str, localization_str, street, eventId, eventVotes, userVoteType));
                         }
                         eventListAdapter.notifyDataSetChanged();
 

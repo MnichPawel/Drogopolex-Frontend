@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
             goToLoggedInMenuActivity();
         }
 
-        Toast.makeText(getApplicationContext(),"Toast testowy",Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),"Toast testowy",Toast.LENGTH_LONG).show();
     }
 
     private void loginRequest() {
