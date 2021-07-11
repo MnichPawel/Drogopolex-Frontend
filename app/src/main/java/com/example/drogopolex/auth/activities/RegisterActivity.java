@@ -1,4 +1,4 @@
-package com.example.drogopolex.activities.main;
+package com.example.drogopolex.auth.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,13 +17,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.activities.main.LoggedInMenuActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-//import retrofit.RestAdapter;
 
 public class RegisterActivity extends AppCompatActivity {
     Button goToMainActivity;
@@ -132,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(goToLoginActivityIntent);
     }
     private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
+        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
         startActivity(goToMainActivityIntent);
     }
     private void goToLoggedInMenuActivity() {

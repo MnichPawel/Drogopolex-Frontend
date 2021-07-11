@@ -14,8 +14,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
-import com.example.drogopolex.activities.main.MainActivity;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
+import com.example.drogopolex.auth.activities.LoginMenuActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -115,7 +115,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
 
     private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
+        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
         startActivity(goToMainActivityIntent);
     }
 }

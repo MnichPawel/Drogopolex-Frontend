@@ -60,7 +60,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.subscriptions_adapter_row, viewGroup, false);
+                .inflate(R.layout.row_subscriptions_list, viewGroup, false);
 
         return new ViewHolder(view);
     }

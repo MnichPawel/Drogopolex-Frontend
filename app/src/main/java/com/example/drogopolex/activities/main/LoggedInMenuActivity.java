@@ -18,6 +18,7 @@ import com.example.drogopolex.activities.NewEventActivity;
 import com.example.drogopolex.activities.ProfileActivity;
 import com.example.drogopolex.activities.events.EventsActivity;
 import com.example.drogopolex.activities.subcribe.SubscribedEventsActivity;
+import com.example.drogopolex.auth.activities.LoginMenuActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,7 +107,7 @@ public class LoggedInMenuActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
+        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
         startActivity(goToMainActivityIntent);
     }
 

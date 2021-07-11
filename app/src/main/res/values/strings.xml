@@ -26,4 +26,5 @@
     <string name="upvote">+</string>
     <string name="downvote">-</string>
     <string name="add_event_gps">Dodaj zdarzenie (GPS)</string>
+    <string name="delete">Usuń</string>
 </resources>

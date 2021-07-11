@@ -16,7 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
 import com.example.drogopolex.activities.main.LoggedInMenuActivity;
-import com.example.drogopolex.activities.main.MainActivity;
+import com.example.drogopolex.auth.activities.LoginMenuActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +63,7 @@ public class SubscribeActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
+        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
         startActivity(goToMainActivityIntent);
     }
 
