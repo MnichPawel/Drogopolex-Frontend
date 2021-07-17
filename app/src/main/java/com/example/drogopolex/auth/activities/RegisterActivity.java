@@ -7,11 +7,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.activities.main.LoggedInMenuActivity;
-import com.example.drogopolex.auth.listeners.RegisterListener;
+import com.example.drogopolex.auth.listeners.BasicListener;
 import com.example.drogopolex.auth.utils.RegisterAction;
 import com.example.drogopolex.auth.viewModel.RegisterViewModel;
-import com.example.drogopolex.data.network.response.RegisterResponse;
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityRegisterBinding;
 
 import androidx.annotation.Nullable;
@@ -20,14 +19,14 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-public class RegisterActivity extends AppCompatActivity implements RegisterListener {
+public class RegisterActivity extends AppCompatActivity implements BasicListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityRegisterBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_register);
         activityMainBinding.setViewModel(new RegisterViewModel(getApplication()));
         activityMainBinding.executePendingBindings();
-        activityMainBinding.getViewModel().registerListener = this;
+        activityMainBinding.getViewModel().basicListener = this;
 
         activityMainBinding.getViewModel().getAction().observe(this, new Observer<RegisterAction>() {
             @Override
@@ -59,10 +58,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterListe
     }
 
     @Override
-    public void onSuccess(LiveData<RegisterResponse> response) {
-        response.observe(this, new Observer<RegisterResponse>() {
+    public void onSuccess(LiveData<BasicResponse> response) {
+        response.observe(this, new Observer<BasicResponse>() {
             @Override
-            public void onChanged(RegisterResponse result) {
+            public void onChanged(BasicResponse result) {
                 if(response.getValue() != null) {
                     if ("true".equals(response.getValue().getSuccess())) {
                         Toast.makeText(RegisterActivity.this,"Konto utworzone",Toast.LENGTH_LONG).show();

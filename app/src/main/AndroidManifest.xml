@@ -23,7 +23,7 @@
         <activity android:name=".activities.subcribe.SubscribedEventsActivity" />
         <activity android:name=".activities.NewEventActivity" />
         <activity android:name=".activities.subcribe.SubscribeActivity" />
-        <activity android:name=".activities.main.LoggedInMenuActivity" />
+        <activity android:name=".auth.activities.LoggedInMenuActivity" />
         <activity android:name=".auth.activities.RegisterActivity" />
         <activity android:name=".activities.subcribe.SubscriptionsActivity"/>
         <activity android:name=".activities.events.EventsSearchActivity"/>

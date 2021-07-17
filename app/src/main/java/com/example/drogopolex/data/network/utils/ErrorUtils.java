@@ -1,8 +1,8 @@
 package com.example.drogopolex.data.network.utils;
 
 
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
-import com.example.drogopolex.data.network.response.RegisterResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.response.TemplateResponse;
 import com.google.gson.JsonObject;
@@ -21,8 +21,8 @@ public class ErrorUtils {
             case LOGIN_RESPONSE:
                 response = new LoginResponse();
                 break;
-            case REGISTER_RESPONSE:
-                response = new RegisterResponse();
+            case BASIC_RESPONSE:
+                response = new BasicResponse();
                 break;
             default:
                 return null;

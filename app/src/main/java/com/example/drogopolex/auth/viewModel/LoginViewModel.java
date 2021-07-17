@@ -1,18 +1,15 @@
 package com.example.drogopolex.auth.viewModel;
 
-import android.app.Application;
-
 import com.example.drogopolex.auth.listeners.LoginListener;
 import com.example.drogopolex.auth.utils.LoginAction;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.repositories.UserRepository;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-public class LoginViewModel extends AndroidViewModel {
+public class LoginViewModel extends ViewModel {
     private MutableLiveData<LoginAction> mAction = new MutableLiveData<>();
     public MutableLiveData<String> email = new MutableLiveData<>();
     public MutableLiveData<String> password = new MutableLiveData<>();
@@ -21,9 +18,7 @@ public class LoginViewModel extends AndroidViewModel {
 
     public LoginListener loginListener = null;
 
-    public LoginViewModel(@NonNull Application application) {
-        super(application);
-
+    public LoginViewModel() {
         userRepository = new UserRepository();
     }
 

@@ -2,9 +2,9 @@ package com.example.drogopolex.auth.viewModel;
 
 import android.app.Application;
 
-import com.example.drogopolex.auth.listeners.RegisterListener;
+import com.example.drogopolex.auth.listeners.BasicListener;
 import com.example.drogopolex.auth.utils.RegisterAction;
-import com.example.drogopolex.data.network.response.RegisterResponse;
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.UserRepository;
 
 import androidx.annotation.NonNull;
@@ -22,7 +22,7 @@ public class RegisterViewModel extends AndroidViewModel {
 
     private UserRepository userRepository;
 
-    public RegisterListener registerListener = null;
+    public BasicListener basicListener = null;
 
     public RegisterViewModel(@NonNull Application application) {
         super(application);
@@ -44,14 +44,14 @@ public class RegisterViewModel extends AndroidViewModel {
                 passwordValue == null || passwordValue.isEmpty() ||
                 repeatPasswordValue == null || repeatPasswordValue.isEmpty() ||
                 usernameValue == null || usernameValue.isEmpty()) {
-            registerListener.onFailure("Nieprawidłowy email, hasło lub nazwa użytkownika.");
+            basicListener.onFailure("Nieprawidłowy email, hasło lub nazwa użytkownika.");
 
         } else if(!passwordValue.equals(repeatPasswordValue)) {
-            registerListener.onFailure("Podane hasła różnią się.");
+            basicListener.onFailure("Podane hasła różnią się.");
 
         } else {
-            LiveData<RegisterResponse> registerResponse = userRepository.userRegister(emailValue, usernameValue, passwordValue);
-            registerListener.onSuccess(registerResponse);
+            LiveData<BasicResponse> registerResponse = userRepository.userRegister(emailValue, usernameValue, passwordValue);
+            basicListener.onSuccess(registerResponse);
         }
     }
 

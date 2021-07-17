@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.activities.main.LoggedInMenuActivity;
 import com.example.drogopolex.auth.utils.LoginMenuAction;
 import com.example.drogopolex.auth.viewModel.LoginMenuViewModel;
 import com.example.drogopolex.databinding.ActivityLoginMenuBinding;

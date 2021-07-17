@@ -2,9 +2,10 @@ package com.example.drogopolex.data.repositories;
 
 import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.LoginRequest;
+import com.example.drogopolex.data.network.request.LogoutRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
-import com.example.drogopolex.data.network.response.RegisterResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
@@ -45,25 +46,47 @@ public class UserRepository {
         return loginResponse;
     }
 
-    public LiveData<RegisterResponse> userRegister(String email, String username, String password){
-        final MutableLiveData<RegisterResponse> registerResponse = new MutableLiveData<>();
+    public LiveData<BasicResponse> userRegister(String email, String username, String password){
+        final MutableLiveData<BasicResponse> registerResponse = new MutableLiveData<>();
 
         myApi.userRegister(new RegisterRequest(email, username, password))
-                .enqueue(new Callback<RegisterResponse>() {
+                .enqueue(new Callback<BasicResponse>() {
                     @Override
-                    public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                    public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
                         if(response.isSuccessful()){
                             registerResponse.setValue(response.body());
                         } else {
-                            registerResponse.setValue((RegisterResponse) ErrorUtils.parseErrorResponse(response, ResponseType.REGISTER_RESPONSE));
+                            registerResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                    public void onFailure(Call<BasicResponse> call, Throwable t) {
                         registerResponse.setValue(null);
                     }
                 });
         return registerResponse;
+    }
+
+    public LiveData<BasicResponse> userLogout(String userId, String token) {
+        final MutableLiveData<BasicResponse> logoutResponse = new MutableLiveData<>();
+
+        myApi.userLogout(new LogoutRequest(userId, token))
+                .enqueue(new Callback<BasicResponse>() {
+                    @Override
+                    public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
+                        if(response.isSuccessful()){
+                            logoutResponse.setValue(response.body());
+                        } else {
+                            logoutResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<BasicResponse> call, Throwable t) {
+                        logoutResponse.setValue(null);
+                    }
+                });
+        return logoutResponse;
     }
 }

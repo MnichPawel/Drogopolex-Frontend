@@ -1,9 +1,10 @@
 package com.example.drogopolex.data.network;
 
 import com.example.drogopolex.data.network.request.LoginRequest;
+import com.example.drogopolex.data.network.request.LogoutRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
-import com.example.drogopolex.data.network.response.RegisterResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -15,6 +16,9 @@ public interface MyApi {
     Call<LoginResponse> userLogin(@Body LoginRequest body);
 
     @POST("register")
-    Call<RegisterResponse> userRegister(@Body RegisterRequest body);
+    Call<BasicResponse> userRegister(@Body RegisterRequest body);
+
+    @POST("logout")
+    Call<BasicResponse> userLogout(@Body LogoutRequest body);
 
 }

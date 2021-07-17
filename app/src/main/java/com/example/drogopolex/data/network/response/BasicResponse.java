@@ -3,7 +3,7 @@ package com.example.drogopolex.data.network.response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RegisterResponse implements TemplateResponse {
+public class BasicResponse implements TemplateResponse {
 
     @SerializedName("success")
     @Expose

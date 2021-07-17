@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.activities.main.LoggedInMenuActivity;
 import com.example.drogopolex.auth.listeners.LoginListener;
 import com.example.drogopolex.auth.utils.LoginAction;
 import com.example.drogopolex.auth.viewModel.LoginViewModel;
@@ -27,7 +26,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityLoginBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-        activityMainBinding.setViewModel(new LoginViewModel(getApplication()));
+        activityMainBinding.setViewModel(new LoginViewModel());
         activityMainBinding.executePendingBindings();
         activityMainBinding.getViewModel().loginListener = this;
 
