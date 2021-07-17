@@ -4,7 +4,7 @@ import com.example.drogopolex.data.network.response.LoginResponse;
 
 import androidx.lifecycle.LiveData;
 
-public interface AuthListener {
+public interface LoginListener {
     void onSuccess(LiveData<LoginResponse> response);
     void onFailure(String message);
 }

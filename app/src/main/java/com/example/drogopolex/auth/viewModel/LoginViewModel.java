@@ -2,7 +2,7 @@ package com.example.drogopolex.auth.viewModel;
 
 import android.app.Application;
 
-import com.example.drogopolex.auth.listeners.AuthListener;
+import com.example.drogopolex.auth.listeners.LoginListener;
 import com.example.drogopolex.auth.utils.LoginAction;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.repositories.UserRepository;
@@ -19,7 +19,7 @@ public class LoginViewModel extends AndroidViewModel {
 
     private UserRepository userRepository;
 
-    public AuthListener authListener = null;
+    public LoginListener loginListener = null;
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
@@ -36,10 +36,11 @@ public class LoginViewModel extends AndroidViewModel {
         String passwordValue = password.getValue();
         if(emailValue == null || emailValue.isEmpty() ||
                 passwordValue == null || passwordValue.isEmpty()){
-            authListener.onFailure("Nieprawidłowy email lub hasło.");
+            loginListener.onFailure("Nieprawidłowy email lub hasło.");
+        } else {
+            LiveData<LoginResponse> loginResponse = userRepository.userLogin(emailValue, passwordValue);
+            loginListener.onSuccess(loginResponse);
         }
-        LiveData<LoginResponse> loginResponse = userRepository.userLogin(emailValue, passwordValue);
-        authListener.onSuccess(loginResponse);
     }
 
     public void onReturnClicked(){

@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.activities.main.LoggedInMenuActivity;
-import com.example.drogopolex.auth.listeners.AuthListener;
+import com.example.drogopolex.auth.listeners.LoginListener;
 import com.example.drogopolex.auth.utils.LoginAction;
 import com.example.drogopolex.auth.viewModel.LoginViewModel;
 import com.example.drogopolex.data.network.response.LoginResponse;
@@ -22,14 +22,14 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-public class LoginActivity extends AppCompatActivity implements AuthListener {
+public class LoginActivity extends AppCompatActivity implements LoginListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityLoginBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         activityMainBinding.setViewModel(new LoginViewModel(getApplication()));
         activityMainBinding.executePendingBindings();
-        activityMainBinding.getViewModel().authListener = this;
+        activityMainBinding.getViewModel().loginListener = this;
 
         activityMainBinding.getViewModel().getAction().observe(this, new Observer<LoginAction>() {
             @Override
@@ -50,7 +50,8 @@ public class LoginActivity extends AppCompatActivity implements AuthListener {
     private void handleAction(LoginAction loginAction) {
         switch (loginAction.getValue()){
             case LoginAction.SHOW_LOGGED_IN:
-                goToLoggedInMenuActivity();
+                Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
+                startActivity(goToLoggedInMenuActivityIntent);
                 break;
             case LoginAction.SHOW_LOGIN_MENU:
                 Intent goToLoginMenuActivityIntent = new Intent(this, LoginMenuActivity.class);
@@ -76,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements AuthListener {
                         spEditor.putBoolean("loggedIn", true);
                         spEditor.apply();
 
-                        goToLoggedInMenuActivity();
+                        handleAction(new LoginAction(LoginAction.SHOW_LOGGED_IN));
                     } else {
                         String errorMessage = response.getValue().getErrorString();
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
@@ -92,10 +93,5 @@ public class LoginActivity extends AppCompatActivity implements AuthListener {
     @Override
     public void onFailure(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void goToLoggedInMenuActivity() {
-        Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
-        startActivity(goToLoggedInMenuActivityIntent);
     }
 }

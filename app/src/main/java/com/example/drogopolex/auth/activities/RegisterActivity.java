@@ -4,138 +4,82 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.drogopolex.R;
-import com.example.drogopolex.RequestSingleton;
 import com.example.drogopolex.activities.main.LoggedInMenuActivity;
+import com.example.drogopolex.auth.listeners.RegisterListener;
+import com.example.drogopolex.auth.utils.RegisterAction;
+import com.example.drogopolex.auth.viewModel.RegisterViewModel;
+import com.example.drogopolex.data.network.response.RegisterResponse;
+import com.example.drogopolex.databinding.ActivityRegisterBinding;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
-public class RegisterActivity extends AppCompatActivity {
-    Button goToMainActivity;
-    Button registerButton;
-    EditText nameInput;
-    EditText emailInput;
-    EditText passwordInput;
-    EditText passwordRepeatInput;
-    RequestQueue rq;
+public class RegisterActivity extends AppCompatActivity implements RegisterListener {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        ActivityRegisterBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_register);
+        activityMainBinding.setViewModel(new RegisterViewModel(getApplication()));
+        activityMainBinding.executePendingBindings();
+        activityMainBinding.getViewModel().registerListener = this;
 
-        rq= Volley.newRequestQueue(this);
-
-        goToMainActivity = (Button) findViewById(R.id.go_back_register);
-        registerButton = (Button) findViewById(R.id.registerButton);
-        nameInput = (EditText) findViewById(R.id.editTextTextPersonName);
-        emailInput = (EditText) findViewById(R.id.editTextTextEmailAddress);
-        passwordInput = (EditText) findViewById(R.id.editTextTextPassword3);
-        passwordRepeatInput = (EditText) findViewById(R.id.editTextTextPassword2);
-
-
-        goToMainActivity.setOnClickListener(new View.OnClickListener() {
+        activityMainBinding.getViewModel().getAction().observe(this, new Observer<RegisterAction>() {
             @Override
-            public void onClick(View view) {
-                goToMainActivity();
-            }
-        });
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               // goToMainActivity();
-                registerRequest();
+            public void onChanged(RegisterAction registerAction) {
+                if(registerAction != null){
+                    handleAction(registerAction);
+                }
             }
         });
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(sp.getBoolean("loggedIn", false)){
-            goToLoggedInMenuActivity();
+            Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
+            startActivity(goToLoggedInMenuActivityIntent);
         }
     }
 
-
-    private void registerRequest() {
-
-        String name = nameInput.getText().toString();
-        String email = emailInput.getText().toString();
-        String pass1 = passwordInput.getText().toString();
-        String pass2 = passwordRepeatInput.getText().toString();
-        if(!pass1.equals(pass2)){
-            Toast.makeText(this.getApplicationContext(),name,Toast.LENGTH_LONG).show();
-            return;
+    private void handleAction(RegisterAction registerAction) {
+        switch (registerAction.getValue()){
+            case RegisterAction.SHOW_LOGIN:
+                Intent goToLoginActivityIntent = new Intent(this, LoginActivity.class);
+                startActivity(goToLoginActivityIntent);
+                break;
+            case RegisterAction.SHOW_LOGIN_MENU:
+                Intent goToLoginMenuActivityIntent = new Intent(this, LoginMenuActivity.class);
+                startActivity(goToLoginMenuActivityIntent);
+                break;
         }
+    }
 
-        try {
-
-            //wrzucenie podanych danych do jsona
-            JSONObject jo = new JSONObject();
-            jo.put("name",name);
-            jo.put("email",email);
-            jo.put("password",pass1);
-
-            String url= "http://10.0.2.2:5000/register";
-            JsonObjectRequest sr = new JsonObjectRequest(Request.Method.POST, url, jo, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Boolean isSuccess = false;
-                    String stringError = "";
-
-                    try {
-                        isSuccess = response.getBoolean("success");
-                        if(!isSuccess) {
-                            stringError = response.getString("errorString");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+    @Override
+    public void onSuccess(LiveData<RegisterResponse> response) {
+        response.observe(this, new Observer<RegisterResponse>() {
+            @Override
+            public void onChanged(RegisterResponse result) {
+                if(response.getValue() != null) {
+                    if ("true".equals(response.getValue().getSuccess())) {
+                        Toast.makeText(RegisterActivity.this,"Konto utworzone",Toast.LENGTH_LONG).show();
+                        handleAction(new RegisterAction(RegisterAction.SHOW_LOGIN));
+                    } else {
+                        String errorMessage = response.getValue().getErrorString();
+                        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
-
-                    //Jesli uda sie zarejestrowac, uzytkownik przenoszony jest do ekranu logowania
-                    if(isSuccess){
-                        Toast.makeText(getApplicationContext(),"Konto utworzone",Toast.LENGTH_LONG).show();
-                        goToLoginActivity();
-                    }else{
-                        Toast.makeText(getApplicationContext(),stringError,Toast.LENGTH_LONG).show();
-                    }
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(this).addToRequestQueue(sr);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
+            }
+        });
     }
-    private void goToLoginActivity() {
-        Intent goToLoginActivityIntent = new Intent(this, LoginActivity.class);
-        startActivity(goToLoginActivityIntent);
-    }
-    private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
-        startActivity(goToMainActivityIntent);
-    }
-    private void goToLoggedInMenuActivity() {
-        Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
-        startActivity(goToLoggedInMenuActivityIntent);
+
+    @Override
+    public void onFailure(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
