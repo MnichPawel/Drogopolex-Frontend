@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.drogopolex.auth.viewModel.LoginViewModel" />
+            type="com.put.drogopolex.auth.viewModel.LoginViewModel" />
     </data>
 <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
