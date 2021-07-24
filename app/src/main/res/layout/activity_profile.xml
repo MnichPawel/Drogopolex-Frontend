@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.drogopolex.auth.viewModel.ProfileViewModel" />
+    </data>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +24,8 @@
             android:layout_marginTop="16dp"
             android:text="@string/go_back_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{()-> viewModel.onReturnClicked()}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -36,13 +42,15 @@
             android:ems="10"
             android:hint="@string/name"
             android:importantForAutofill="no"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:text="@={viewModel.username}"/>
         <Button
             android:id="@+id/profile_change_username_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/change_userName"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp"
+            android:onClick="@{()-> viewModel.onChangeUsernameClicked()}"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,7 +66,8 @@
             android:ems="10"
             android:hint="@string/password"
             android:importantForAutofill="no"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:text="@={viewModel.password}"/>
         <EditText
             android:id="@+id/profile_change_password_repeat_textfield"
             android:layout_width="match_parent"
@@ -66,13 +75,15 @@
             android:ems="10"
             android:hint="@string/password_repeat"
             android:importantForAutofill="no"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:text="@={viewModel.repeatPassword}"/>
         <Button
             android:id="@+id/profile_change_password_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/change_password" />
+            android:text="@string/change_password"
+            android:onClick="@{()-> viewModel.onChangePasswordClicked()}"/>
     </LinearLayout>
 
 <LinearLayout
@@ -89,18 +100,17 @@
         android:ems="10"
         android:hint="@string/email"
         android:importantForAutofill="no"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:text="@={viewModel.email}"/>
     <Button
         android:id="@+id/profile_change_email_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="@string/change_email" />
+        android:text="@string/change_email"
+        android:onClick="@{()-> viewModel.onChangeEmailClicked()}"/>
 
 </LinearLayout>
 
-
-
-
-
 </LinearLayout>
+</layout>
