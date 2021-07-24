@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
@@ -12,6 +13,7 @@ import com.example.drogopolex.auth.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.auth.utils.ProfileAction;
 import com.example.drogopolex.auth.viewModel.ProfileViewModel;
 import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.databinding.ActivityProfileBinding;
 
 import androidx.annotation.Nullable;
@@ -36,6 +38,24 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
             public void onChanged(ProfileAction profileAction) {
                 if(profileAction != null){
                     handleAction(profileAction);
+                }
+            }
+        });
+
+        activityProfileBinding.getViewModel().getUserData().observe(this, new Observer<ProfileResponse>() {
+            @Override
+            public void onChanged(ProfileResponse profileResponse) {
+                if(profileResponse != null) {
+                    if ("true".equals(profileResponse.getSuccess())) {
+                        EditText username = findViewById(R.id.profile_change_username_textfield);
+                        username.setText(profileResponse.getNazwa());
+                        EditText email = findViewById(R.id.profile_change_email_textfield);
+                        email.setText(profileResponse.getEmail());
+                    } else {
+                        Toast.makeText(ProfileActivity.this, profileResponse.getErrorString(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

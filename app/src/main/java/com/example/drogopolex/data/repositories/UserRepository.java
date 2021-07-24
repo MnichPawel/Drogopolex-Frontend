@@ -1,12 +1,13 @@
 package com.example.drogopolex.data.repositories;
 
 import com.example.drogopolex.data.network.MyApi;
+import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
-import com.example.drogopolex.data.network.request.LogoutRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
+import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
@@ -72,7 +73,7 @@ public class UserRepository {
     public LiveData<BasicResponse> userLogout(String userId, String token) {
         final MutableLiveData<BasicResponse> logoutResponse = new MutableLiveData<>();
 
-        myApi.userLogout(new LogoutRequest(userId, token))
+        myApi.userLogout(new BasicRequest(userId, token))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
@@ -111,5 +112,27 @@ public class UserRepository {
                     }
                 });
         return changeUserDataResponse;
+    }
+
+    public LiveData<ProfileResponse> userGetUserData(String user_id, String token) {
+        final MutableLiveData<ProfileResponse> getUserDataResponse = new MutableLiveData<>();
+
+        myApi.userGetUserData(new BasicRequest(user_id, token))
+                .enqueue(new Callback<ProfileResponse>() {
+                    @Override
+                    public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
+                        if(response.isSuccessful()){
+                            getUserDataResponse.setValue(response.body());
+                        } else {
+                            getUserDataResponse.setValue((ProfileResponse) ErrorUtils.parseErrorResponse(response, ResponseType.PROFILE_RESPONSE));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ProfileResponse> call, Throwable t) {
+                        getUserDataResponse.setValue(null);
+                    }
+                });
+        return getUserDataResponse;
     }
 }

@@ -3,6 +3,7 @@ package com.example.drogopolex.data.network.utils;
 
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
+import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.response.TemplateResponse;
 import com.google.gson.JsonObject;
@@ -23,6 +24,9 @@ public class ErrorUtils {
                 break;
             case BASIC_RESPONSE:
                 response = new BasicResponse();
+                break;
+            case PROFILE_RESPONSE:
+                response = new ProfileResponse();
                 break;
             default:
                 return null;

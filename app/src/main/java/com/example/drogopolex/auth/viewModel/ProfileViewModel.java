@@ -7,6 +7,7 @@ import com.example.drogopolex.auth.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.auth.utils.ProfileAction;
 import com.example.drogopolex.auth.utils.UserDataType;
 import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.repositories.UserRepository;
 
 import androidx.lifecycle.LiveData;
@@ -31,6 +32,14 @@ public class ProfileViewModel extends ViewModel {
 
     public LiveData<ProfileAction> getAction(){
         return mAction;
+    }
+
+    public LiveData<ProfileResponse> getUserData() {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String user_id = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+
+        return userRepository.userGetUserData(user_id, token);
     }
 
     public void onReturnClicked() {
