@@ -2,9 +2,11 @@ package com.example.drogopolex.data.network;
 
 import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
+import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 
@@ -13,6 +15,10 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface MyApi {
+
+    /*
+     * User Data Requests
+     */
 
     @POST("login")
     Call<LoginResponse> userLogin(@Body LoginRequest body);
@@ -28,4 +34,11 @@ public interface MyApi {
 
     @POST("myProfile")
     Call<ProfileResponse> userGetUserData(@Body BasicRequest body);
+
+    /*
+     * Events Requests
+     */
+
+    @POST("getEventsFromUserArea")
+    Call<EventsResponse> eventsGetFromUserArea(@Body EventsByGpsRequest body);
 }
