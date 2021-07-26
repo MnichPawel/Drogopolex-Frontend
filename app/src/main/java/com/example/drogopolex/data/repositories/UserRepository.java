@@ -5,7 +5,6 @@ import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
-import com.example.drogopolex.data.network.request.SubscribeRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
@@ -135,26 +134,5 @@ public class UserRepository {
                     }
                 });
         return getUserDataResponse;
-    }
-    public LiveData<BasicResponse> userSubscribe(String localization, String coordinates,String user_id, String token) {
-        final MutableLiveData<BasicResponse> userSubscribeResponse = new MutableLiveData<>();
-
-        myApi.userSubscribe(new SubscribeRequest(localization, coordinates,user_id, token))
-                .enqueue(new Callback<BasicResponse>() {
-                    @Override
-                    public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
-                            userSubscribeResponse.setValue(response.body());
-                        } else {
-                            userSubscribeResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<BasicResponse> call, Throwable t) {
-                        userSubscribeResponse.setValue(null);
-                    }
-                });
-        return userSubscribeResponse;
     }
 }

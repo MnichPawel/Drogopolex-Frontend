@@ -43,6 +43,10 @@ public interface MyApi {
     @POST("getEventsFromUserArea")
     Call<EventsResponse> eventsGetFromUserArea(@Body EventsByGpsRequest body);
 
+    /*
+     * Subscription Requests
+     */
+
     @POST("subscribe")
-    Call<BasicResponse> userSubscribe(SubscribeRequest subscribeRequest);
+    Call<BasicResponse> subscriptionSubscribe(@Body SubscribeRequest body);
 }
