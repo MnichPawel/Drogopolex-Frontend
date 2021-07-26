@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.drogopolex.subscription.viewModel.SubscribeViewModel" />
+    </data>
+<LinearLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".events.activities.NewEventActivity"
+    tools:context=".subscription.activities.SubscribeActivity"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +25,8 @@
         android:layout_marginTop="16dp"
         android:text="@string/go_back_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="@{()-> viewModel.onReturnClicked()}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <Space
         android:layout_width="match_parent"
@@ -35,6 +42,7 @@
         android:layout_weight="1"
         android:ems="10"
         android:hint="@string/localization"
+        android:text="@={viewModel.localization}"
         android:importantForAutofill="no"
         android:inputType="text" />
     <Space
@@ -49,10 +57,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_weight="3"
-        android:text="@string/subscribe" />
+        android:text="@string/subscribe"
+        android:onClick="@{()-> viewModel.onSubscribeClicked()}"/>
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"/>
 
 </LinearLayout>
+</layout>

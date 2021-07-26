@@ -17,20 +17,38 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.auth.activities.ProfileActivity;
+import com.example.drogopolex.auth.viewModel.ProfileViewModel;
+import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.subscription.viewModel.SubscribeViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 public class SubscribeActivity extends AppCompatActivity {
-    Button goToLoggedInMenuActivity;
+
+
+    /*Button goToLoggedInMenuActivity;
     Button subscribe;
-    EditText localizationInput;
+    EditText localizationInput;*/
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivitySubscribeBinding activitySubscribeBinding;
+        activitySubscribeBinding = DataBindingUtil.setContentView(this,R.layout.activity_subcribe);
+
+        activitySubscribeBinding.setViewModel(new SubscribeViewModel());
+        activitySubscribeBinding.executePendingBindings();
+        activitySubscribeBinding.getViewModel().sharedPreferencesHolder = this;
+        activitySubscribeBinding.getViewModel().basicListener = this;
+
         setContentView(R.layout.activity_subcribe);
 
         goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_subscribe);
@@ -51,17 +69,43 @@ public class SubscribeActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        if(!sp.getBoolean("loggedIn", false)){
-            goToMainActivity();
-        }
+        //chyba niepotrzebne
+        //SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        //if(!sp.getBoolean("loggedIn", false)){
+           // goToMainActivity();
+        //}
+    }
+    @Override
+    public void onSuccess(LiveData<BasicResponse> response) {
+        response.observe(this, new Observer<BasicResponse>() {
+            @Override
+            public void onChanged(BasicResponse result) {
+                if(response.getValue() != null) {
+                    if ("true".equals(response.getValue().getSuccess())) {
+                        Toast.makeText(SubscribeActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(SubscribeActivity.this, response.getValue().getErrorString(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(SubscribeActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    @Override
+    public void onFailure(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 
     private void goToLoggedInMenuActivity() {
         Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
         startActivity(goToLoggedInMenuActivityIntent);
     }
-
+/*
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
         startActivity(goToMainActivityIntent);
@@ -117,5 +161,5 @@ public class SubscribeActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
