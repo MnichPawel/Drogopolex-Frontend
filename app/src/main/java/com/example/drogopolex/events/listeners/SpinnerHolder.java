@@ -1,5 +1,5 @@
 package com.example.drogopolex.events.listeners;
 
-public interface SpinerHolder {
+public interface SpinnerHolder {
     String getSelectedItem();
 }

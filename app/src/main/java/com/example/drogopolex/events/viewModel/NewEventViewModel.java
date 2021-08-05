@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import com.example.drogopolex.constants.EventTypes;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
-import com.example.drogopolex.events.listeners.SpinerHolder;
+import com.example.drogopolex.events.listeners.SpinnerHolder;
 import com.example.drogopolex.events.utils.NewEventAction;
 import com.example.drogopolex.listeners.BasicListener;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
@@ -26,7 +26,7 @@ public class NewEventViewModel extends AndroidViewModel {
 
     public BasicListener basicListener = null;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
-    public SpinerHolder spinnerHolder = null;
+    public SpinnerHolder spinnerHolder = null;
 
     private EventsRepository eventsRepository;
 

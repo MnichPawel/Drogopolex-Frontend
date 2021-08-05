@@ -15,7 +15,7 @@ import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.constants.EventTypes;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityNewEventBinding;
-import com.example.drogopolex.events.listeners.SpinerHolder;
+import com.example.drogopolex.events.listeners.SpinnerHolder;
 import com.example.drogopolex.events.utils.NewEventAction;
 import com.example.drogopolex.events.viewModel.NewEventViewModel;
 import com.example.drogopolex.listeners.BasicListener;
@@ -30,7 +30,7 @@ import androidx.lifecycle.Observer;
 
 import static com.example.drogopolex.constants.AppConstant.PERMISSIONS_REQUEST_LOCATION;
 
-public class NewEventActivity extends AppCompatActivity implements BasicListener, SharedPreferencesHolder, SpinerHolder {
+public class NewEventActivity extends AppCompatActivity implements BasicListener, SharedPreferencesHolder, SpinnerHolder {
     ActivityNewEventBinding activityNewEventBinding;
 
     @Override
