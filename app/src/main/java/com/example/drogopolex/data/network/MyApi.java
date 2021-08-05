@@ -1,5 +1,6 @@
 package com.example.drogopolex.data.network;
 
+import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
@@ -42,6 +43,9 @@ public interface MyApi {
 
     @POST("getEventsFromUserArea")
     Call<EventsResponse> eventsGetFromUserArea(@Body EventsByGpsRequest body);
+
+    @POST("addEvent")
+    Call<BasicResponse> eventsAddEvent(@Body AddEventRequest body);
 
     /*
      * Subscription Requests

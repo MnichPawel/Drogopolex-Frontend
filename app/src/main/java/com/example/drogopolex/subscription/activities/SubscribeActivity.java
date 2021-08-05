@@ -8,9 +8,9 @@ import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
-import com.example.drogopolex.auth.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivitySubscribeBinding;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.subscription.listeners.SubscribeListener;
 import com.example.drogopolex.subscription.utils.SubscribeAction;
 import com.example.drogopolex.subscription.viewModel.SubscribeViewModel;
@@ -58,12 +58,12 @@ public class SubscribeActivity extends AppCompatActivity implements SharedPrefer
         response.observe(this, new Observer<BasicResponse>() {
             @Override
             public void onChanged(BasicResponse result) {
-                if (response.getValue() != null) {
-                    if ("true".equals(response.getValue().getSuccess())) {
+                if (result != null) {
+                    if ("true".equals(result.getSuccess())) {
                         Toast.makeText(SubscribeActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
                         handleAction(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIBED));
                     } else {
-                        Toast.makeText(SubscribeActivity.this, response.getValue().getErrorString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SubscribeActivity.this, result.getErrorString(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(SubscribeActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();

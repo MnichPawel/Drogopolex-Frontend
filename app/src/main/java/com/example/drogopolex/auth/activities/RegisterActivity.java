@@ -7,11 +7,11 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.auth.listeners.BasicListener;
 import com.example.drogopolex.auth.utils.RegisterAction;
 import com.example.drogopolex.auth.viewModel.RegisterViewModel;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityRegisterBinding;
+import com.example.drogopolex.listeners.BasicListener;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,12 +62,12 @@ public class RegisterActivity extends AppCompatActivity implements BasicListener
         response.observe(this, new Observer<BasicResponse>() {
             @Override
             public void onChanged(BasicResponse result) {
-                if(response.getValue() != null) {
-                    if ("true".equals(response.getValue().getSuccess())) {
+                if(result != null) {
+                    if ("true".equals(result.getSuccess())) {
                         Toast.makeText(RegisterActivity.this,"Konto utworzone",Toast.LENGTH_LONG).show();
                         handleAction(new RegisterAction(RegisterAction.SHOW_LOGIN));
                     } else {
-                        String errorMessage = response.getValue().getErrorString();
+                        String errorMessage = result.getErrorString();
                         Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 } else {

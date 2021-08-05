@@ -1,4 +1,4 @@
-package com.example.drogopolex.auth.listeners;
+package com.example.drogopolex.listeners;
 
 import android.content.SharedPreferences;
 

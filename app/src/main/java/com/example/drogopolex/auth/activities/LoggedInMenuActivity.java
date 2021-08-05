@@ -7,14 +7,14 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.auth.listeners.BasicListener;
-import com.example.drogopolex.auth.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.auth.utils.LoggedInMenuAction;
 import com.example.drogopolex.auth.viewModel.LoggedInMenuViewModel;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityLoggedInMenuBinding;
 import com.example.drogopolex.events.activities.EventsActivity;
 import com.example.drogopolex.events.activities.NewEventActivity;
+import com.example.drogopolex.listeners.BasicListener;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.subscription.activities.SubscribedEventsActivity;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
 
@@ -85,13 +85,13 @@ public class LoggedInMenuActivity extends AppCompatActivity implements SharedPre
         response.observe(this, new Observer<BasicResponse>() {
             @Override
             public void onChanged(BasicResponse result) {
-                if(response.getValue() != null) {
-                    if ("true".equals(response.getValue().getSuccess())) {
+                if(result != null) {
+                    if ("true".equals(result.getSuccess())) {
                         SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
                         handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
                     } else {
                         SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                        Toast.makeText(LoggedInMenuActivity.this, response.getValue().getErrorString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoggedInMenuActivity.this, result.getErrorString(), Toast.LENGTH_SHORT).show();
                         handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
                     }
                 } else {

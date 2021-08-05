@@ -2,9 +2,9 @@ package com.example.drogopolex.subscription.viewModel;
 
 import android.content.SharedPreferences;
 
-import com.example.drogopolex.auth.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.subscription.listeners.SubscribeListener;
 import com.example.drogopolex.subscription.utils.SubscribeAction;
 

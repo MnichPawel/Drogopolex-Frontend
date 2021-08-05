@@ -13,8 +13,6 @@ import com.example.drogopolex.auth.viewModel.LoginViewModel;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.databinding.ActivityLoginBinding;
 
-import java.util.Objects;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -64,10 +62,10 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         response.observe(this, new Observer<LoginResponse>() {
             @Override
             public void onChanged(LoginResponse result) {
-                if(response.getValue() != null) {
-                    if ("true".equals(response.getValue().getSuccess())) {
-                        String user_id = Objects.requireNonNull(response.getValue()).getUserId();
-                        String token = response.getValue().getToken();
+                if(result != null) {
+                    if ("true".equals(result.getSuccess())) {
+                        String user_id = result.getUserId();
+                        String token = result.getToken();
 
                         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
                         SharedPreferences.Editor spEditor = sp.edit();
@@ -78,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
                         handleAction(new LoginAction(LoginAction.SHOW_LOGGED_IN));
                     } else {
-                        String errorMessage = response.getValue().getErrorString();
+                        String errorMessage = result.getErrorString();
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 } else {

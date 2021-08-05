@@ -5,266 +5,134 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
-import com.example.drogopolex.RequestSingleton;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.constants.EventTypes;
+import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.databinding.ActivityNewEventBinding;
+import com.example.drogopolex.events.listeners.SpinerHolder;
+import com.example.drogopolex.events.utils.NewEventAction;
+import com.example.drogopolex.events.viewModel.NewEventViewModel;
+import com.example.drogopolex.listeners.BasicListener;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
+import com.example.drogopolex.model.LocationDetails;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
-public class NewEventActivity extends AppCompatActivity implements LocationListener {
+import static com.example.drogopolex.constants.AppConstant.PERMISSIONS_REQUEST_LOCATION;
 
-    ArrayList<String> listaZdarzen = NewEventActivity.getListOfEventTypes();
-
-
-    Button goToLoggedInMenuActivity;
-    Button addEvent, addEventGPS;
-    EditText localizationInput;
-    //EditText eventTypeInput; //Zastapione Spinnerem
-    Spinner spinnerEvTyp;
-    String wybranaAktywnosc;
-    LocationManager locationManager;
-    double latitude, longitude;
-
-    private final int PERMISSIONS_REQUEST_LOCATION = 99;
+public class NewEventActivity extends AppCompatActivity implements BasicListener, SharedPreferencesHolder, SpinerHolder {
+    ActivityNewEventBinding activityNewEventBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_event);
-        listaZdarzen.add(0,"Wybierz typ"); //PAWEŁ NAWET TEGO NIE PRÓBUJ a tym bardziej Ty Kamil!!!
-        goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_new_event);
-        addEvent = (Button) findViewById(R.id.addNewEventButton);
-        addEventGPS = (Button) findViewById(R.id.addNewEventGPSButton);
-        localizationInput = (EditText) findViewById(R.id.editTextLocalization);
-        //eventTypeInput = (EditText) findViewById(R.id.editTextEventType);
-        spinnerEvTyp= (Spinner) findViewById(R.id.spinnerEvent); //lista wyskakujaca
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listaZdarzen);
+        activityNewEventBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_event);
 
-        // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, EventTypes.getEventTypes());
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        activityNewEventBinding.setSpinnerAdapter(spinnerArrayAdapter);
 
-        // attaching data adapter to spinner
-        spinnerEvTyp.setAdapter(dataAdapter);
-        spinnerEvTyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        activityNewEventBinding.setViewModel(new NewEventViewModel(getApplication()));
+        activityNewEventBinding.executePendingBindings();
+        activityNewEventBinding.getViewModel().basicListener = this;
+        activityNewEventBinding.getViewModel().spinnerHolder = this;
+        activityNewEventBinding.getViewModel().sharedPreferencesHolder = this;
+
+
+
+        activityNewEventBinding.getViewModel().getAction().observe(this, new Observer<NewEventAction>() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                wybranaAktywnosc = listaZdarzen.get(i); //jak uzytkownik cos wybral to to ustaw
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                wybranaAktywnosc=""; //jak nie to nic nie ustawiaj
+            public void onChanged(NewEventAction newEventAction) {
+                if(newEventAction != null){
+                    handleAction(newEventAction);
+                }
             }
         });
 
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        if(!sp.getBoolean("loggedIn", false)){
+            Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
+            startActivity(goToMainActivityIntent);
+        }
+    }
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    private void handleAction(NewEventAction newEventAction) {
+        switch (newEventAction.getValue()) {
+            case NewEventAction.SHOW_LOGGED_IN:
+                Intent goToLoggedInIntent = new Intent(this, LoggedInMenuActivity.class);
+                startActivity(goToLoggedInIntent);
+                break;
+            case NewEventAction.ADD_EVENT_BY_GPS:
+                prepRequestLocationUpdates();
+                break;
+        }
+    }
+
+    private void prepRequestLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             ActivityCompat.requestPermissions(this,
                     new String[] {
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION
                     }, PERMISSIONS_REQUEST_LOCATION);
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, this);
-
-
-        goToLoggedInMenuActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToLoggedInMenuActivity();
-            }
-        });
-
-        addEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addEventByInputRequest();
-            }
-        });
-
-        addEventGPS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addEventByGPSRequest();
-            }
-        });
-
-
-
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        if(!sp.getBoolean("loggedIn", false)){
-            goToMainActivity();
-        }
-    }
-    public static ArrayList<String> getListOfEventTypes(){
-        ArrayList<String> lista = new ArrayList<String>(Arrays.asList("Wypadek","Korek","Patrol Policji","Roboty Drogowe"));
-        return lista;
-    }
-
-    private void goToLoggedInMenuActivity() {
-        Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
-        startActivity(goToLoggedInMenuActivityIntent);
-    }
-
-    private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
-        startActivity(goToMainActivityIntent);
-    }
-
-    private void addEventByInputRequest() {
-        String localization = localizationInput.getText().toString();
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String user_id = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
-
-        if (listaZdarzen.get(0).equals(wybranaAktywnosc) || "".equals(wybranaAktywnosc)) {
-            Toast.makeText(getApplicationContext(), "Wybierz typ zdarzenia", Toast.LENGTH_LONG).show();
-
         } else {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("gps", false);
-                jsonObject.put("localization", localization);
-                jsonObject.put("longitude", "");
-                jsonObject.put("latitude", "");
-                jsonObject.put("type", wybranaAktywnosc);
-                jsonObject.put("user_id", user_id);
-                jsonObject.put("token", token);
-
-                String url = "http://10.0.2.2:5000/addEvent";
-                JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        boolean isSuccess = false;
-                        String stringError = "";
-
-                        try {
-                            isSuccess = response.getBoolean("success");
-                            if (!isSuccess) {
-                                stringError = response.getString("error");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (isSuccess) {
-                            Toast.makeText(getApplicationContext(), "Zgłoszenie zostało dodane", Toast.LENGTH_LONG).show();
-                            goToLoggedInMenuActivity();
-                        } else {
-                            Toast.makeText(getApplicationContext(), stringError, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            requestLocationUpdates();
         }
     }
 
-    private void addEventByGPSRequest() {
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String user_id = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
-
-        if (listaZdarzen.get(0).equals(wybranaAktywnosc) || "".equals(wybranaAktywnosc)) {
-            Toast.makeText(getApplicationContext(), "Wybierz typ zdarzenia", Toast.LENGTH_LONG).show();
-
-        } else {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("gps", true);
-                jsonObject.put("localization", "");
-                jsonObject.put("longitude", longitude);
-                jsonObject.put("latitude", latitude);
-                jsonObject.put("type", wybranaAktywnosc);
-                jsonObject.put("user_id", user_id);
-                jsonObject.put("token", token);
-
-                String url = "http://10.0.2.2:5000/addEvent";
-                JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        boolean isSuccess = false;
-                        String stringError = "";
-
-                        try {
-                            isSuccess = response.getBoolean("success");
-                            if (!isSuccess) {
-                                stringError = response.getString("error");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (isSuccess) {
-                            Toast.makeText(getApplicationContext(), "Zgłoszenie zostało dodane", Toast.LENGTH_LONG).show();
-                            goToLoggedInMenuActivity();
-                        } else {
-                            Toast.makeText(getApplicationContext(), stringError, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private void requestLocationUpdates() {
+        activityNewEventBinding.getViewModel().getLocationLiveData().observe(this, new Observer<LocationDetails>() {
+            @Override
+            public void onChanged(LocationDetails locationDetails) {
+                activityNewEventBinding.getViewModel().onAddNewEventGpsReady(locationDetails);
             }
-        }
+        });
     }
 
     @Override
-    public void onLocationChanged(@NonNull Location location) {
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
+    public void onSuccess(LiveData<BasicResponse> response) {
+        response.observe(this, new Observer<BasicResponse>() {
+            @Override
+            public void onChanged(BasicResponse basicResponse) {
+                if(basicResponse != null) {
+                    if ("true".equals(basicResponse.getSuccess())) {
+                        Toast.makeText(NewEventActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                        handleAction(new NewEventAction(NewEventAction.SHOW_LOGGED_IN));
+                    } else {
+                        String errorMessage = basicResponse.getErrorString();
+                        Toast.makeText(NewEventActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(NewEventActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getApplicationContext(), "PERMISSION GRANTED", Toast.LENGTH_LONG).show();
-            }
-        }
+    public void onFailure(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public String getSelectedItem() {
+        return (String) activityNewEventBinding.spinnerEvent.getSelectedItem();
+    }
+
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 }

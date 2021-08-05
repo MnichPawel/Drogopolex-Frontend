@@ -2,10 +2,10 @@ package com.example.drogopolex.auth.viewModel;
 
 import android.app.Application;
 
-import com.example.drogopolex.auth.listeners.BasicListener;
 import com.example.drogopolex.auth.utils.RegisterAction;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.UserRepository;
+import com.example.drogopolex.listeners.BasicListener;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;

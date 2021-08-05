@@ -8,13 +8,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.auth.listeners.BasicListener;
-import com.example.drogopolex.auth.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.auth.utils.ProfileAction;
 import com.example.drogopolex.auth.viewModel.ProfileViewModel;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.databinding.ActivityProfileBinding;
+import com.example.drogopolex.listeners.BasicListener;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -79,11 +79,11 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
         response.observe(this, new Observer<BasicResponse>() {
             @Override
             public void onChanged(BasicResponse result) {
-                if(response.getValue() != null) {
-                    if ("true".equals(response.getValue().getSuccess())) {
+                if(result != null) {
+                    if ("true".equals(result.getSuccess())) {
                         Toast.makeText(ProfileActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(ProfileActivity.this, response.getValue().getErrorString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileActivity.this, result.getErrorString(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();

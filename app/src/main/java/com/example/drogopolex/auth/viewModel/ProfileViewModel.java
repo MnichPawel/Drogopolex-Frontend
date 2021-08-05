@@ -2,13 +2,13 @@ package com.example.drogopolex.auth.viewModel;
 
 import android.content.SharedPreferences;
 
-import com.example.drogopolex.auth.listeners.BasicListener;
-import com.example.drogopolex.auth.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.auth.utils.ProfileAction;
 import com.example.drogopolex.auth.utils.UserDataType;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.repositories.UserRepository;
+import com.example.drogopolex.listeners.BasicListener;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

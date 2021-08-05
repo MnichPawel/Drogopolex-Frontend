@@ -23,6 +23,7 @@ import com.example.drogopolex.ServerUtils;
 import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.constants.EventTypes;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.Vote;
 import com.example.drogopolex.model.VoteType;
@@ -48,7 +49,7 @@ public class EventsSearchActivity extends AppCompatActivity {
     Spinner spinnerEvTyp;
     String wybranaAktywnosc;
 
-    ArrayList<String> listaZdarzen = NewEventActivity.getListOfEventTypes();
+    List<String> listaZdarzen = EventTypes.getEventTypes();
 
     EventListAdapter eventListAdapter;
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
@@ -58,7 +59,7 @@ public class EventsSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events_search);
         //Toast.makeText(getApplicationContext(), "1", Toast.LENGTH_SHORT).show();
-        listaZdarzen.add(0,"Dowolny typ");
+        //listaZdarzen.add(0,"Dowolny typ");
 
         goToLoggedInMenuActivity = (Button) findViewById(R.id.go_back_events_search);
         searchEventsByLocalizationButton = (Button) findViewById(R.id.search_events_button);

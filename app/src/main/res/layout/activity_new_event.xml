@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.drogopolex.events.viewModel.NewEventViewModel" />
+        <variable
+            name="spinnerAdapter"
+            type="android.widget.ArrayAdapter"/>
+    </data>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,7 +28,8 @@
         android:layout_marginTop="16dp"
         android:text="@string/go_back_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="@{()-> viewModel.onReturnClicked()}"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Space
@@ -42,17 +51,19 @@
             android:layout_marginEnd="50dp"
             android:ems="10"
             android:hint="@string/localization"
+            android:text="@={viewModel.localization}"
             android:importantForAutofill="no"
             android:inputType="text"/>
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinnerEvent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="50dp"
             android:layout_marginTop="10dp"
-            android:hint="@string/event_type" />
+            android:hint="@string/event_type"
+            app:adapter="@{spinnerAdapter}"/>
     </LinearLayout>
 
     <Space
@@ -67,7 +78,8 @@
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
         android:layout_weight="3"
-        android:text="@string/add_event" />
+        android:text="@string/add_event"
+        android:onClick="@{()-> viewModel.onAddNewEventClicked()}" />
 
     <Button
         android:id="@+id/addNewEventGPSButton"
@@ -76,10 +88,12 @@
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
         android:layout_weight="3"
-        android:text="@string/add_event_gps" />
+        android:text="@string/add_event_gps"
+        android:onClick="@{()-> viewModel.onAddNewEventGpsClicked()}"/>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"/>
 </LinearLayout>
+</layout>
