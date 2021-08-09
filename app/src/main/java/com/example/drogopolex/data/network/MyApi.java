@@ -7,10 +7,12 @@ import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
+import com.example.drogopolex.data.network.request.SubscriptionsRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
+import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -53,4 +55,7 @@ public interface MyApi {
 
     @POST("subscribe")
     Call<BasicResponse> subscriptionSubscribe(@Body SubscribeRequest body);
+
+    @POST("subscriptions")
+    Call<SubscriptionsResponse> subscriptionSubscriptions(@Body SubscriptionsRequest body);
 }

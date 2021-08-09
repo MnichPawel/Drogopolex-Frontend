@@ -16,6 +16,9 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.model.DrogopolexEvent;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,17 +27,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscriptionsActivity extends AppCompatActivity {
+public class SubscriptionsActivity extends AppCompatActivity implements OnSuccessListener<LiveData<EventsResponse>> {
     Button goToSubscribedEventsButton;
     RecyclerView subscriptionsRecyclerView;
 
     SubscriptionsListAdapter listAdapter;
 
-    ArrayList<String> subscriptions = new ArrayList<>();
-    ArrayList<String> subscriptionIds = new ArrayList<>();
+    ArrayList<DrogopolexEvent> subscriptions = new ArrayList<>();
+   // ArrayList<String> subscriptionIds = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

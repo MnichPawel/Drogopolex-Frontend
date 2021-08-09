@@ -1,9 +1,13 @@
 package com.example.drogopolex.data.repositories;
 
 import com.example.drogopolex.data.network.MyApi;
+import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
+import com.example.drogopolex.data.network.request.SubscriptionsRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
+import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 
@@ -41,5 +45,26 @@ public class SubscriptionsRepository {
                     }
                 });
         return userSubscribeResponse;
+    }
+    public LiveData<SubscriptionsResponse> getSubscriptions(String latitude, String longitude) {
+        final MutableLiveData<SubscriptionsResponse> eventsResponse = new MutableLiveData<>();
+
+        myApi.subscriptionSubscriptions(new SubscriptionsRequest(latitude, longitude))
+                .enqueue(new Callback<SubscriptionsResponse>() {
+                    @Override
+                    public void onResponse(Call<SubscriptionsResponse> call, Response<SubscriptionsResponse> response) {
+                        if(response.isSuccessful()){
+                            eventsResponse.setValue(response.body());
+                        } else {
+                            eventsResponse.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<SubscriptionsResponse> call, Throwable t) {
+                        eventsResponse.setValue(null);
+                    }
+                });
+        return eventsResponse;
     }
 }
