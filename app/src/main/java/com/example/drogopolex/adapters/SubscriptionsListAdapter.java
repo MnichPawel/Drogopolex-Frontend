@@ -15,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.model.DrogopolexSubscription;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
     private static ArrayList<String> localDataSet;
     private static ArrayList<String> localDataSetIds;
+    private static ArrayList<DrogopolexSubscription> localDataSubs;
     private final Context context;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -41,7 +43,8 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
             unsubscribe.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    unsubscribeRequest(localDataSetIds.get(getAdapterPosition()));
+                    DrogopolexSubscription drogopolexSubscription = localDataSubs.get(getAdapterPosition());
+                    unsubscribeRequest(drogopolexSubscription.getId_sub().toString());
                 }
             });
         }
@@ -51,9 +54,10 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         }
     }
 
-    public SubscriptionsListAdapter(ArrayList<String> dataSet, ArrayList<String> dataId, Context context) {
-        localDataSet = dataSet;
-        localDataSetIds = dataId;
+    public SubscriptionsListAdapter( ArrayList<DrogopolexSubscription> data, Context context) {
+        //localDataSet = dataSet;
+        //localDataSetIds = dataId;
+        localDataSubs=data;
         this.context = context;
     }
 
@@ -67,12 +71,13 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        viewHolder.getSubscriptionTextView().setText(localDataSet.get(position));
+        DrogopolexSubscription drogopolexSubscription = localDataSubs.get(position);
+        viewHolder.getSubscriptionTextView().setText(drogopolexSubscription.getLocation());
     }
 
     @Override
     public int getItemCount() {
-        return localDataSet.size();
+        return localDataSubs.size();
     }
 
     public void unsubscribeRequest(String subId){
@@ -142,13 +147,14 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
                 public void onResponse(JSONObject response) {
                     try {
                         JSONArray resp = response.getJSONArray("subscriptions");
-                        localDataSet.clear();
+                        localDataSubs.clear();
                         for (int i = 0; i < resp.length(); i++) {
                             JSONObject item = resp.getJSONObject(i);
                             String localization_str = item.getString("localization");
-                            localDataSet.add(localization_str);
+                            //localDataSet.add(localization_str);
                             String sub_id_str = item.getString("id_sub");
-                            localDataSetIds.add(sub_id_str);
+                            DrogopolexSubscription drogopolexSubscription = new DrogopolexSubscription(Integer.parseInt(sub_id_str),localization_str);
+                            localDataSubs.add(drogopolexSubscription);
                         }
                         notifyDataSetChanged();
                     } catch (JSONException e) {

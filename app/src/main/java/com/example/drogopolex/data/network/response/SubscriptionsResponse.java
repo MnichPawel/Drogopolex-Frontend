@@ -8,7 +8,7 @@ public class SubscriptionsResponse {
     @SerializedName("subscriptions")
     private List<SubscriptionsValue> subscriptions;
 
-    public List<SubscriptionsValue> getSubscriptionss() {
+    public List<SubscriptionsValue> getSubscriptions() {
         return subscriptions;
     }
 }

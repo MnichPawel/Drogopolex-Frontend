@@ -9,6 +9,7 @@ import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.events.utils.EventsAction;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
+import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class SubscriptionsViewModel extends AndroidViewModel {
-    private MutableLiveData<EventsAction> mAction = new MutableLiveData<>();
+    private MutableLiveData<SubscriptionsAction> mAction = new MutableLiveData<>();
     private LiveData<SubscriptionsResponse> subscriptionsLiveData = new MutableLiveData<>();
     private LocationLiveData locationLiveData;
 
@@ -37,7 +38,7 @@ public class SubscriptionsViewModel extends AndroidViewModel {
     }
 
     public void onReturnClicked() {
-        mAction.setValue(new EventsAction(EventsAction.SHOW_LOGGED_IN));
+        mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_LOGGED_IN));
     }
 
 
@@ -45,7 +46,7 @@ public class SubscriptionsViewModel extends AndroidViewModel {
         return locationLiveData;
     }
 
-    public LiveData<EventsAction> getAction() {
+    public LiveData<SubscriptionsAction> getAction() {
         return mAction;
     }
 }

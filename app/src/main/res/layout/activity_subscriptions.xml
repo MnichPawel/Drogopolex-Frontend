@@ -29,9 +29,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:onClick="@{()-> viewModel.onReturnClicked()}"/>
-
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/subscriptions_view"
+                android:id="@+id/subscriptionsView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
@@ -43,6 +43,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/go_back_subscriptions" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 </layout>
