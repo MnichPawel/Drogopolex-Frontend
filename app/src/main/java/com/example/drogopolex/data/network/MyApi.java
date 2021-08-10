@@ -4,6 +4,7 @@ import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
+import com.example.drogopolex.data.network.request.FilterEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
@@ -48,6 +49,15 @@ public interface MyApi {
 
     @POST("addEvent")
     Call<BasicResponse> eventsAddEvent(@Body AddEventRequest body);
+
+    @POST("getEventsByLocalization")
+    Call<EventsResponse> eventsGetEventsByLocalization(@Body FilterEventsRequest body);
+
+    @POST("getEventsByType")
+    Call<EventsResponse> eventsGetEventsByType(@Body FilterEventsRequest body);
+
+    @POST("getEventsByTypeAndLoc")
+    Call<EventsResponse> eventsGetEventsByTypeAndLocalization(@Body FilterEventsRequest body);
 
     /*
      * Subscription Requests

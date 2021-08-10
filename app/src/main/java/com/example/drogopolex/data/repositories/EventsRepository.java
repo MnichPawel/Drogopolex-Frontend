@@ -3,6 +3,7 @@ package com.example.drogopolex.data.repositories;
 import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
+import com.example.drogopolex.data.network.request.FilterEventsRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
@@ -101,5 +102,68 @@ public class EventsRepository {
             }
         });
         return addEventResponse;
+    }
+
+    public LiveData<EventsResponse> getEventsByType(String type) {
+        final MutableLiveData<EventsResponse> getEventsByTypeResponse = new MutableLiveData<>();
+
+        myApi.eventsGetEventsByType(new FilterEventsRequest("", type)).enqueue(new Callback<EventsResponse>() {
+            @Override
+            public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
+                if(response.isSuccessful()){
+                    getEventsByTypeResponse.setValue(response.body());
+                } else {
+                    getEventsByTypeResponse.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EventsResponse> call, Throwable t) {
+                getEventsByTypeResponse.setValue(null);
+            }
+        });
+        return getEventsByTypeResponse;
+    }
+
+    public LiveData<EventsResponse> getEventsByLocalization(String localization) {
+        final MutableLiveData<EventsResponse> getEventsByLocalizationResponse = new MutableLiveData<>();
+
+        myApi.eventsGetEventsByLocalization(new FilterEventsRequest(localization, "")).enqueue(new Callback<EventsResponse>() {
+            @Override
+            public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
+                if(response.isSuccessful()){
+                    getEventsByLocalizationResponse.setValue(response.body());
+                } else {
+                    getEventsByLocalizationResponse.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EventsResponse> call, Throwable t) {
+                getEventsByLocalizationResponse.setValue(null);
+            }
+        });
+        return getEventsByLocalizationResponse;
+    }
+
+    public LiveData<EventsResponse> getEventsByTypeAndLocalization(String type, String localization) {
+        final MutableLiveData<EventsResponse> getEventsByTypeAndLocalizationResponse = new MutableLiveData<>();
+
+        myApi.eventsGetEventsByTypeAndLocalization(new FilterEventsRequest(localization, type)).enqueue(new Callback<EventsResponse>() {
+            @Override
+            public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
+                if(response.isSuccessful()){
+                    getEventsByTypeAndLocalizationResponse.setValue(response.body());
+                } else {
+                    getEventsByTypeAndLocalizationResponse.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EventsResponse> call, Throwable t) {
+                getEventsByTypeAndLocalizationResponse.setValue(null);
+            }
+        });
+        return getEventsByTypeAndLocalizationResponse;
     }
 }

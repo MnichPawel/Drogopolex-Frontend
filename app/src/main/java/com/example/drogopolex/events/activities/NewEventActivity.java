@@ -48,8 +48,6 @@ public class NewEventActivity extends AppCompatActivity implements BasicListener
         activityNewEventBinding.getViewModel().spinnerHolder = this;
         activityNewEventBinding.getViewModel().sharedPreferencesHolder = this;
 
-
-
         activityNewEventBinding.getViewModel().getAction().observe(this, new Observer<NewEventAction>() {
             @Override
             public void onChanged(NewEventAction newEventAction) {
