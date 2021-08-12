@@ -26,6 +26,7 @@ import com.example.drogopolex.events.activities.EventsActivity;
 import com.example.drogopolex.events.activities.EventsSearchActivity;
 import com.example.drogopolex.events.utils.EventsAction;
 import com.example.drogopolex.events.viewModel.EventsViewModel;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.DrogopolexSubscription;
 import com.example.drogopolex.model.Vote;
@@ -47,7 +48,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscriptionsActivity extends AppCompatActivity implements OnSuccessListener<LiveData<SubscriptionsResponse>> {
+public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder,  OnSuccessListener<LiveData<SubscriptionsResponse>> {
     //Button goToSubscribedEventsButton;
     RecyclerView subscriptionsRecyclerView;
     ActivitySubscriptionsBinding activitySubscriptionsBinding;
@@ -63,6 +64,9 @@ public class SubscriptionsActivity extends AppCompatActivity implements OnSucces
         activitySubscriptionsBinding.setViewModel(new SubscriptionsViewModel(getApplication()));
         activitySubscriptionsBinding.executePendingBindings();
         activitySubscriptionsBinding.getViewModel().onSuccessListener = this;
+        activitySubscriptionsBinding.getViewModel().sharedPreferencesHolder = this;
+
+
 
         activitySubscriptionsBinding.getViewModel().getAction().observe(this, new Observer<SubscriptionsAction>() {
             @Override
@@ -91,10 +95,13 @@ public class SubscriptionsActivity extends AppCompatActivity implements OnSucces
         //listAdapter = new SubscriptionsListAdapter(subscriptions,subscriptionIds,getApplicationContext());
         //subscriptionsRecyclerView=  (RecyclerView) findViewById(R.id.subscriptionsView);
         //subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        activitySubscriptionsBinding.getViewModel().requestSubscriptions();
        // getSubscriptions();
     }
-
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+    }
     private void handleAction(SubscriptionsAction subscriptionsAction) {
         switch (subscriptionsAction.getValue()) {
             case SubscriptionsAction.SHOW_LOGGED_IN:
@@ -112,6 +119,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements OnSucces
         subscriptionsResponseLiveData.observe(this, new Observer<SubscriptionsResponse>() {
             @Override
             public void onChanged(SubscriptionsResponse subscriptionsResponse) {
+                Toast.makeText(SubscriptionsActivity.this, "Moze tutaj?.", Toast.LENGTH_SHORT).show();
                 if(subscriptionsResponse != null) {
                     subscriptions.clear();
                     subscriptionsResponse.getSubscriptions()

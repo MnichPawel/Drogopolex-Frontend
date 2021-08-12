@@ -46,10 +46,10 @@ public class SubscriptionsRepository {
                 });
         return userSubscribeResponse;
     }
-    public LiveData<SubscriptionsResponse> getSubscriptions(String latitude, String longitude) {
+    public LiveData<SubscriptionsResponse> getSubscriptions(String token, String user_id) {
         final MutableLiveData<SubscriptionsResponse> eventsResponse = new MutableLiveData<>();
 
-        myApi.subscriptionSubscriptions(new SubscriptionsRequest(latitude, longitude))
+        myApi.subscriptionSubscriptions(new SubscriptionsRequest(token, user_id))
                 .enqueue(new Callback<SubscriptionsResponse>() {
                     @Override
                     public void onResponse(Call<SubscriptionsResponse> call, Response<SubscriptionsResponse> response) {
