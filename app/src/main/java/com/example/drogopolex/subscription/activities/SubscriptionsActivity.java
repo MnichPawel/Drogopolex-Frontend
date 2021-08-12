@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -119,11 +120,12 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         subscriptionsResponseLiveData.observe(this, new Observer<SubscriptionsResponse>() {
             @Override
             public void onChanged(SubscriptionsResponse subscriptionsResponse) {
-                Toast.makeText(SubscriptionsActivity.this, "Moze tutaj?.", Toast.LENGTH_SHORT).show();
+                Log.d("myTag", "On changed");
                 if(subscriptionsResponse != null) {
                     subscriptions.clear();
                     subscriptionsResponse.getSubscriptions()
                             .forEach(subscription -> {
+                                Log.d("myTag",subscription.getLocalization());
                                 subscriptions.add(new DrogopolexSubscription(
                                         Integer.parseInt(subscription.getId()),
                                         subscription.getLocalization()
@@ -131,11 +133,16 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
                                 ));
                             });
                     if(listAdapter != null) {
+                        Log.d("myTag", "Notyfikacja o zmianach adaptera rozpoczeta");
                         listAdapter.notifyDataSetChanged();
+                        Log.d("myTag", "Notyfikacja o zmianach adaptera zakonczona");
                     } else {
+                        Log.d("myTag", "Utworzenie adaptera rozpoczete");
+                        Log.d("myTag", Integer.toString(subscriptions.size()));
                         listAdapter = new SubscriptionsListAdapter(subscriptions, SubscriptionsActivity.this);
                         subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(SubscriptionsActivity.this));
                         subscriptionsRecyclerView.setAdapter(listAdapter);
+                        Log.d("myTag", "Utworzenie adaptera zakonczone");
                     }
                 } else {
                     Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
@@ -188,7 +195,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         }
 
     }*/
-
+    /*
     private void goToSubscribedEventsActivity(){ //TODO: czy da sie te wszystkie goto wsadzic do jednej klasy utilsowej?
         Intent goToSubscribedEventsActivityIntent = new Intent(this, SubscribedEventsActivity.class);
         startActivity(goToSubscribedEventsActivityIntent);
@@ -198,5 +205,5 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
         startActivity(goToMainActivityIntent);
-    }
+    }*/
 }

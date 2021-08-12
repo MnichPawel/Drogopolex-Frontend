@@ -2,6 +2,7 @@ package com.example.drogopolex.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +134,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        Log.d("myTag", "This is my messageeevents");
         DrogopolexEvent drogopolexEvent = localDataSet.get(position);
         viewHolder.getTypeTextView().setText(drogopolexEvent.getType());
         viewHolder.getLocationTextView().setText(String.format("%s, %s", drogopolexEvent.getStreet(), drogopolexEvent.getLocation()));

@@ -2,6 +2,7 @@ package com.example.drogopolex.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         //localDataSet = dataSet;
         //localDataSetIds = dataId;
         localDataSubs=data;
+        Log.d("myTag", Integer.toString(localDataSubs.size()));
         this.context = context;
     }
 
@@ -71,12 +73,20 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        Log.d("myTag", "This is my messageee");
+
         DrogopolexSubscription drogopolexSubscription = localDataSubs.get(position);
+        Log.d("myTag", "This is my message2");
+        Log.d("myTag", drogopolexSubscription.getLocation());
+        Log.d("myTag", "This is my message3");
         viewHolder.getSubscriptionTextView().setText(drogopolexSubscription.getLocation());
+        Log.d("myTag", "This is my message4");
+
     }
 
     @Override
     public int getItemCount() {
+        Log.d("myTag", Integer.toString(localDataSubs.size()));
         return localDataSubs.size();
     }
 

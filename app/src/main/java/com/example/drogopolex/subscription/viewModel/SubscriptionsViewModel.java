@@ -40,7 +40,7 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
     }
 
     public void requestSubscriptions() { //LocationDetails location
-        Log.d("myTag", "This is my message");
+        Log.d("myTag", "Wyslanie prosby o cale te");
         SharedPreferences sp = sharedPreferencesHolder.getSharedPreferences();
         String user_id = sp.getString("user_id", "");
         String token = sp.getString("token", "");
