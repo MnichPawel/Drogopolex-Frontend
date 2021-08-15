@@ -2,7 +2,6 @@ package com.example.drogopolex.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +26,6 @@ import java.util.ArrayList;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
-    private static ArrayList<String> localDataSet;
-    private static ArrayList<String> localDataSetIds;
     private static ArrayList<DrogopolexSubscription> localDataSubs;
     private final Context context;
 
@@ -56,10 +53,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
     }
 
     public SubscriptionsListAdapter( ArrayList<DrogopolexSubscription> data, Context context) {
-        //localDataSet = dataSet;
-        //localDataSetIds = dataId;
-        localDataSubs=data;
-        Log.d("myTag", Integer.toString(localDataSubs.size()));
+        localDataSubs = data;
         this.context = context;
     }
 
@@ -73,20 +67,12 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Log.d("myTag", "This is my messageee");
-
         DrogopolexSubscription drogopolexSubscription = localDataSubs.get(position);
-        Log.d("myTag", "This is my message2");
-        Log.d("myTag", drogopolexSubscription.getLocation());
-        Log.d("myTag", "This is my message3");
         viewHolder.getSubscriptionTextView().setText(drogopolexSubscription.getLocation());
-        Log.d("myTag", "This is my message4");
-
     }
 
     @Override
     public int getItemCount() {
-        Log.d("myTag", Integer.toString(localDataSubs.size()));
         return localDataSubs.size();
     }
 

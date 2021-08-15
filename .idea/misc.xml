@@ -5,6 +5,9 @@
       <map>
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/row_events_list.xml" value="0.5592105263157895" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/row_subscriptions_list.xml" value="1.3892857142857142" />
+        <entry key="app/src/main/res/layout/activity_events.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_events_search.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_subscriptions.xml" value="0.10520275439938791" />
       </map>
     </option>
   </component>

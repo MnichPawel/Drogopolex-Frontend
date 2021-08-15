@@ -4,67 +4,43 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
-import com.example.drogopolex.RequestSingleton;
-import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
-import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
-import com.example.drogopolex.databinding.ActivityEventsBinding;
 import com.example.drogopolex.databinding.ActivitySubscriptionsBinding;
-import com.example.drogopolex.events.activities.EventsActivity;
-import com.example.drogopolex.events.activities.EventsSearchActivity;
-import com.example.drogopolex.events.utils.EventsAction;
-import com.example.drogopolex.events.viewModel.EventsViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
-import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.DrogopolexSubscription;
-import com.example.drogopolex.model.Vote;
-import com.example.drogopolex.model.VoteType;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.example.drogopolex.subscription.viewModel.SubscriptionsViewModel;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder,  OnSuccessListener<LiveData<SubscriptionsResponse>> {
-    //Button goToSubscribedEventsButton;
+public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder {
     RecyclerView subscriptionsRecyclerView;
     ActivitySubscriptionsBinding activitySubscriptionsBinding;
     SubscriptionsListAdapter listAdapter;
 
     ArrayList<DrogopolexSubscription> subscriptions = new ArrayList<>();
-   // ArrayList<String> subscriptionIds = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activitySubscriptionsBinding = DataBindingUtil.setContentView(this, R.layout.activity_subscriptions);
-        activitySubscriptionsBinding.setViewModel(new SubscriptionsViewModel(getApplication()));
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+        String token = sp.getString("token", "");
+        activitySubscriptionsBinding.setViewModel(new SubscriptionsViewModel(getApplication(), user_id, token));
         activitySubscriptionsBinding.executePendingBindings();
-        activitySubscriptionsBinding.getViewModel().onSuccessListener = this;
         activitySubscriptionsBinding.getViewModel().sharedPreferencesHolder = this;
 
 
@@ -77,27 +53,15 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
                 }
             }
         });
-        //goToSubscribedEventsButton = (Button) findViewById(R.id.go_back_subscriptions);
-        subscriptionsRecyclerView = (RecyclerView) findViewById(R.id.subscriptionsView);
 
-        /*goToSubscribedEventsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToSubscribedEventsActivity();
-            }
-        });*/
+        subscriptionsRecyclerView = findViewById(R.id.subscriptionsView);
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
         }
 
-        //listAdapter = new SubscriptionsListAdapter(subscriptions,subscriptionIds,getApplicationContext());
-        //subscriptionsRecyclerView=  (RecyclerView) findViewById(R.id.subscriptionsView);
-        //subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        activitySubscriptionsBinding.getViewModel().requestSubscriptions();
-       // getSubscriptions();
+        getSubscriptions();
     }
     @Override
     public SharedPreferences getSharedPreferences() {
@@ -115,34 +79,25 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         }
     }
 
-    @Override
-    public void onSuccess(LiveData<SubscriptionsResponse> subscriptionsResponseLiveData) {
-        subscriptionsResponseLiveData.observe(this, new Observer<SubscriptionsResponse>() {
+    public void getSubscriptions() {
+        activitySubscriptionsBinding.getViewModel().getSubscriptionsLiveData().observe(this, new Observer<SubscriptionsResponse>() {
             @Override
             public void onChanged(SubscriptionsResponse subscriptionsResponse) {
-                Log.d("myTag", "On changed");
                 if(subscriptionsResponse != null) {
                     subscriptions.clear();
                     subscriptionsResponse.getSubscriptions()
                             .forEach(subscription -> {
-                                Log.d("myTag",subscription.getLocalization());
                                 subscriptions.add(new DrogopolexSubscription(
                                         Integer.parseInt(subscription.getId()),
                                         subscription.getLocalization()
-
                                 ));
                             });
                     if(listAdapter != null) {
-                        Log.d("myTag", "Notyfikacja o zmianach adaptera rozpoczeta");
                         listAdapter.notifyDataSetChanged();
-                        Log.d("myTag", "Notyfikacja o zmianach adaptera zakonczona");
                     } else {
-                        Log.d("myTag", "Utworzenie adaptera rozpoczete");
-                        Log.d("myTag", Integer.toString(subscriptions.size()));
                         listAdapter = new SubscriptionsListAdapter(subscriptions, SubscriptionsActivity.this);
                         subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(SubscriptionsActivity.this));
                         subscriptionsRecyclerView.setAdapter(listAdapter);
-                        Log.d("myTag", "Utworzenie adaptera zakonczone");
                     }
                 } else {
                     Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
@@ -150,60 +105,4 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
             }
         });
     }
-    //stare
-    /*
-    private void getSubscriptions() {
-        JSONObject jsonObject = new JSONObject();
-        String url = "http://10.0.2.2:5000/subscriptions";
-
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String user_id = sp.getString("user_id", "");
-
-        try {
-            jsonObject.put("token", "");
-            jsonObject.put("user_id", user_id);
-
-            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray resp = response.getJSONArray("subscriptions");
-                        subscriptions.clear();
-                        for (int i = 0; i < resp.length(); i++) {
-                            JSONObject item = resp.getJSONObject(i);
-                            String localization_str = item.getString("localization");
-                            subscriptions.add(localization_str);
-                            String sub_id_str = item.getString("id_sub");
-                            subscriptionIds.add(sub_id_str);
-                        }
-                        listAdapter.notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(this).addToRequestQueue(objectRequest);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }*/
-    /*
-    private void goToSubscribedEventsActivity(){ //TODO: czy da sie te wszystkie goto wsadzic do jednej klasy utilsowej?
-        Intent goToSubscribedEventsActivityIntent = new Intent(this, SubscribedEventsActivity.class);
-        startActivity(goToSubscribedEventsActivityIntent);
-    }
-
-
-    private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
-        startActivity(goToMainActivityIntent);
-    }*/
 }

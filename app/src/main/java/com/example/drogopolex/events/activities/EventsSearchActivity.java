@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.constants.EventTypes;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.databinding.ActivityEventsSearchBinding;
 import com.example.drogopolex.events.listeners.EventsListener;
@@ -43,6 +45,9 @@ public class EventsSearchActivity extends AppCompatActivity implements EventsLis
         super.onCreate(savedInstanceState);
         activityEventsSearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_events_search);
         activityEventsSearchBinding.setViewModel(new EventsSearchViewModel());
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, EventTypes.getEventTypes());
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        activityEventsSearchBinding.setSpinnerAdapter(spinnerArrayAdapter);
         activityEventsSearchBinding.executePendingBindings();
         activityEventsSearchBinding.getViewModel().eventsListener = this;
         activityEventsSearchBinding.getViewModel().spinnerHolder = this;
