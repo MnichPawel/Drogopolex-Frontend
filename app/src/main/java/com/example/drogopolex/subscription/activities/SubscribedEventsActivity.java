@@ -19,9 +19,16 @@ import com.example.drogopolex.ServerUtils;
 import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.data.network.response.SubscriptionsResponse;
+import com.example.drogopolex.databinding.ActivitySubscriptionsBinding;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.Vote;
 import com.example.drogopolex.model.VoteType;
+import com.example.drogopolex.subscription.utils.SubscribedEventsAction;
+import com.example.drogopolex.subscription.utils.SubscriptionsAction;
+import com.example.drogopolex.subscription.viewModel.SubscribedEventsViewModel;
+import com.example.drogopolex.subscription.viewModel.SubscriptionsViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,31 +41,52 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscribedEventsActivity extends AppCompatActivity {
-    Button goToLoggedInMenuActivityButton;
-    Button addSubscriptionButton;
-    Button goToSubscriptionListButton;
+public class SubscribedEventsActivity extends AppCompatActivity implements SharedPreferencesHolder {
+    //Button goToLoggedInMenuActivityButton;
+    //Button addSubscriptionButton;
+    //Button goToSubscriptionListButton;
     RecyclerView subscribedEventsRecyclerView;
 
+    SubscribedEventsActivityBinding subscribedEventsActivityBinding;
     EventListAdapter eventListAdapter;
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
-    ArrayList<String> subscriptions = new ArrayList<>();
-    boolean subscriptionsUpdatedFlag = false;
+   // ArrayList<String> subscriptions = new ArrayList<>();
+   // boolean subscriptionsUpdatedFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        subscribedEventsActivityBinding = DataBindingUtil.setContentView(this, R.layout.activity_subscriptions);
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        String user_id = sp.getString("user_id", "");
+        String token = sp.getString("token", "");
+        subscribedEventsActivityBinding.setViewModel(new SubscribedEventsViewModel(getApplication(), user_id, token));
+        subscribedEventsActivityBinding.executePendingBindings();
+        subscribedEventsActivityBinding.getViewModel().sharedPreferencesHolder = this;
+
         setContentView(R.layout.activity_subscribed_events);
 
-        goToLoggedInMenuActivityButton = (Button) findViewById(R.id.go_back_subscribed_events);
-        addSubscriptionButton = (Button) findViewById(R.id.addSubscription);
-        goToSubscriptionListButton = (Button) findViewById(R.id.go_to_subscriptions_list);
+       // goToLoggedInMenuActivityButton = (Button) findViewById(R.id.go_back_subscribed_events);
+        //addSubscriptionButton = (Button) findViewById(R.id.addSubscription);
+        //goToSubscriptionListButton = (Button) findViewById(R.id.go_to_subscriptions_list);
 
         subscribedEventsRecyclerView = (RecyclerView) findViewById(R.id.subscribed_events_view);
+        subscribedEventsActivityBinding.getViewModel().getAction().observe(this, new Observer<SubscribedEventsAction>() {
+        @Override
+        public void onChanged(SubscribedEventsAction subscriptionsEventAction) {
+            if(subscriptionsEventAction != null){
+                handleAction(subscriptionsEventAction);
+            }
+        }
+         });
 
+        /*
         goToLoggedInMenuActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,9 +106,9 @@ public class SubscribedEventsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 goToSubscriptionsListActivity();
             }
-        });
+        });*/
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        //SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
             goToMainActivity();
         }
@@ -90,9 +118,30 @@ public class SubscribedEventsActivity extends AppCompatActivity {
         subscribedEventsRecyclerView.setAdapter(eventListAdapter);
         subscribedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        new getEventsFromSubscribed().execute();
+        //new getEventsFromSubscribed().execute();
+    }
+    private void handleAction(SubscribedEventsAction subscriptionsAction) {
+        switch (SubscribedEventsAction.getValue()) {
+            case SubscribedEventsAction.ADD_SUBSCRIPTION:
+                Intent goToAddSubIntent = new Intent(this, SubscribeActivity.class);
+                startActivity(goToAddSubIntent);
+                break;
+            case SubscribedEventsAction.SHOW_SUBSCRIPTIONS:
+                Intent goToSubscriptionsIntent = new Intent(this, SubscriptionsActivity.class);
+                startActivity(goToSubscriptionsIntent);
+                break;
+            case SubscribedEventsAction.GO_TO_MAIN_MENU:
+                Intent goToMainMenuIntent = new Intent(this, LoggedInMenuActivity.class);
+                startActivity(goToMainMenuIntent);
+        }
+    }
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 
+
+    /*
     private void getSubscriptions(CountDownLatch latch) {
         JSONObject jsonObject = new JSONObject();
         String url = "http://10.0.2.2:5000/subscriptions";
@@ -192,19 +241,19 @@ public class SubscribedEventsActivity extends AppCompatActivity {
         } catch (JSONException | InterruptedException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
-
+    /*
     private void goToLoggedInMenuActivity() {
         Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
         startActivity(goToLoggedInMenuActivityIntent);
-    }
+    }*/
 
     private void goToMainActivity() {
         Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
         startActivity(goToMainActivityIntent);
     }
-
+/*
     private void goToSubscribeActivity() {
         Intent goToSubscribeActivityIntent = new Intent(this, SubscribeActivity.class);
         startActivity(goToSubscribeActivityIntent);
@@ -213,8 +262,8 @@ public class SubscribedEventsActivity extends AppCompatActivity {
     private void goToSubscriptionsListActivity() {
         Intent goToSubscriptionsListActivityIntent = new Intent(this, SubscriptionsActivity.class);
         startActivity(goToSubscriptionsListActivityIntent);
-    }
-
+    }*/
+    /*
     private class getEventsFromSubscribed extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
@@ -226,5 +275,5 @@ public class SubscribedEventsActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             getAllEventsRequest();
         }
-    }
+    }*/
 }
