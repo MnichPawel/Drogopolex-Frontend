@@ -143,7 +143,7 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
                     if(eventListAdapter != null) {
                         eventListAdapter.notifyDataSetChanged();
                     } else {
-                        eventListAdapter = new EventListAdapter(eventListData, EventsActivity.this);
+                        //eventListAdapter = new EventListAdapter(eventListData, EventsActivity.this);
                         recyclerView.setLayoutManager(new LinearLayoutManager(EventsActivity.this));
                         recyclerView.setAdapter(eventListAdapter);
                     }

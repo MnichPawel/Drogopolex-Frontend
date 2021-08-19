@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<data>
+
+    <variable
+        name="position"
+        type="java.lang.Integer" />
+
+    <variable
+        name="viewModel"
+        type="com.example.drogopolex.events.viewModel.EventListViewModel" />
+</data>
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="20dp"
@@ -18,13 +29,15 @@
             android:id="@+id/typeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:text="@{viewModel.getTypeAt(position)}"/>
 
         <TextView
             android:id="@+id/locationText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:text="@{viewModel.getLocationAt(position)"/>
     </LinearLayout>
 
     <ImageButton
@@ -36,7 +49,8 @@
         android:src="@drawable/thumb_down"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="@{() -> viewModel.onUpVoteClick(position)"/>
 
     <TextView
         android:id="@+id/voteCounter"
@@ -46,7 +60,8 @@
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/downvoteButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@{viewModel.getVotesCountAt(position)}"/>
 
     <ImageButton
         android:id="@+id/upvoteButton"
@@ -58,5 +73,7 @@
         android:src="@drawable/thumb_up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/voteCounter"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="@{() -> viewModel.onDownVoteClick(position)"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,29 +1,34 @@
 package com.example.drogopolex.events.viewModel;
 
+import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.constants.EventTypes;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
-import com.example.drogopolex.events.listeners.EventsListener;
 import com.example.drogopolex.events.listeners.SpinnerHolder;
 import com.example.drogopolex.events.utils.EventsSearchAction;
+import com.example.drogopolex.model.DrogopolexEvent;
+
+import java.util.ArrayList;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-public class EventsSearchViewModel extends ViewModel {
+public class EventsSearchViewModel extends EventListViewModel {
     private MutableLiveData<EventsSearchAction> mAction = new MutableLiveData<>();
-    private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
     public MutableLiveData<String> localization = new MutableLiveData<>();
 
-    private EventsRepository eventsRepository;
-
-    public EventsListener eventsListener = null;
     public SpinnerHolder spinnerHolder = null;
 
     public EventsSearchViewModel() {
         this.eventsRepository = new EventsRepository();
+        this.adapter = new EventListAdapter(this);
     }
+
+    public void setEventsInAdapter(ArrayList<DrogopolexEvent> events) {
+        adapter.setLocalDataSet(events);
+        adapter.notifyDataSetChanged();
+    }
+
     public void onReturnClicked() {
         mAction.setValue(new EventsSearchAction(EventsSearchAction.SHOW_LOGGED_IN));
     }
@@ -51,4 +56,6 @@ public class EventsSearchViewModel extends ViewModel {
     public LiveData<EventsSearchAction> getAction() {
         return mAction;
     }
+
+
 }

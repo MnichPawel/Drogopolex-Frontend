@@ -86,7 +86,7 @@ public class SubscribedEventsActivity extends AppCompatActivity {
         }
 
 
-        eventListAdapter = new EventListAdapter(eventListData, this);
+        //eventListAdapter = new EventListAdapter(eventListData, this);
         subscribedEventsRecyclerView.setAdapter(eventListAdapter);
         subscribedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 

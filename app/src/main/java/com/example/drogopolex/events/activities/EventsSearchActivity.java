@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.constants.EventTypes;
@@ -29,12 +28,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EventsSearchActivity extends AppCompatActivity implements EventsListener, SpinnerHolder {
     ActivityEventsSearchBinding activityEventsSearchBinding;
-    EventListAdapter eventListAdapter;
 
     RecyclerView recyclerView;
 
@@ -101,13 +98,7 @@ public class EventsSearchActivity extends AppCompatActivity implements EventsLis
                                         VoteType.UPVOTED
                                 ));
                             });
-                    if(eventListAdapter != null) {
-                        eventListAdapter.notifyDataSetChanged();
-                    } else {
-                        eventListAdapter = new EventListAdapter(eventListData, EventsSearchActivity.this);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(EventsSearchActivity.this));
-                        recyclerView.setAdapter(eventListAdapter);
-                    }
+                    activityEventsSearchBinding.getViewModel().setEventsInAdapter(eventListData);
                 } else {
                     Toast.makeText(EventsSearchActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
                 }

@@ -1,12 +1,15 @@
 package com.example.drogopolex.data.network;
 
 import com.example.drogopolex.data.network.request.AddEventRequest;
+import com.example.drogopolex.data.network.request.AddVoteRequest;
 import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
+import com.example.drogopolex.data.network.request.ChangeVoteRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.FilterEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
+import com.example.drogopolex.data.network.request.RemoveVoteRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
 import com.example.drogopolex.data.network.request.SubscriptionsRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
@@ -68,4 +71,17 @@ public interface MyApi {
 
     @POST("subscriptions")
     Call<SubscriptionsResponse> subscriptionSubscriptions(@Body SubscriptionsRequest body);
+
+    /*
+     * Votes Requests
+     */
+
+    @POST("vote")
+    Call<BasicResponse> votesAddVote(@Body AddVoteRequest body);
+
+    @POST("vote")
+    Call<BasicResponse> votesChangeVote(@Body ChangeVoteRequest body);
+
+    @POST("vote")
+    Call<BasicResponse> votesRemoveVote(@Body RemoveVoteRequest body);
 }
