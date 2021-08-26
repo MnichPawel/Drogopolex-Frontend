@@ -63,7 +63,7 @@ public class SubscribeActivity extends AppCompatActivity implements SharedPrefer
                         Toast.makeText(SubscribeActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
                         handleAction(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIBED));
                     } else {
-                        Toast.makeText(SubscribeActivity.this, result.getErrorString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SubscribeActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(SubscribeActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();

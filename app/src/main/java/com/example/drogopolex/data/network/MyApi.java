@@ -1,14 +1,12 @@
 package com.example.drogopolex.data.network;
 
 import com.example.drogopolex.data.network.request.AddEventRequest;
-import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.FilterEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
-import com.example.drogopolex.data.network.request.SubscriptionsRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
@@ -17,6 +15,7 @@ import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface MyApi {
@@ -26,46 +25,75 @@ public interface MyApi {
      */
 
     @POST("login")
-    Call<LoginResponse> userLogin(@Body LoginRequest body);
+    Call<LoginResponse> userLogin(
+            @Body LoginRequest body);
 
     @POST("register")
-    Call<BasicResponse> userRegister(@Body RegisterRequest body);
+    Call<BasicResponse> userRegister(
+            @Body RegisterRequest body);
 
     @POST("logout")
-    Call<BasicResponse> userLogout(@Body BasicRequest body);
+    Call<BasicResponse> userLogout(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId);
 
     @POST("changeUserData")
-    Call<BasicResponse> userChangeUserData(@Body ChangeUserDataRequest body);
+    Call<BasicResponse> userChangeUserData(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId,
+            @Body ChangeUserDataRequest body);
 
     @POST("myProfile")
-    Call<ProfileResponse> userGetUserData(@Body BasicRequest body);
+    Call<ProfileResponse> userGetUserData(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId);
 
     /*
      * Events Requests
      */
 
     @POST("getEventsFromUserArea")
-    Call<EventsResponse> eventsGetFromUserArea(@Body EventsByGpsRequest body);
+    Call<EventsResponse> eventsGetFromUserArea(
+            @Header("UserId") String userId,
+            @Header("AuthorizationToken") String token,
+            @Body EventsByGpsRequest body);
 
     @POST("addEvent")
-    Call<BasicResponse> eventsAddEvent(@Body AddEventRequest body);
+    Call<BasicResponse> eventsAddEvent(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId,
+            @Body AddEventRequest body);
 
     @POST("getEventsByLocalization")
-    Call<EventsResponse> eventsGetEventsByLocalization(@Body FilterEventsRequest body);
+    Call<EventsResponse> eventsGetEventsByLocalization(
+            @Header("UserId") String userId,
+            @Header("AuthorizationToken") String token,
+            @Body FilterEventsRequest body);
 
     @POST("getEventsByType")
-    Call<EventsResponse> eventsGetEventsByType(@Body FilterEventsRequest body);
+    Call<EventsResponse> eventsGetEventsByType(
+            @Header("UserId") String userId,
+            @Header("AuthorizationToken") String token,
+            @Body FilterEventsRequest body);
 
     @POST("getEventsByTypeAndLoc")
-    Call<EventsResponse> eventsGetEventsByTypeAndLocalization(@Body FilterEventsRequest body);
+    Call<EventsResponse> eventsGetEventsByTypeAndLocalization(
+            @Header("UserId") String userId,
+            @Header("AuthorizationToken") String token,
+            @Body FilterEventsRequest body);
 
     /*
      * Subscription Requests
      */
 
     @POST("subscribe")
-    Call<BasicResponse> subscriptionSubscribe(@Body SubscribeRequest body);
+    Call<BasicResponse> subscriptionSubscribe(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId,
+            @Body SubscribeRequest body);
 
     @POST("subscriptions")
-    Call<SubscriptionsResponse> subscriptionSubscriptions(@Body SubscriptionsRequest body);
+    Call<SubscriptionsResponse> subscriptionSubscriptions(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId);
 }

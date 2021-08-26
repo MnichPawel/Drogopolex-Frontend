@@ -8,9 +8,9 @@ public class ProfileResponse implements TemplateResponse {
     @SerializedName("success")
     @Expose
     private String success;
-    @SerializedName("errorString")
+    @SerializedName("error")
     @Expose
-    private String errorString;
+    private String error;
     @SerializedName("id")
     @Expose
     private String id;
@@ -30,12 +30,12 @@ public class ProfileResponse implements TemplateResponse {
         this.success = success;
     }
 
-    public String getErrorString() {
-        return errorString;
+    public String getError() {
+        return error;
     }
 
-    public void setErrorString(String errorString) {
-        this.errorString = errorString;
+    public void setError(String error) {
+        this.error = error;
     }
 
     public String getId() {

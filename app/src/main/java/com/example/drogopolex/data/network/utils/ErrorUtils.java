@@ -36,14 +36,16 @@ public class ErrorUtils {
             if(baseResponse.errorBody() != null) {
                 String responseBody = baseResponse.errorBody().string();
                 JsonObject jsonObject = new JsonParser().parse(responseBody).getAsJsonObject();
-                String success = jsonObject.get("success").getAsString();
-                String errorString = jsonObject.get("errorString").getAsString();
-                response.setSuccess(success);
-                response.setErrorString(errorString);
+                if(responseType != ResponseType.BASIC_RESPONSE) {
+                    String success = jsonObject.get("success").getAsString();
+                    response.setSuccess(success);
+                }
+                String error = jsonObject.get("error").getAsString();
+                response.setError(error);
             }
             else {
                 response.setSuccess("false");
-                response.setErrorString("Nie udało się przetworzyć odpowiedzi.");
+                response.setError("Nie udało się przetworzyć odpowiedzi.");
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,11 +1,8 @@
 package com.example.drogopolex.data.repositories;
 
 import com.example.drogopolex.data.network.MyApi;
-import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
-import com.example.drogopolex.data.network.request.SubscriptionsRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
-import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
@@ -28,7 +25,7 @@ public class SubscriptionsRepository {
     public LiveData<BasicResponse> subscriptionSubscribe(String localization, String coordinates, String user_id, String token) {
         final MutableLiveData<BasicResponse> userSubscribeResponse = new MutableLiveData<>();
 
-        myApi.subscriptionSubscribe(new SubscribeRequest(localization, coordinates,user_id, token))
+        myApi.subscriptionSubscribe(token, user_id, new SubscribeRequest(localization, coordinates))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
@@ -49,7 +46,7 @@ public class SubscriptionsRepository {
     public LiveData<SubscriptionsResponse> getSubscriptions(String token, String user_id) {
         final MutableLiveData<SubscriptionsResponse> eventsResponse = new MutableLiveData<>();
 
-        myApi.subscriptionSubscriptions(new SubscriptionsRequest(token, user_id))
+        myApi.subscriptionSubscriptions(token, user_id)
                 .enqueue(new Callback<SubscriptionsResponse>() {
                     @Override
                     public void onResponse(Call<SubscriptionsResponse> call, Response<SubscriptionsResponse> response) {

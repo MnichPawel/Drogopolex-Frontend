@@ -19,6 +19,7 @@ import com.example.drogopolex.events.listeners.EventsListener;
 import com.example.drogopolex.events.listeners.SpinnerHolder;
 import com.example.drogopolex.events.utils.EventsSearchAction;
 import com.example.drogopolex.events.viewModel.EventsSearchViewModel;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.Vote;
 import com.example.drogopolex.model.VoteType;
@@ -32,7 +33,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class EventsSearchActivity extends AppCompatActivity implements EventsListener, SpinnerHolder {
+public class EventsSearchActivity extends AppCompatActivity implements EventsListener, SpinnerHolder, SharedPreferencesHolder {
     ActivityEventsSearchBinding activityEventsSearchBinding;
     EventListAdapter eventListAdapter;
 
@@ -51,6 +52,7 @@ public class EventsSearchActivity extends AppCompatActivity implements EventsLis
         activityEventsSearchBinding.executePendingBindings();
         activityEventsSearchBinding.getViewModel().eventsListener = this;
         activityEventsSearchBinding.getViewModel().spinnerHolder = this;
+        activityEventsSearchBinding.getViewModel().sharedPreferencesHolder = this;
 
         activityEventsSearchBinding.getViewModel().getAction().observe(this, new Observer<EventsSearchAction>() {
             @Override
@@ -118,5 +120,10 @@ public class EventsSearchActivity extends AppCompatActivity implements EventsLis
     @Override
     public void onFailure(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 }

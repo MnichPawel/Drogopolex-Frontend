@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
                         handleAction(new LoginAction(LoginAction.SHOW_LOGGED_IN));
                     } else {
-                        String errorMessage = result.getErrorString();
+                        String errorMessage = result.getError();
                         Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 } else {
