@@ -7,9 +7,10 @@ import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.FilterEventsRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
 import com.example.drogopolex.data.network.request.SubscriptionEventsRequest;
-import com.example.drogopolex.data.network.request.SubscriptionsRequest;
+//import com.example.drogopolex.data.network.request.SubscriptionsRequest;
 
 import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
@@ -72,10 +73,10 @@ public class SubscriptionsRepository {
         return eventsResponse;
     }
 
-    public LiveData<EventsResponse> getSubscribedEvents(String token,String userId) {
+    public LiveData<EventsResponse> getSubscribedEvents(String token, String userId) {
         final MutableLiveData<EventsResponse> getSubscribedEventsResponse = new MutableLiveData<>();
 
-        myApi.subscriptionEvents(new SubscriptionEventsRequest(token, userId)).enqueue(new Callback<EventsResponse>() {
+        myApi.subscriptionEvents(token, userId,new SubscriptionEventsRequest()).enqueue(new Callback<EventsResponse>() {
             @Override
             public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
                 if(response.isSuccessful()){

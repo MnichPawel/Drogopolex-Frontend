@@ -9,7 +9,7 @@ import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
 
 import com.example.drogopolex.data.network.request.SubscriptionEventsRequest;
-import com.example.drogopolex.data.network.request.SubscriptionsRequest;
+//import com.example.drogopolex.data.network.request.SubscriptionsRequest;
 
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
@@ -100,8 +100,8 @@ public interface MyApi {
 
     Call<SubscriptionsResponse> subscriptionSubscriptions(
             @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
-            @Body SubscriptionsRequest body);
+            @Header("UserId") String userId);
+            //@Body SubscriptionsRequest body);
     //Call<SubscriptionsResponse> subscriptionSubscriptions(@Body SubscriptionsRequest body);
 
     @POST("subscriptionsEvents")
