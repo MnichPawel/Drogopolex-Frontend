@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity implements BasicListener
                         Toast.makeText(RegisterActivity.this,"Konto utworzone",Toast.LENGTH_LONG).show();
                         handleAction(new RegisterAction(RegisterAction.SHOW_LOGIN));
                     } else {
-                        String errorMessage = result.getErrorString();
+                        String errorMessage = result.getError();
                         Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 } else {

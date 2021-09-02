@@ -24,10 +24,10 @@ public class EventsRepository {
         myApi =  RetrofitUtils.getRetrofitInstance().create(MyApi.class);
     }
 
-    public LiveData<EventsResponse> getEventsFromUserArea(String latitude, String longitude) {
+    public LiveData<EventsResponse> getEventsFromUserArea(String userId, String token, String latitude, String longitude) {
         final MutableLiveData<EventsResponse> eventsResponse = new MutableLiveData<>();
 
-        myApi.eventsGetFromUserArea(new EventsByGpsRequest(latitude, longitude))
+        myApi.eventsGetFromUserArea(userId, token, new EventsByGpsRequest(latitude, longitude))
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
@@ -49,14 +49,13 @@ public class EventsRepository {
     public LiveData<BasicResponse> addEvent(String localization, String eventType, String userId, String token) {
         final MutableLiveData<BasicResponse> addEventResponse = new MutableLiveData<>();
 
-        myApi.eventsAddEvent(new AddEventRequest(
-                false,
-                localization,
-                "",
-                "",
-                eventType,
-                userId,
-                token
+        myApi.eventsAddEvent(token, userId,
+                new AddEventRequest(
+                    false,
+                    localization,
+                    "",
+                    "",
+                    eventType
         )).enqueue(new Callback<BasicResponse>() {
             @Override
             public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
@@ -78,14 +77,13 @@ public class EventsRepository {
     public LiveData<BasicResponse> addEventByGps(LocationDetails locationDetails, String eventType, String userId, String token) {
         final MutableLiveData<BasicResponse> addEventResponse = new MutableLiveData<>();
 
-        myApi.eventsAddEvent(new AddEventRequest(
+        myApi.eventsAddEvent(token, userId,
+                new AddEventRequest(
                 true,
                 "",
                 locationDetails.getLatitude(),
                 locationDetails.getLongitude(),
-                eventType,
-                userId,
-                token
+                eventType
         )).enqueue(new Callback<BasicResponse>() {
             @Override
             public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
@@ -104,10 +102,10 @@ public class EventsRepository {
         return addEventResponse;
     }
 
-    public LiveData<EventsResponse> getEventsByType(String type) {
+    public LiveData<EventsResponse> getEventsByType(String userId, String token, String type) {
         final MutableLiveData<EventsResponse> getEventsByTypeResponse = new MutableLiveData<>();
 
-        myApi.eventsGetEventsByType(new FilterEventsRequest("", type)).enqueue(new Callback<EventsResponse>() {
+        myApi.eventsGetEventsByType(userId, token, new FilterEventsRequest("", type)).enqueue(new Callback<EventsResponse>() {
             @Override
             public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
                 if(response.isSuccessful()){
@@ -125,10 +123,10 @@ public class EventsRepository {
         return getEventsByTypeResponse;
     }
 
-    public LiveData<EventsResponse> getEventsByLocalization(String localization) {
+    public LiveData<EventsResponse> getEventsByLocalization(String userId, String token, String localization) {
         final MutableLiveData<EventsResponse> getEventsByLocalizationResponse = new MutableLiveData<>();
 
-        myApi.eventsGetEventsByLocalization(new FilterEventsRequest(localization, "")).enqueue(new Callback<EventsResponse>() {
+        myApi.eventsGetEventsByLocalization(userId, token ,new FilterEventsRequest(localization, "")).enqueue(new Callback<EventsResponse>() {
             @Override
             public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
                 if(response.isSuccessful()){
@@ -146,10 +144,10 @@ public class EventsRepository {
         return getEventsByLocalizationResponse;
     }
 
-    public LiveData<EventsResponse> getEventsByTypeAndLocalization(String type, String localization) {
+    public LiveData<EventsResponse> getEventsByTypeAndLocalization(String userId, String token, String type, String localization) {
         final MutableLiveData<EventsResponse> getEventsByTypeAndLocalizationResponse = new MutableLiveData<>();
 
-        myApi.eventsGetEventsByTypeAndLocalization(new FilterEventsRequest(localization, type)).enqueue(new Callback<EventsResponse>() {
+        myApi.eventsGetEventsByTypeAndLocalization(userId, token, new FilterEventsRequest(localization, type)).enqueue(new Callback<EventsResponse>() {
             @Override
             public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
                 if(response.isSuccessful()){

@@ -52,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
                         EditText email = findViewById(R.id.profile_change_email_textfield);
                         email.setText(profileResponse.getEmail());
                     } else {
-                        Toast.makeText(ProfileActivity.this, profileResponse.getErrorString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileActivity.this, profileResponse.getError(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
@@ -83,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
                     if ("true".equals(result.getSuccess())) {
                         Toast.makeText(ProfileActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(ProfileActivity.this, result.getErrorString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();

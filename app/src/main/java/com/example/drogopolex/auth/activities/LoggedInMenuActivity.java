@@ -91,7 +91,7 @@ public class LoggedInMenuActivity extends AppCompatActivity implements SharedPre
                         handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
                     } else {
                         SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                        Toast.makeText(LoggedInMenuActivity.this, result.getErrorString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoggedInMenuActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
                         handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
                     }
                 } else {

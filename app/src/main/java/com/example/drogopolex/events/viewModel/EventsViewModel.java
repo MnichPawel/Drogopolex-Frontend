@@ -1,10 +1,12 @@
 package com.example.drogopolex.events.viewModel;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.events.utils.EventsAction;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,6 +21,7 @@ public class EventsViewModel extends AndroidViewModel {
     private LocationLiveData locationLiveData;
 
     public OnSuccessListener<LiveData<EventsResponse>> onSuccessListener = null;
+    public SharedPreferencesHolder sharedPreferencesHolder = null;
 
     private EventsRepository eventsRepository;
 
@@ -29,7 +32,10 @@ public class EventsViewModel extends AndroidViewModel {
     }
 
     public void onLocationChanged(LocationDetails location) {
-        eventsLiveData = eventsRepository.getEventsFromUserArea(location.getLatitude(), location.getLongitude());
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String userId = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+        eventsLiveData = eventsRepository.getEventsFromUserArea(userId, token, location.getLatitude(), location.getLongitude());
         onSuccessListener.onSuccess(eventsLiveData);
     }
 

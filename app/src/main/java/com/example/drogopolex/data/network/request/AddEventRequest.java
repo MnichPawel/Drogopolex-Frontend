@@ -6,16 +6,12 @@ public class AddEventRequest {
     final String latitude;
     final String longitude;
     final String type;
-    final String user_id;
-    final String token;
 
-    public AddEventRequest(boolean gps, String localization, String latitude, String longitude, String type, String user_id, String token) {
+    public AddEventRequest(boolean gps, String localization, String latitude, String longitude, String type) {
         this.gps = gps;
         this.localization = localization;
         this.latitude = latitude;
         this.longitude = longitude;
         this.type = type;
-        this.user_id = user_id;
-        this.token = token;
     }
 }

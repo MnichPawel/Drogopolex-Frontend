@@ -109,7 +109,7 @@ public class NewEventActivity extends AppCompatActivity implements BasicListener
                         Toast.makeText(NewEventActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
                         handleAction(new NewEventAction(NewEventAction.SHOW_LOGGED_IN));
                     } else {
-                        String errorMessage = basicResponse.getErrorString();
+                        String errorMessage = basicResponse.getError();
                         Toast.makeText(NewEventActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 } else {

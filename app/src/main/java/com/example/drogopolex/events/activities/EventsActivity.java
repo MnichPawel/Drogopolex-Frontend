@@ -16,6 +16,7 @@ import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.databinding.ActivityEventsBinding;
 import com.example.drogopolex.events.utils.EventsAction;
 import com.example.drogopolex.events.viewModel.EventsViewModel;
+import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.model.Vote;
@@ -35,7 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.example.drogopolex.constants.AppConstant.PERMISSIONS_REQUEST_LOCATION;
 
-public class EventsActivity extends AppCompatActivity implements OnSuccessListener<LiveData<EventsResponse>> {
+public class EventsActivity extends AppCompatActivity implements OnSuccessListener<LiveData<EventsResponse>>, SharedPreferencesHolder {
     ActivityEventsBinding activityEventsBinding;
     EventListAdapter eventListAdapter;
 
@@ -50,6 +51,7 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
         activityEventsBinding.setViewModel(new EventsViewModel(getApplication()));
         activityEventsBinding.executePendingBindings();
         activityEventsBinding.getViewModel().onSuccessListener = this;
+        activityEventsBinding.getViewModel().sharedPreferencesHolder = this;
 
         activityEventsBinding.getViewModel().getAction().observe(this, new Observer<EventsAction>() {
             @Override
@@ -152,5 +154,10 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
                 }
             }
         });
+    }
+
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 }

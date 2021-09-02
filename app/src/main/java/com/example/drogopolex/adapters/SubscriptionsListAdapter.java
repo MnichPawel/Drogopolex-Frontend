@@ -97,7 +97,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
                     try {
                         isSuccess = response.getBoolean("success");
                         if(!isSuccess) {
-                            stringError = response.getString("errorString");
+                            stringError = response.getString("error");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

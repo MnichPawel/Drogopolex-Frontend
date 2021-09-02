@@ -1,7 +1,6 @@
 package com.example.drogopolex.data.repositories;
 
 import com.example.drogopolex.data.network.MyApi;
-import com.example.drogopolex.data.network.request.BasicRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
@@ -73,7 +72,7 @@ public class UserRepository {
     public LiveData<BasicResponse> userLogout(String userId, String token) {
         final MutableLiveData<BasicResponse> logoutResponse = new MutableLiveData<>();
 
-        myApi.userLogout(new BasicRequest(userId, token))
+        myApi.userLogout(token, userId)
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
@@ -95,7 +94,7 @@ public class UserRepository {
     public LiveData<BasicResponse> userChangeUserData(String user_id, String token, String changed_value, String new_value) {
         final MutableLiveData<BasicResponse> changeUserDataResponse = new MutableLiveData<>();
 
-        myApi.userChangeUserData(new ChangeUserDataRequest(user_id, token, changed_value, new_value))
+        myApi.userChangeUserData(token, user_id, new ChangeUserDataRequest(changed_value, new_value))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
@@ -114,10 +113,10 @@ public class UserRepository {
         return changeUserDataResponse;
     }
 
-    public LiveData<ProfileResponse> userGetUserData(String user_id, String token) {
+    public LiveData<ProfileResponse> userGetUserData(String userId, String token) {
         final MutableLiveData<ProfileResponse> getUserDataResponse = new MutableLiveData<>();
 
-        myApi.userGetUserData(new BasicRequest(user_id, token))
+        myApi.userGetUserData(token, userId)
                 .enqueue(new Callback<ProfileResponse>() {
                     @Override
                     public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
