@@ -7,19 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
-import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.data.repositories.VotesRepository;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -28,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.ViewHolder> {
     private ArrayList<DrogopolexEvent> localDataSet;
     private final Context context;
+
+    private VotesRepository votesRepository;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView typeText;
@@ -121,6 +115,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
     public EventListAdapter(ArrayList<DrogopolexEvent> dataSet, Context context) {
         localDataSet = dataSet;
         this.context = context;
+        votesRepository = new VotesRepository();
     }
 
     @Override
@@ -157,152 +152,35 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
     }
 
     public void sendVote(int position, boolean isUpvote) {
-        int eventId = localDataSet.get(position).getId();
-        String voteType;
-        if(isUpvote) voteType = "T";
-        else voteType = "F";
+        String eventId = String.valueOf(localDataSet.get(position).getId());
+        VoteType voteType;
+        if(isUpvote) voteType = VoteType.UPVOTED;
+        else voteType = VoteType.DOWNVOTED;
 
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         String user_id = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("event_id", eventId);
-            jsonObject.put("type", voteType);
-            jsonObject.put("user_id", user_id);
-            jsonObject.put("token", token);
-
-            String url = "http://10.0.2.2:5000/vote"; //TODO adres jako zmienna globalna w pakiecie, bo jak się zmieni to się nie doszukamy
-            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    boolean isSuccess = false;
-                    String stringError = "";
-
-                    try {
-                        isSuccess = response.getBoolean("success");
-                        if (!isSuccess) {
-                            stringError = response.getString("error");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (!isSuccess) {
-                        Toast.makeText(context, stringError, Toast.LENGTH_LONG).show();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(context).addToRequestQueue(objectRequest);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        votesRepository.votesAddVote(user_id, token, voteType, eventId);
     }
 
     public void deleteVote(int position) {
-        int eventId = localDataSet.get(position).getId();
+        String eventId = String.valueOf(localDataSet.get(position).getId());
 
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         String user_id = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("event_id", eventId);
-            jsonObject.put("user_id", user_id);
-            jsonObject.put("token", token);
-
-            String url = "http://10.0.2.2:5000/remove_vote";
-            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    boolean isSuccess = false;
-                    String stringError = "";
-
-                    try {
-                        isSuccess = response.getBoolean("success");
-                        if (!isSuccess) {
-                            stringError = response.getString("error");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (!isSuccess) {
-                        Toast.makeText(context, stringError, Toast.LENGTH_LONG).show();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(context).addToRequestQueue(objectRequest);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        votesRepository.votesRemoveVote(user_id, token, eventId);
     }
 
     public void changeVote(int position, VoteType newVoteType) {
-        int eventId = localDataSet.get(position).getId();
-
-        String newVoteTypeString;
-        if(newVoteType == VoteType.UPVOTED) newVoteTypeString = "T";
-        else newVoteTypeString = "F";
+        String eventId = String.valueOf(localDataSet.get(position).getId());
 
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         String user_id = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("event_id", eventId);
-            jsonObject.put("new_type", newVoteTypeString);
-            jsonObject.put("user_id", user_id);
-            jsonObject.put("token", token);
-
-            String url = "http://10.0.2.2:5000/change_vote";
-            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    boolean isSuccess = false;
-                    String stringError = "";
-
-                    try {
-                        isSuccess = response.getBoolean("success");
-                        if (!isSuccess) {
-                            stringError = response.getString("error");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (!isSuccess) {
-                        Toast.makeText(context, stringError, Toast.LENGTH_LONG).show();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(context).addToRequestQueue(objectRequest);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        votesRepository.votesChangeVote(user_id, token, newVoteType, eventId);
     }
 }
