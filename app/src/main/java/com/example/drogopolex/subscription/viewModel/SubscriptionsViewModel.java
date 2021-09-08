@@ -1,11 +1,13 @@
 package com.example.drogopolex.subscription.viewModel;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -14,18 +16,23 @@ import androidx.lifecycle.MutableLiveData;
 public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewModel
     private MutableLiveData<SubscriptionsAction> mAction = new MutableLiveData<>();
     private LiveData<SubscriptionsResponse> subscriptionsLiveData = new MutableLiveData<>();
+
     public SharedPreferencesHolder sharedPreferencesHolder = null;
+    public OnSuccessListener<LiveData<SubscriptionsResponse>> onSuccessListener = null;
 
     private SubscriptionsRepository subscriptionsRepository;
 
-    public SubscriptionsViewModel(Application application, String userId, String token) {
+    public SubscriptionsViewModel(Application application) {
         super(application);
         subscriptionsRepository = new SubscriptionsRepository();
-        requestSubscriptions(userId, token);
     }
 
-    public void requestSubscriptions(String userId, String token) {
+    public void requestSubscriptions() {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String userId = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
         subscriptionsLiveData = subscriptionsRepository.getSubscriptions(token, userId);
+        onSuccessListener.onSuccess(subscriptionsLiveData);
     }
 
     public void onReturnClicked() {
@@ -37,7 +44,4 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
         return mAction;
     }
 
-    public LiveData<SubscriptionsResponse> getSubscriptionsLiveData() {
-        return subscriptionsLiveData;
-    }
 }

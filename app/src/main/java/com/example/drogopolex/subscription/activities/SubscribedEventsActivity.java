@@ -4,27 +4,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.databinding.ActivitySubscribedEventsBinding;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
+import com.example.drogopolex.model.Vote;
+import com.example.drogopolex.model.VoteType;
 import com.example.drogopolex.subscription.utils.SubscribedEventsAction;
 import com.example.drogopolex.subscription.viewModel.SubscribedEventsViewModel;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscribedEventsActivity extends AppCompatActivity implements SharedPreferencesHolder {
-    RecyclerView subscribedEventsRecyclerView;
+public class SubscribedEventsActivity extends AppCompatActivity implements SharedPreferencesHolder, OnSuccessListener<LiveData<EventsResponse>> {
+    RecyclerView recyclerView;
     ActivitySubscribedEventsBinding activitySubscribedEventsBinding;
     EventListAdapter eventListAdapter;
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
@@ -34,13 +40,12 @@ public class SubscribedEventsActivity extends AppCompatActivity implements Share
         super.onCreate(savedInstanceState);
 
         activitySubscribedEventsBinding = DataBindingUtil.setContentView(this, R.layout.activity_subscribed_events);
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String user_id = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
-        activitySubscribedEventsBinding.setViewModel(new SubscribedEventsViewModel(getApplication(), user_id, token));
+        activitySubscribedEventsBinding.setViewModel(new SubscribedEventsViewModel(getApplication()));
         activitySubscribedEventsBinding.executePendingBindings();
+        activitySubscribedEventsBinding.getViewModel().sharedPreferencesHolder = this;
+        activitySubscribedEventsBinding.getViewModel().onSuccessListener = this;
 
-        subscribedEventsRecyclerView = (RecyclerView) findViewById(R.id.subscribed_events_view);
+        recyclerView = (RecyclerView) findViewById(R.id.subscribed_events_view);
         activitySubscribedEventsBinding.getViewModel().getAction().observe(this, new Observer<SubscribedEventsAction>() {
         @Override
         public void onChanged(SubscribedEventsAction subscriptionsEventAction) {
@@ -50,16 +55,15 @@ public class SubscribedEventsActivity extends AppCompatActivity implements Share
         }
          });
 
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
-            goToMainActivity();
+            Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
+            startActivity(goToMainActivityIntent);
         }
 
-
-        eventListAdapter = new EventListAdapter(eventListData, this);
-        subscribedEventsRecyclerView.setAdapter(eventListAdapter);
-        subscribedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        prepRequestSubscribedEvents();
     }
+
     private void handleAction(SubscribedEventsAction subscribedEventsAction) {
         switch (subscribedEventsAction.getValue()) {
             case SubscribedEventsAction.ADD_SUBSCRIPTION:
@@ -75,13 +79,45 @@ public class SubscribedEventsActivity extends AppCompatActivity implements Share
                 startActivity(goToMainMenuIntent);
         }
     }
+
+    private void prepRequestSubscribedEvents() {
+        activitySubscribedEventsBinding.getViewModel().requestSubscribedEvents();
+    }
+
     @Override
     public SharedPreferences getSharedPreferences() {
         return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 
-    private void goToMainActivity() {
-        Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
-        startActivity(goToMainActivityIntent);
+    @Override
+    public void onSuccess(LiveData<EventsResponse> response) {
+        response.observe(this, new Observer<EventsResponse>() {
+            @Override
+            public void onChanged(EventsResponse eventsResponse) {
+                if(eventsResponse != null) {
+                    eventListData.clear();
+                    eventsResponse.getEvents()
+                            .forEach(event -> {
+                                eventListData.add(new DrogopolexEvent(
+                                        event.getType(),
+                                        event.getCountry(),
+                                        event.getStreet(),
+                                        Integer.parseInt(event.getId()),
+                                        new ArrayList<Vote>(),
+                                        VoteType.UPVOTED
+                                ));
+                            });
+                    if(eventListAdapter != null) {
+                        eventListAdapter.notifyDataSetChanged();
+                    } else {
+                        eventListAdapter = new EventListAdapter(eventListData, SubscribedEventsActivity.this);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(SubscribedEventsActivity.this));
+                        recyclerView.setAdapter(eventListAdapter);
+                    }
+                } else {
+                    Toast.makeText(SubscribedEventsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

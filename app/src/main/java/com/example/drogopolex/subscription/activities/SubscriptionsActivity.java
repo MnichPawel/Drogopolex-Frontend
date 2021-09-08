@@ -16,16 +16,18 @@ import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexSubscription;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.example.drogopolex.subscription.viewModel.SubscriptionsViewModel;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder {
+public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder, OnSuccessListener<LiveData<SubscriptionsResponse>> {
     RecyclerView subscriptionsRecyclerView;
     ActivitySubscriptionsBinding activitySubscriptionsBinding;
     SubscriptionsListAdapter listAdapter;
@@ -36,12 +38,10 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activitySubscriptionsBinding = DataBindingUtil.setContentView(this, R.layout.activity_subscriptions);
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String user_id = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
-        activitySubscriptionsBinding.setViewModel(new SubscriptionsViewModel(getApplication(), user_id, token));
+        activitySubscriptionsBinding.setViewModel(new SubscriptionsViewModel(getApplication()));
         activitySubscriptionsBinding.executePendingBindings();
         activitySubscriptionsBinding.getViewModel().sharedPreferencesHolder = this;
+        activitySubscriptionsBinding.getViewModel().onSuccessListener = this;
 
 
 
@@ -56,6 +56,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
 
         subscriptionsRecyclerView = findViewById(R.id.subscriptionsView);
 
+        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if(!sp.getBoolean("loggedIn", false)){
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
@@ -80,7 +81,12 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
     }
 
     public void getSubscriptions() {
-        activitySubscriptionsBinding.getViewModel().getSubscriptionsLiveData().observe(this, new Observer<SubscriptionsResponse>() {
+        activitySubscriptionsBinding.getViewModel().requestSubscriptions();
+    }
+
+    @Override
+    public void onSuccess(LiveData<SubscriptionsResponse> subscriptionsResponseLiveData) {
+        subscriptionsResponseLiveData.observe(this, new Observer<SubscriptionsResponse>() {
             @Override
             public void onChanged(SubscriptionsResponse subscriptionsResponse) {
                 if(subscriptionsResponse != null) {
