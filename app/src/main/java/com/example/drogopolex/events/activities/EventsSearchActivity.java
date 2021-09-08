@@ -21,7 +21,6 @@ import com.example.drogopolex.events.utils.EventsSearchAction;
 import com.example.drogopolex.events.viewModel.EventsSearchViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
-import com.example.drogopolex.model.Vote;
 import com.example.drogopolex.model.VoteType;
 
 import java.util.ArrayList;
@@ -94,13 +93,18 @@ public class EventsSearchActivity extends AppCompatActivity implements EventsLis
                     eventListData.clear();
                     eventsResponse.getEvents()
                             .forEach(event -> {
+                                VoteType userVoteType;
+                                if("1".equals(event.getUserVote())) userVoteType = VoteType.UPVOTED;
+                                else if("-1".equals(event.getUserVote())) userVoteType = VoteType.DOWNVOTED;
+                                else userVoteType = VoteType.NO_VOTE;
+
                                 eventListData.add(new DrogopolexEvent(
                                         event.getType(),
                                         event.getCountry(),
                                         event.getStreet(),
                                         Integer.parseInt(event.getId()),
-                                        new ArrayList<Vote>(),
-                                        VoteType.UPVOTED
+                                        Integer.parseInt(event.getValueOfVotes()),
+                                        userVoteType
                                 ));
                             });
                     if(eventListAdapter != null) {

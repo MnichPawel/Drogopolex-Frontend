@@ -14,7 +14,6 @@ import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.databinding.ActivitySubscribedEventsBinding;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
-import com.example.drogopolex.model.Vote;
 import com.example.drogopolex.model.VoteType;
 import com.example.drogopolex.subscription.utils.SubscribedEventsAction;
 import com.example.drogopolex.subscription.viewModel.SubscribedEventsViewModel;
@@ -98,13 +97,18 @@ public class SubscribedEventsActivity extends AppCompatActivity implements Share
                     eventListData.clear();
                     eventsResponse.getEvents()
                             .forEach(event -> {
+                                VoteType userVoteType;
+                                if("1".equals(event.getUserVote())) userVoteType = VoteType.UPVOTED;
+                                else if("-1".equals(event.getUserVote())) userVoteType = VoteType.DOWNVOTED;
+                                else userVoteType = VoteType.NO_VOTE;
+
                                 eventListData.add(new DrogopolexEvent(
                                         event.getType(),
                                         event.getCountry(),
                                         event.getStreet(),
                                         Integer.parseInt(event.getId()),
-                                        new ArrayList<Vote>(),
-                                        VoteType.UPVOTED
+                                        Integer.parseInt(event.getValueOfVotes()),
+                                        userVoteType
                                 ));
                             });
                     if(eventListAdapter != null) {

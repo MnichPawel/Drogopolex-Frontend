@@ -22,6 +22,13 @@ public class EventsValue {
     @SerializedName("street")
     @Expose
     private String street;
+    @SerializedName("value_of_votes")
+    @Expose
+    private String valueOfVotes;
+    @SerializedName("user_vote")
+    @Expose
+    private String userVote;
+
 
     public String getId() {
         return id;
@@ -71,4 +78,19 @@ public class EventsValue {
         this.street = street;
     }
 
+    public String getValueOfVotes() {
+        return valueOfVotes;
+    }
+
+    public void setValueOfVotes(String valueOfVotes) {
+        this.valueOfVotes = valueOfVotes;
+    }
+
+    public String getUserVote() {
+        return userVote;
+    }
+
+    public void setUserVote(String userVote) {
+        this.userVote = userVote;
+    }
 }

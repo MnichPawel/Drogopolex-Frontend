@@ -1,21 +1,19 @@
 package com.example.drogopolex.model;
 
-import java.util.List;
-
 public class DrogopolexEvent {
     private String type;
     private String location;
     private String street;
     private int id;
     private VoteType userVoteType;
-    private List<Vote> votes;
+    private int valueOfVotes;
 
-    public DrogopolexEvent(String type, String location, String street, int id, List<Vote> votes, VoteType userVoteType) {
+    public DrogopolexEvent(String type, String location, String street, int id, int valueOfVotes, VoteType userVoteType) {
         this.type = type;
         this.location = location;
         this.street = street;
         this.id = id;
-        this.votes = votes;
+        this.valueOfVotes = valueOfVotes;
         this.userVoteType = userVoteType;
     }
 
@@ -43,13 +41,7 @@ public class DrogopolexEvent {
         this.userVoteType = userVoteType;
     }
 
-    public int getVotesCount() {
-        int upvotes = (int) votes.stream()
-                .filter(vote -> vote.getType() == VoteType.UPVOTED)
-                .count();
-        int downvotes = (int) votes.stream()
-                .filter(vote -> vote.getType() == VoteType.DOWNVOTED)
-                .count();
-        return upvotes - downvotes;
+    public int getValueOfVotes() {
+        return valueOfVotes;
     }
 }

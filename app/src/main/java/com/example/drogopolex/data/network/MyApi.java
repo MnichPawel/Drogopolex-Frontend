@@ -120,13 +120,13 @@ public interface MyApi {
             @Body AddVoteRequest body
         );
 
-    @POST("vote")
+    @POST("change_vote")
     Call<BasicResponse> votesChangeVote(
             @Header("AuthorizationToken") String token,
             @Header("UserId") String userId,
             @Body ChangeVoteRequest body);
 
-    @POST("vote")
+    @POST("remove_vote")
     Call<BasicResponse> votesRemoveVote(
             @Header("AuthorizationToken") String token,
             @Header("UserId") String userId,

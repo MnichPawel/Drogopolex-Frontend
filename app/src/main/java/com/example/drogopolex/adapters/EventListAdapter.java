@@ -131,7 +131,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.View
         DrogopolexEvent drogopolexEvent = localDataSet.get(position);
         viewHolder.getTypeTextView().setText(drogopolexEvent.getType());
         viewHolder.getLocationTextView().setText(String.format("%s, %s", drogopolexEvent.getStreet(), drogopolexEvent.getLocation()));
-        viewHolder.getVoteCounter().setText(String.valueOf(drogopolexEvent.getVotesCount()));
+        viewHolder.getVoteCounter().setText(String.valueOf(drogopolexEvent.getValueOfVotes()));
 
         if(drogopolexEvent.getUserVoteType() == VoteType.UPVOTED) {
             viewHolder.getUpvoteButton().setImageResource(R.drawable.thumb_up_checked);
