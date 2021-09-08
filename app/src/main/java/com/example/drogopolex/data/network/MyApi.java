@@ -1,11 +1,14 @@
 package com.example.drogopolex.data.network;
 
 import com.example.drogopolex.data.network.request.AddEventRequest;
+import com.example.drogopolex.data.network.request.AddVoteRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
+import com.example.drogopolex.data.network.request.ChangeVoteRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.FilterEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
+import com.example.drogopolex.data.network.request.RemoveVoteRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
 import com.example.drogopolex.data.network.request.SubscriptionEventsRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
@@ -98,13 +101,34 @@ public interface MyApi {
     Call<SubscriptionsResponse> subscriptionSubscriptions(
             @Header("AuthorizationToken") String token,
             @Header("UserId") String userId);
-            //@Body SubscriptionsRequest body);
-    //Call<SubscriptionsResponse> subscriptionSubscriptions(@Body SubscriptionsRequest body);
-
+  
     @POST("getEvents")
     Call<EventsResponse> subscriptionEvents(
             @Header("AuthorizationToken") String token,
             @Header("UserId") String userId,
             @Body SubscriptionEventsRequest body);
 
+
+    /*
+     * Votes Requests
+     */
+
+    @POST("vote")
+    Call<BasicResponse> votesAddVote(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId,
+            @Body AddVoteRequest body
+        );
+
+    @POST("vote")
+    Call<BasicResponse> votesChangeVote(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId,
+            @Body ChangeVoteRequest body);
+
+    @POST("vote")
+    Call<BasicResponse> votesRemoveVote(
+            @Header("AuthorizationToken") String token,
+            @Header("UserId") String userId,
+            @Body RemoveVoteRequest body);
 }
