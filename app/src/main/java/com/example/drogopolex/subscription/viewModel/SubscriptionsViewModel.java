@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
+import com.example.drogopolex.subscription.listeners.SubscribeListener;
+import com.example.drogopolex.subscription.listeners.SubscriptionListListener;
+import com.example.drogopolex.subscription.listeners.SubscriptionsListener;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -19,8 +22,11 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
 
     public SharedPreferencesHolder sharedPreferencesHolder = null;
     public OnSuccessListener<LiveData<SubscriptionsResponse>> onSuccessListener = null;
+    public SubscriptionsListener subscriptionsListener;
+
 
     private SubscriptionsRepository subscriptionsRepository;
+
 
     public SubscriptionsViewModel(Application application) {
         super(application);

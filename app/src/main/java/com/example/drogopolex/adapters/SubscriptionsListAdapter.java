@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
 import com.example.drogopolex.RequestSingleton;
 import com.example.drogopolex.model.DrogopolexSubscription;
+import com.example.drogopolex.subscription.listeners.SubscriptionListListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,8 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
     private static ArrayList<DrogopolexSubscription> localDataSubs;
     private final Context context;
-
+    public Integer indexToUnsubscribeTo;
+    public SubscriptionListListener subscriptionListListener;
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView subscriptionText;
 
@@ -85,7 +87,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
             jsonObject.put("id_to_del",subId);
             jsonObject.put("user_id",userId);
             jsonObject.put("token", token);
-
+            indexToUnsubscribeTo =Integer.parseInt(subId);
 
             String url = "http://10.0.2.2:5000/unsubscribe";
             JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
@@ -105,7 +107,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
                     if(isSuccess){
                         Toast.makeText(context,"Subskrypcja usunieta",Toast.LENGTH_LONG).show();
-                        resetSubscriptions();
+                        //resetSubscriptions();
 
 
                     }else{

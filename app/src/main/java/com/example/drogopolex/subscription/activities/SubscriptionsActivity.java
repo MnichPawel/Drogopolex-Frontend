@@ -10,10 +10,15 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.databinding.ActivitySubscriptionsBinding;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexSubscription;
+import com.example.drogopolex.subscription.listeners.SubscribeListener;
+import com.example.drogopolex.subscription.listeners.SubscriptionListListener;
+import com.example.drogopolex.subscription.listeners.SubscriptionsListener;
+import com.example.drogopolex.subscription.utils.SubscribeAction;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.example.drogopolex.subscription.viewModel.SubscriptionsViewModel;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,7 +32,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder, OnSuccessListener<LiveData<SubscriptionsResponse>> {
+public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder, SubscriptionListListener, SubscriptionsListener { //OnSuccessListener<LiveData<SubscriptionsResponse>>,
     RecyclerView subscriptionsRecyclerView;
     ActivitySubscriptionsBinding activitySubscriptionsBinding;
     SubscriptionsListAdapter listAdapter;
@@ -41,7 +46,9 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         activitySubscriptionsBinding.setViewModel(new SubscriptionsViewModel(getApplication()));
         activitySubscriptionsBinding.executePendingBindings();
         activitySubscriptionsBinding.getViewModel().sharedPreferencesHolder = this;
-        activitySubscriptionsBinding.getViewModel().onSuccessListener = this;
+        //activitySubscriptionsBinding.getViewModel().onSuccessListener = this;
+        listAdapter.subscriptionListListener = this;
+        activitySubscriptionsBinding.getViewModel().subscriptionsListener = this;
 
 
 
@@ -82,6 +89,23 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
 
     public void getSubscriptions() {
         activitySubscriptionsBinding.getViewModel().requestSubscriptions();
+    }
+    @Override
+    public void onFailure(String s){
+        Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onSubscriptionsSuccess(LiveData<BasicResponse> subscriptionsResponseLiveData) {
+        subscriptionsResponseLiveData.observe(this, new Observer<BasicResponse>() {
+            @Override
+            public void onChanged(BasicResponse subscriptionsResponse) {
+                if(subscriptionsResponse != null) {
+                    subscriptions.remove(listAdapter.indexToUnsubscribeTo);
+                } else {
+                    Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
