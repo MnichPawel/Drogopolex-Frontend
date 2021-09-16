@@ -15,13 +15,10 @@ import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.databinding.ActivitySubscriptionsBinding;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexSubscription;
-import com.example.drogopolex.subscription.listeners.SubscribeListener;
 import com.example.drogopolex.subscription.listeners.SubscriptionListListener;
 import com.example.drogopolex.subscription.listeners.SubscriptionsListener;
-import com.example.drogopolex.subscription.utils.SubscribeAction;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.example.drogopolex.subscription.viewModel.SubscriptionsViewModel;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
@@ -47,8 +44,8 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         activitySubscriptionsBinding.executePendingBindings();
         activitySubscriptionsBinding.getViewModel().sharedPreferencesHolder = this;
         //activitySubscriptionsBinding.getViewModel().onSuccessListener = this;
-        listAdapter.subscriptionListListener = this;
-        activitySubscriptionsBinding.getViewModel().subscriptionsListener = this;
+//        listAdapter.subscriptionListListener = this;
+        activitySubscriptionsBinding.getViewModel().subscriptionListListener = this;
 
 
 
@@ -95,12 +92,12 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
     }
     @Override
-    public void onSubscriptionsSuccess(LiveData<BasicResponse> subscriptionsResponseLiveData) {
+    public void onSubscriptionsSuccess(LiveData<BasicResponse> subscriptionsResponseLiveData, int indexToDelete) {
         subscriptionsResponseLiveData.observe(this, new Observer<BasicResponse>() {
             @Override
             public void onChanged(BasicResponse subscriptionsResponse) {
                 if(subscriptionsResponse != null) {
-                    subscriptions.remove(listAdapter.indexToUnsubscribeTo);
+                    subscriptions.remove(indexToDelete);
                 } else {
                     Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
                 }
@@ -126,6 +123,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
                         listAdapter.notifyDataSetChanged();
                     } else {
                         listAdapter = new SubscriptionsListAdapter(subscriptions, SubscriptionsActivity.this);
+                        listAdapter.subscriptionsListener = SubscriptionsActivity.this;
                         subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(SubscriptionsActivity.this));
                         subscriptionsRecyclerView.setAdapter(listAdapter);
                     }

@@ -104,7 +104,6 @@ public interface MyApi {
             @Header("UserId") String userId);
 
     @POST("unsubscribe")
-
     Call<BasicResponse> subscriptionUnsubscribe(
             @Header("AuthorizationToken") String token,
             @Header("UserId") String userId,
