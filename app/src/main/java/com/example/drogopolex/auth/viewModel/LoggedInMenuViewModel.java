@@ -43,6 +43,10 @@ public class LoggedInMenuViewModel extends ViewModel {
         mAction.setValue(new LoggedInMenuAction(LoggedInMenuAction.SHOW_PROFILE));
     }
 
+    public void onMapClicked(){
+        mAction.setValue(new LoggedInMenuAction(LoggedInMenuAction.SHOW_MAP));
+    }
+
     public void onLogoutClicked(){
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         boolean loggedIn = sharedPreferences.getBoolean("loggedIn", false);

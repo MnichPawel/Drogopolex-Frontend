@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.drogopolex.MapActivity;
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.utils.LoggedInMenuAction;
 import com.example.drogopolex.auth.viewModel.LoggedInMenuViewModel;
@@ -71,6 +72,10 @@ public class LoggedInMenuActivity extends AppCompatActivity implements SharedPre
             case LoggedInMenuAction.SHOW_LOGIN_MENU:
                 Intent goToLoginMenuActivityIntent = new Intent(this, LoginMenuActivity.class);
                 startActivity(goToLoginMenuActivityIntent);
+                break;
+            case LoggedInMenuAction.SHOW_MAP:
+                Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
+                startActivity(goToMapActivityIntent);
                 break;
         }
     }
