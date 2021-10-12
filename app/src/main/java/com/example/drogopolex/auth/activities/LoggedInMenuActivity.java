@@ -6,13 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.example.drogopolex.MapActivity;
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.utils.LoggedInMenuAction;
 import com.example.drogopolex.auth.viewModel.LoggedInMenuViewModel;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityLoggedInMenuBinding;
 import com.example.drogopolex.events.activities.EventsActivity;
+import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.events.activities.NewEventActivity;
 import com.example.drogopolex.listeners.BasicListener;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;

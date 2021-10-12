@@ -22,6 +22,7 @@ import com.example.drogopolex.events.viewModel.EventsSearchViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -103,6 +104,7 @@ public class EventsSearchActivity extends AppCompatActivity implements EventsLis
                                         event.getCountry(),
                                         event.getStreet(),
                                         Integer.parseInt(event.getId()),
+                                        new LatLng(0.0,0.0),
                                         Integer.parseInt(event.getValueOfVotes()),
                                         userVoteType
                                 ));

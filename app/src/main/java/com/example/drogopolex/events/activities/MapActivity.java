@@ -9,51 +9,54 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.adapters.EventListAdapter;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
-import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.data.network.response.EventsResponse;
-import com.example.drogopolex.databinding.ActivityEventsBinding;
+import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.utils.EventsAction;
-import com.example.drogopolex.events.viewModel.EventsViewModel;
+import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.model.VoteType;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import static com.example.drogopolex.constants.AppConstant.PERMISSIONS_REQUEST_LOCATION;
 
-public class EventsActivity extends AppCompatActivity implements OnSuccessListener<LiveData<EventsResponse>>, SharedPreferencesHolder {
-    ActivityEventsBinding activityEventsBinding;
-    EventListAdapter eventListAdapter;
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, OnSuccessListener<LiveData<EventsResponse>>, SharedPreferencesHolder {
 
-    RecyclerView recyclerView;
+    GoogleMap map;
+    ActivityMapBinding activityMapBinding;
 
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityEventsBinding = DataBindingUtil.setContentView(this, R.layout.activity_events);
-        activityEventsBinding.setViewModel(new EventsViewModel(getApplication()));
-        activityEventsBinding.executePendingBindings();
-        activityEventsBinding.getViewModel().onSuccessListener = this;
-        activityEventsBinding.getViewModel().sharedPreferencesHolder = this;
+        activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
+        activityMapBinding.setViewModel(new MapViewModel(getApplication()));
+        activityMapBinding.executePendingBindings();
+        activityMapBinding.getViewModel().onSuccessListener = this;
+        activityMapBinding.getViewModel().sharedPreferencesHolder = this;
 
-        activityEventsBinding.getViewModel().getAction().observe(this, new Observer<EventsAction>() {
+        activityMapBinding.getViewModel().getAction().observe(this, new Observer<EventsAction>() {
             @Override
             public void onChanged(EventsAction eventsAction) {
                 if(eventsAction != null){
@@ -62,15 +65,11 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
             }
         });
 
-        recyclerView = (RecyclerView) findViewById(R.id.eventsListView);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        if(!sp.getBoolean("loggedIn", false)){
-            Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
-            startActivity(goToMainActivityIntent);
-        }
+        mapFragment.getMapAsync(this);
 
-        prepRequestLocationUpdates();
     }
 
     private void handleAction(EventsAction eventsAction) {
@@ -83,6 +82,13 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
                 Intent goToEventsSearchIntent = new Intent(this, EventsSearchActivity.class);
                 startActivity(goToEventsSearchIntent);
         }
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        map = googleMap;
+
+        prepRequestLocationUpdates();
     }
 
     private void prepRequestLocationUpdates() {
@@ -100,24 +106,21 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
     }
 
     private void requestLocationUpdates() {
-        activityEventsBinding.getViewModel().getLocationLiveData().observe(this, new Observer<LocationDetails>() {
+        activityMapBinding.getViewModel().getLocationLiveData().observe(this, new Observer<LocationDetails>() {
             @Override
             public void onChanged(LocationDetails locationDetails) {
-                activityEventsBinding.getViewModel().onLocationChanged(locationDetails);
+                activityMapBinding.getViewModel().onLocationChanged(locationDetails);
+                LatLng location = new LatLng(
+                        Double.parseDouble(locationDetails.getLatitude()),
+                        Double.parseDouble(locationDetails.getLatitude()));
+                map.moveCamera(CameraUpdateFactory.newLatLng(location));
             }
         });
     }
 
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                requestLocationUpdates();
-            } else {
-                Toast.makeText(this, "Nie można uzyskać lokalizacji bez uprawnień.", Toast.LENGTH_SHORT).show();
-            }
-        }
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -134,32 +137,42 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
                                 else if("-1".equals(event.getUserVote())) userVoteType = VoteType.DOWNVOTED;
                                 else userVoteType = VoteType.NO_VOTE;
 
+                                LatLng coordinates = parseCoordinatesString(event.getCoordinates());
+
                                 eventListData.add(new DrogopolexEvent(
                                         event.getType(),
                                         event.getCountry(),
                                         event.getStreet(),
                                         Integer.parseInt(event.getId()),
-                                        new LatLng(0.0,0.0),
+                                        coordinates,
                                         Integer.parseInt(event.getValueOfVotes()),
                                         userVoteType
                                 ));
+
+                                map.addMarker(new MarkerOptions().position(coordinates).title(event.getType()));
                             });
-                    if(eventListAdapter != null) {
-                        eventListAdapter.notifyDataSetChanged();
-                    } else {
-                        eventListAdapter = new EventListAdapter(eventListData, EventsActivity.this);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(EventsActivity.this));
-                        recyclerView.setAdapter(eventListAdapter);
-                    }
+
                 } else {
-                    Toast.makeText(EventsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    @Override
-    public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+    private void addMapMarker(String name, LatLng latLng) {
+        LatLng maharashtra = new LatLng(19.204847, 73.039494);
+        map.addMarker(new MarkerOptions().position(maharashtra).title("Maharashtra"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(maharashtra));
+    }
+
+    private LatLng parseCoordinatesString(String latLngString) {
+        Pattern pattern = Pattern.compile("(.+),(.+)");
+        Matcher matcher = pattern.matcher(latLngString.replace("(","").replace(")",""));
+        if(matcher.find()){
+            return new LatLng(
+                    Double.parseDouble(matcher.group(1)),
+                    Double.parseDouble(matcher.group(2)));
+        }
+        return new LatLng(0.0,0.0); //TODO exception
     }
 }

@@ -17,6 +17,7 @@ import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
 import com.example.drogopolex.subscription.utils.SubscribedEventsAction;
 import com.example.drogopolex.subscription.viewModel.SubscribedEventsViewModel;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -107,6 +108,7 @@ public class SubscribedEventsActivity extends AppCompatActivity implements Share
                                         event.getCountry(),
                                         event.getStreet(),
                                         Integer.parseInt(event.getId()),
+                                        new LatLng(0.0,0.0),
                                         Integer.parseInt(event.getValueOfVotes()),
                                         userVoteType
                                 ));
