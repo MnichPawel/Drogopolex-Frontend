@@ -1,14 +1,9 @@
 package com.example.drogopolex.data.repositories;
 
 import com.example.drogopolex.data.network.MyApi;
-
-import com.example.drogopolex.data.network.request.SubscribeRequest;
-import com.example.drogopolex.data.network.request.EventsByGpsRequest;
-import com.example.drogopolex.data.network.request.FilterEventsRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
 import com.example.drogopolex.data.network.request.SubscriptionEventsRequest;
-//import com.example.drogopolex.data.network.request.SubscriptionsRequest;
-
+import com.example.drogopolex.data.network.request.UnsubscribeRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
@@ -92,6 +87,27 @@ public class SubscriptionsRepository {
             }
         });
         return getSubscribedEventsResponse;
+    }
+
+    public LiveData<BasicResponse> unsubscribeSubscriptions(String token, String userId, String idToDelete) {
+        final MutableLiveData<BasicResponse> unsubscribeResponse = new MutableLiveData<>();
+
+        myApi.subscriptionUnsubscribe(token, userId, new UnsubscribeRequest(idToDelete)).enqueue(new Callback<BasicResponse>() {
+            @Override
+            public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
+                if(response.isSuccessful()){
+                    unsubscribeResponse.setValue(response.body());
+                } else {
+                    unsubscribeResponse.setValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BasicResponse> call, Throwable t) {
+                unsubscribeResponse.setValue(null);
+            }
+        });
+        return unsubscribeResponse;
     }
 
 }
