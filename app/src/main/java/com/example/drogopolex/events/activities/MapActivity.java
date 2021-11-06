@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,12 +42,19 @@ import androidx.lifecycle.Observer;
 
 import static com.example.drogopolex.constants.AppConstant.PERMISSIONS_REQUEST_LOCATION;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback, OnSuccessListener<LiveData<EventsResponse>>, SharedPreferencesHolder {
+public class MapActivity extends FragmentActivity
+        implements OnMapReadyCallback,
+        OnSuccessListener<LiveData<EventsResponse>>,
+        SharedPreferencesHolder,
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener {
 
     GoogleMap map;
     ActivityMapBinding activityMapBinding;
 
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
+
+    boolean firstLocalizationUpdateLoaded = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,7 +68,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         activityMapBinding.getViewModel().getAction().observe(this, new Observer<EventsAction>() {
             @Override
             public void onChanged(EventsAction eventsAction) {
-                if(eventsAction != null){
+                if (eventsAction != null) {
                     handleAction(eventsAction);
                 }
             }
@@ -88,6 +97,19 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        map.setMyLocationEnabled(true);
+        map.setOnMyLocationButtonClickListener(this);
+        map.setOnMyLocationClickListener(this);
+
+        UiSettings mapSettings = map.getUiSettings();
+        mapSettings.setZoomControlsEnabled(true);
+        mapSettings.setMapToolbarEnabled(false);
+
+        mapSettings.setMyLocationButtonEnabled(true);
+
         prepRequestLocationUpdates();
     }
 
@@ -110,10 +132,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             @Override
             public void onChanged(LocationDetails locationDetails) {
                 activityMapBinding.getViewModel().onLocationChanged(locationDetails);
-                LatLng location = new LatLng(
-                        Double.parseDouble(locationDetails.getLatitude()),
-                        Double.parseDouble(locationDetails.getLatitude()));
-                map.moveCamera(CameraUpdateFactory.newLatLng(location));
+
+                if (!firstLocalizationUpdateLoaded) {
+                    firstLocalizationUpdateLoaded = true;
+                    LatLng location = new LatLng(
+                            Double.parseDouble(locationDetails.getLatitude()),
+                            Double.parseDouble(locationDetails.getLongitude()));
+                    Toast.makeText(getApplicationContext(), location.latitude + " - " + location.longitude, Toast.LENGTH_SHORT).show();
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
+                }
             }
         });
     }
@@ -174,5 +201,18 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     Double.parseDouble(matcher.group(2)));
         }
         return new LatLng(0.0,0.0); //TODO exception
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(getApplicationContext(), "Button clicked.", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        LatLng currentUserLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        Toast.makeText(getApplicationContext(), "onmlc " + currentUserLatLng.latitude + " - " + currentUserLatLng.longitude, Toast.LENGTH_SHORT).show();
+        map.moveCamera(CameraUpdateFactory.newLatLng(currentUserLatLng));
     }
 }
