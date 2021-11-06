@@ -20,6 +20,7 @@ import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.model.VoteType;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -119,10 +120,6 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
         }
     }
 
-    /*
-     * TODO
-     *  Votes are hard-coded to ZERO votes
-     */
     @Override
     public void onSuccess(LiveData<EventsResponse> eventsResponseLiveData) {
         eventsResponseLiveData.observe(this, new Observer<EventsResponse>() {
@@ -142,6 +139,7 @@ public class EventsActivity extends AppCompatActivity implements OnSuccessListen
                                         event.getCountry(),
                                         event.getStreet(),
                                         Integer.parseInt(event.getId()),
+                                        new LatLng(0.0,0.0),
                                         Integer.parseInt(event.getValueOfVotes()),
                                         userVoteType
                                 ));

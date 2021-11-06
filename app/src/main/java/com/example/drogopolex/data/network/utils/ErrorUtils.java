@@ -36,10 +36,6 @@ public class ErrorUtils {
             if(baseResponse.errorBody() != null) {
                 String responseBody = baseResponse.errorBody().string();
                 JsonObject jsonObject = new JsonParser().parse(responseBody).getAsJsonObject();
-                if(responseType != ResponseType.BASIC_RESPONSE) {
-                    String success = jsonObject.get("success").getAsString();
-                    response.setSuccess(success);
-                }
                 String error = jsonObject.get("error").getAsString();
                 response.setError(error);
             }

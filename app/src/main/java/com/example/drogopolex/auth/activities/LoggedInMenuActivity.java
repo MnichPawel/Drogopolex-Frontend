@@ -12,6 +12,7 @@ import com.example.drogopolex.auth.viewModel.LoggedInMenuViewModel;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityLoggedInMenuBinding;
 import com.example.drogopolex.events.activities.EventsActivity;
+import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.events.activities.NewEventActivity;
 import com.example.drogopolex.listeners.BasicListener;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
@@ -71,6 +72,10 @@ public class LoggedInMenuActivity extends AppCompatActivity implements SharedPre
             case LoggedInMenuAction.SHOW_LOGIN_MENU:
                 Intent goToLoginMenuActivityIntent = new Intent(this, LoginMenuActivity.class);
                 startActivity(goToLoginMenuActivityIntent);
+                break;
+            case LoggedInMenuAction.SHOW_MAP:
+                Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
+                startActivity(goToMapActivityIntent);
                 break;
         }
     }
