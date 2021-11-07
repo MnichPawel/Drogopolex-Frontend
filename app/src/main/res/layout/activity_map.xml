@@ -1,21 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="viewModel"
             type="com.example.drogopolex.events.viewModel.MapViewModel" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".events.activities.MapActivity">
 
         <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/dodajZdarzenie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:layout_marginStart="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/zdarzenie1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:visibility="invisible"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/dodajZdarzenie"
+            app:layout_constraintStart_toEndOf="@+id/dodajZdarzenie"
+            app:srcCompat="@drawable/ic_pedal" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/zdarzenie2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/zdarzenie1"
+            app:layout_constraintStart_toEndOf="@+id/zdarzenie1"
+            app:srcCompat="@drawable/thumb_down_checked" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

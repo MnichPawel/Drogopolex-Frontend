@@ -7,6 +7,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
@@ -27,6 +30,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -56,6 +60,15 @@ public class MapActivity extends FragmentActivity
 
     boolean firstLocalizationUpdateLoaded = false;
 
+    private Animation rightwardsOpenAnimation = AnimationUtils.loadAnimation(this,R.anim.rightwards_open_anim);
+    private Animation rightwardsCloseAnimation = AnimationUtils.loadAnimation(this,R.anim.rightwards_close_anim);
+    private Animation buttonJiggleStart = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_start);
+    private Animation buttonJiggleEnd = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_end);
+
+    private boolean clicked = false;
+    private FloatingActionButton addEventButt;
+    private FloatingActionButton eventType1;
+    private FloatingActionButton eventType2;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +92,7 @@ public class MapActivity extends FragmentActivity
 
         mapFragment.getMapAsync(this);
 
+        generateButtonsOnClickListeners();
     }
 
     private void handleAction(EventsAction eventsAction) {
@@ -214,5 +228,58 @@ public class MapActivity extends FragmentActivity
         LatLng currentUserLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         Toast.makeText(getApplicationContext(), "onmlc " + currentUserLatLng.latitude + " - " + currentUserLatLng.longitude, Toast.LENGTH_SHORT).show();
         map.moveCamera(CameraUpdateFactory.newLatLng(currentUserLatLng));
+    }
+    private void generateButtonsOnClickListeners(){
+
+        addEventButt = findViewById(R.id.dodajZdarzenie);
+        addEventButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clicked= !clicked;
+                Toast.makeText(getApplicationContext(), "Nacisnieto przycisk dodania zdarzenia", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        eventType1 = findViewById(R.id.zdarzenie1);
+        eventType1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setVisibility(clicked);
+                setAnimation(clicked);
+                Toast.makeText(getApplicationContext(), "Zdarzenie1", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        eventType2 = findViewById(R.id.zdarzenie2);
+        eventType2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setVisibility(clicked);
+                setAnimation(clicked);
+                Toast.makeText(getApplicationContext(), "Zdarzenie2", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setVisibility(boolean clicked){
+        if(clicked){
+            eventType1.setVisibility(View.INVISIBLE);
+            eventType2.setVisibility(View.INVISIBLE);
+        }else{
+            eventType1.setVisibility(View.VISIBLE);
+            eventType2.setVisibility(View.VISIBLE);
+        }
+    }
+    private void setAnimation(boolean clicked){
+        if(clicked){
+            eventType1.startAnimation(rightwardsCloseAnimation);
+            eventType2.startAnimation(rightwardsCloseAnimation);
+            addEventButt.startAnimation(buttonJiggleEnd);
+        }else{
+            eventType1.startAnimation(rightwardsOpenAnimation);
+            eventType2.startAnimation(rightwardsOpenAnimation);
+            addEventButt.startAnimation(buttonJiggleStart);
+        }
     }
 }
