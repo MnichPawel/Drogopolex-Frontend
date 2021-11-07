@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <translate
-        android:duration ="300"
-        android:fromXDelta="100%"
-        android:toXDelta="0%" />
+        android:duration ="3000"
+        android:fromXDelta="0%"
+        android:toXDelta="100%" />
     <scale
         android:pivotX="50%"
         android:pivotY="50%"
@@ -12,7 +12,7 @@
         android:toXScale="0.8"
         android:toYScale="0.8" />
     <alpha
-        android:fromAlpha="1"
-        android:toAlpha="0"
-        android:duration ="900" />
+        android:fromAlpha="0"
+        android:toAlpha="1"
+        android:duration ="200" />
 </set>

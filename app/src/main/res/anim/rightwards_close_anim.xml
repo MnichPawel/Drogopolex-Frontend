@@ -2,16 +2,16 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillAfter="true">
     <translate
-            android:duration ="300"
-            android:fromXDelta="0%"
-            android:toXDelta="100%" />
+            android:duration ="3000"
+            android:fromXDelta="100%"
+            android:toXDelta="0%" />
     <scale
             android:pivotX="50%"
             android:pivotY="50%"
             android:toXScale="0.8"
             android:toYScale="0.8" />
     <alpha
-            android:fromAlpha="0"
-            android:toAlpha="100"
-        android:duration ="900" />
+            android:fromAlpha="100"
+            android:toAlpha="0"
+        android:duration ="200" />
 </set>

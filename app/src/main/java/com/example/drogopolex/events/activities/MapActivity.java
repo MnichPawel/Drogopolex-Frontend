@@ -60,10 +60,10 @@ public class MapActivity extends FragmentActivity
 
     boolean firstLocalizationUpdateLoaded = false;
 
-    private Animation rightwardsOpenAnimation = AnimationUtils.loadAnimation(this,R.anim.rightwards_open_anim);
-    private Animation rightwardsCloseAnimation = AnimationUtils.loadAnimation(this,R.anim.rightwards_close_anim);
-    private Animation buttonJiggleStart = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_start);
-    private Animation buttonJiggleEnd = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_end);
+    private Animation rightwardsOpenAnimation;// = AnimationUtils.loadAnimation(this,R.anim.rightwards_open_anim);
+    private Animation rightwardsCloseAnimation;// = AnimationUtils.loadAnimation(this,R.anim.rightwards_close_anim);
+    private Animation buttonJiggleStart;// = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_start);
+    private Animation buttonJiggleEnd;// = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_end);
 
     private boolean clicked = false;
     private FloatingActionButton addEventButt;
@@ -91,6 +91,11 @@ public class MapActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
+
+        rightwardsOpenAnimation = AnimationUtils.loadAnimation(this,R.anim.rightwards_open_anim);
+        rightwardsCloseAnimation = AnimationUtils.loadAnimation(this,R.anim.rightwards_close_anim);
+        buttonJiggleStart = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_start);
+        buttonJiggleEnd = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_end);
 
         generateButtonsOnClickListeners();
     }
@@ -235,9 +240,10 @@ public class MapActivity extends FragmentActivity
         addEventButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                clicked= !clicked;
                 Toast.makeText(getApplicationContext(), "Nacisnieto przycisk dodania zdarzenia", Toast.LENGTH_SHORT).show();
-
+                setVisibility(clicked);
+                setAnimation(clicked);
+                clicked = !clicked;
             }
         });
 
@@ -245,8 +251,6 @@ public class MapActivity extends FragmentActivity
         eventType1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setVisibility(clicked);
-                setAnimation(clicked);
                 Toast.makeText(getApplicationContext(), "Zdarzenie1", Toast.LENGTH_SHORT).show();
             }
         });
@@ -255,8 +259,6 @@ public class MapActivity extends FragmentActivity
         eventType2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setVisibility(clicked);
-                setAnimation(clicked);
                 Toast.makeText(getApplicationContext(), "Zdarzenie2", Toast.LENGTH_SHORT).show();
             }
         });
@@ -264,9 +266,10 @@ public class MapActivity extends FragmentActivity
 
     private void setVisibility(boolean clicked){
         if(clicked){
-            eventType1.setVisibility(View.INVISIBLE);
-            eventType2.setVisibility(View.INVISIBLE);
+            eventType1.setVisibility(View.GONE);
+            eventType2.setVisibility(View.GONE);
         }else{
+            Toast.makeText(getApplicationContext(), "set visible", Toast.LENGTH_SHORT).show();
             eventType1.setVisibility(View.VISIBLE);
             eventType2.setVisibility(View.VISIBLE);
         }
