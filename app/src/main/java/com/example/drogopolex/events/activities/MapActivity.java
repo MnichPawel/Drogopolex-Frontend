@@ -65,10 +65,14 @@ public class MapActivity extends FragmentActivity
     private Animation buttonJiggleStart;// = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_start);
     private Animation buttonJiggleEnd;// = AnimationUtils.loadAnimation(this,R.anim.button_jiggle_end);
 
-    private boolean clicked = false;
+    private boolean clickedAdd = false; //czy menu dodawania zdarzenia ma byc widoczne czy nie
+    private boolean switchAllChosen = true; //czy widzimy wszystkie zdarzenia czy tylko subskrypcje
     private FloatingActionButton addEventButt;
     private FloatingActionButton eventType1;
     private FloatingActionButton eventType2;
+    private FloatingActionButton menuButt;
+    private FloatingActionButton allEventsButt;
+    private FloatingActionButton onlySubsButt;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -241,9 +245,9 @@ public class MapActivity extends FragmentActivity
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "Nacisnieto przycisk dodania zdarzenia", Toast.LENGTH_SHORT).show();
-                setVisibility(clicked);
-                setAnimation(clicked);
-                clicked = !clicked;
+                setVisibility(clickedAdd);
+                setAnimation(clickedAdd);
+                clickedAdd = !clickedAdd;
             }
         });
 
@@ -262,8 +266,42 @@ public class MapActivity extends FragmentActivity
                 Toast.makeText(getApplicationContext(), "Zdarzenie2", Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
+
+
+        //menu
+        menuButt = findViewById(R.id.menu);
+        menuButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "menu glowne", Toast.LENGTH_SHORT).show();
+            }
+        });
+        //switch (2 buttons)
+        allEventsButt = findViewById(R.id.allEventsShown);
+        allEventsButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(allEventsButt.getVisibility()==View.VISIBLE) {
+                    switchAllChosen = !switchAllChosen;
+                    setVisibilitySwitch(switchAllChosen);
+
+                    Toast.makeText(getApplicationContext(), "all Events ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        onlySubsButt = findViewById(R.id.onlySubscriptionsShown);
+        onlySubsButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(onlySubsButt.getVisibility()==View.VISIBLE) {
+                    switchAllChosen = !switchAllChosen;
+                    setVisibilitySwitch(switchAllChosen);
+                    Toast.makeText(getApplicationContext(), "only Subs", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
     private void setVisibility(boolean clicked){
         if(clicked){
             eventType1.setVisibility(View.GONE);
@@ -272,6 +310,16 @@ public class MapActivity extends FragmentActivity
             Toast.makeText(getApplicationContext(), "set visible", Toast.LENGTH_SHORT).show();
             eventType1.setVisibility(View.VISIBLE);
             eventType2.setVisibility(View.VISIBLE);
+        }
+    }
+    private void setVisibilitySwitch(boolean clicked){ //setVisibility for switch buttons
+        if(clicked){
+            onlySubsButt.setVisibility(View.GONE);
+            allEventsButt.setVisibility(View.VISIBLE);
+        }else{
+            Toast.makeText(getApplicationContext(), "switch visibility changed", Toast.LENGTH_SHORT).show();
+            onlySubsButt.setVisibility(View.VISIBLE);
+            allEventsButt.setVisibility(View.GONE);
         }
     }
     private void setAnimation(boolean clicked){
