@@ -66,7 +66,7 @@
             android:layout_marginTop="24dp"
             android:clickable="true"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/map"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_menu" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -76,8 +76,8 @@
             android:layout_marginEnd="24dp"
             android:layout_marginTop="24dp"
             android:clickable="true"
-            app:layout_constraintEnd_toEndOf="@+id/map"
-            app:layout_constraintTop_toTopOf="@+id/map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_switch_left" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -88,8 +88,8 @@
             android:layout_marginTop="24dp"
             android:clickable="true"
             android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="@+id/map"
-            app:layout_constraintTop_toTopOf="@+id/map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_switch_right" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

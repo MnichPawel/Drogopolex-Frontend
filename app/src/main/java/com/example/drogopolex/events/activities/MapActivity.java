@@ -244,7 +244,6 @@ public class MapActivity extends FragmentActivity
         addEventButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Nacisnieto przycisk dodania zdarzenia", Toast.LENGTH_SHORT).show();
                 setVisibility(clickedAdd);
                 setAnimation(clickedAdd);
                 clickedAdd = !clickedAdd;
@@ -307,7 +306,6 @@ public class MapActivity extends FragmentActivity
             eventType1.setVisibility(View.GONE);
             eventType2.setVisibility(View.GONE);
         }else{
-            Toast.makeText(getApplicationContext(), "set visible", Toast.LENGTH_SHORT).show();
             eventType1.setVisibility(View.VISIBLE);
             eventType2.setVisibility(View.VISIBLE);
         }
@@ -317,7 +315,6 @@ public class MapActivity extends FragmentActivity
             onlySubsButt.setVisibility(View.GONE);
             allEventsButt.setVisibility(View.VISIBLE);
         }else{
-            Toast.makeText(getApplicationContext(), "switch visibility changed", Toast.LENGTH_SHORT).show();
             onlySubsButt.setVisibility(View.VISIBLE);
             allEventsButt.setVisibility(View.GONE);
         }
