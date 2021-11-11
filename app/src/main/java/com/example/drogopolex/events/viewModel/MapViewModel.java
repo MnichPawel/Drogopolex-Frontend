@@ -41,11 +41,6 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private final EventsRepository eventsRepository;
     private final SubscriptionsRepository subscriptionsRepository;
 
-    public int eventWypadekButtonVisibility = View.VISIBLE;
-    public int eventKorekButtonVisibility = View.VISIBLE;
-    public int eventPatrolPolicjiButtonVisibility = View.VISIBLE;
-    public int eventRobotyDrogoweButtonVisibility = View.VISIBLE;
-
     public boolean addEventButtonClicked = false;
     private boolean isOnlySubs = false;
 

@@ -2,7 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="viewModel"
             type="com.example.drogopolex.events.viewModel.MapViewModel" />
@@ -13,45 +15,34 @@
         android:layout_height="match_parent"
         tools:context=".events.activities.MapActivity">
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/dodajZdarzenie"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
             android:layout_marginStart="24dp"
+            android:layout_marginBottom="24dp"
             android:clickable="true"
             android:focusable="true"
-            android:tint="@color/white"
             android:onClick="@{()-> viewModel.onAddEventClicked()}"
+            android:tint="@color/white"
+            app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add"
-            app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}"
-            />
+            app:srcCompat="@drawable/ic_add" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/event_wypadek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:visibility="@{viewModel.eventWypadekButtonVisibility}"
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()-> viewModel.onEventWypadekClicked()}"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/dodajZdarzenie"
             app:layout_constraintStart_toEndOf="@+id/dodajZdarzenie"
-            app:srcCompat="@drawable/ic_pedal"
-            app:showEventButton="@{viewModel.addEventButtonClicked}"/>
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            app:srcCompat="@drawable/ic_pedal" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/event_korek"
@@ -60,12 +51,12 @@
             android:layout_marginStart="10dp"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="@{viewModel.eventKorekButtonVisibility}"
             android:onClick="@{()-> viewModel.onEventKorekClicked()}"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/event_wypadek"
             app:layout_constraintStart_toEndOf="@+id/event_wypadek"
-            app:srcCompat="@drawable/thumb_down_checked"
-            app:showEventButton="@{viewModel.addEventButtonClicked}"/>
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            app:srcCompat="@drawable/thumb_down_checked" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/event_patrol_policji"
@@ -75,7 +66,7 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()-> viewModel.onEventPatrolPolicjiClicked()}"
-            android:visibility="@{viewModel.eventPatrolPolicjiButtonVisibility}"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/event_korek"
             app:layout_constraintStart_toEndOf="@+id/event_korek"
             app:showEventButton="@{viewModel.addEventButtonClicked}"
@@ -89,7 +80,7 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()-> viewModel.onEventRobotyDrogoweClicked()}"
-            android:visibility="@{viewModel.eventRobotyDrogoweButtonVisibility}"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/event_patrol_policji"
             app:layout_constraintStart_toEndOf="@+id/event_patrol_policji"
             app:showEventButton="@{viewModel.addEventButtonClicked}"
@@ -112,14 +103,24 @@
             android:id="@+id/allEventsShown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="visible"
             android:onClick="@{(view)-> viewModel.onShowAllEventsClicked(view)}"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_switch_left" />
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
