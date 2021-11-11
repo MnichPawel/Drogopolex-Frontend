@@ -32,20 +32,26 @@
             android:clickable="true"
             android:focusable="true"
             android:tint="@color/white"
+            android:onClick="@{()-> viewModel.onAddEventClicked()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_add" />
+            app:srcCompat="@drawable/ic_add"
+            app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}"
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/zdarzenie1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:visibility="invisible"
+            android:visibility="@{viewModel.event1ButtonVisibility}"
             android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onEvent1Clicked()}"
             app:layout_constraintBottom_toBottomOf="@+id/dodajZdarzenie"
             app:layout_constraintStart_toEndOf="@+id/dodajZdarzenie"
-            app:srcCompat="@drawable/ic_pedal" />
+            app:srcCompat="@drawable/ic_pedal"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/zdarzenie2"
@@ -53,10 +59,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:clickable="true"
-            android:visibility="invisible"
+            android:focusable="true"
+            android:visibility="@{viewModel.event2ButtonVisibility}"
+            android:onClick="@{()-> viewModel.onEvent2Clicked()}"
             app:layout_constraintBottom_toBottomOf="@+id/zdarzenie1"
             app:layout_constraintStart_toEndOf="@+id/zdarzenie1"
-            app:srcCompat="@drawable/thumb_down_checked" />
+            app:srcCompat="@drawable/thumb_down_checked"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/menu"
@@ -65,6 +74,8 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onMenuClicked()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_menu" />
@@ -76,20 +87,11 @@
             android:layout_marginEnd="24dp"
             android:layout_marginTop="24dp"
             android:clickable="true"
+            android:focusable="true"
+            android:visibility="visible"
+            android:onClick="@{(view)-> viewModel.onShowAllEventsClicked(view)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_switch_left" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/onlySubscriptionsShown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="24dp"
-            android:clickable="true"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_switch_right" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
