@@ -146,6 +146,7 @@ public class MapActivity extends FragmentActivity
         eventsResponseLiveData.observe(this, eventsResponse -> {
             if(eventsResponse != null) {
                 eventListData.clear();
+                map.clear();
                 eventsResponse.getEvents()
                         .forEach(event -> {
                             VoteType userVoteType;
