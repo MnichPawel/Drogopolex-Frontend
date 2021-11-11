@@ -40,32 +40,60 @@
             />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/zdarzenie1"
+            android:id="@+id/event_wypadek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:visibility="@{viewModel.event1ButtonVisibility}"
+            android:visibility="@{viewModel.eventWypadekButtonVisibility}"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="@{()-> viewModel.onEvent1Clicked()}"
+            android:onClick="@{()-> viewModel.onEventWypadekClicked()}"
             app:layout_constraintBottom_toBottomOf="@+id/dodajZdarzenie"
             app:layout_constraintStart_toEndOf="@+id/dodajZdarzenie"
             app:srcCompat="@drawable/ic_pedal"
             app:showEventButton="@{viewModel.addEventButtonClicked}"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/zdarzenie2"
+            android:id="@+id/event_korek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="@{viewModel.event2ButtonVisibility}"
-            android:onClick="@{()-> viewModel.onEvent2Clicked()}"
-            app:layout_constraintBottom_toBottomOf="@+id/zdarzenie1"
-            app:layout_constraintStart_toEndOf="@+id/zdarzenie1"
+            android:visibility="@{viewModel.eventKorekButtonVisibility}"
+            android:onClick="@{()-> viewModel.onEventKorekClicked()}"
+            app:layout_constraintBottom_toBottomOf="@+id/event_wypadek"
+            app:layout_constraintStart_toEndOf="@+id/event_wypadek"
             app:srcCompat="@drawable/thumb_down_checked"
             app:showEventButton="@{viewModel.addEventButtonClicked}"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/event_patrol_policji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onEventPatrolPolicjiClicked()}"
+            android:visibility="@{viewModel.eventPatrolPolicjiButtonVisibility}"
+            app:layout_constraintBottom_toBottomOf="@+id/event_korek"
+            app:layout_constraintStart_toEndOf="@+id/event_korek"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/event_roboty_drogowe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onEventRobotyDrogoweClicked()}"
+            android:visibility="@{viewModel.eventRobotyDrogoweButtonVisibility}"
+            app:layout_constraintBottom_toBottomOf="@+id/event_patrol_policji"
+            app:layout_constraintStart_toEndOf="@+id/event_patrol_policji"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/menu"

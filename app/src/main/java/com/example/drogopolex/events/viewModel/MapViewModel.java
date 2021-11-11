@@ -8,14 +8,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.example.drogopolex.R;
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
+import com.example.drogopolex.events.listeners.MapActivityListener;
 import com.example.drogopolex.events.utils.EventsAction;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
@@ -34,14 +35,16 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
     private LocationLiveData locationLiveData;
 
-    public OnSuccessListener<LiveData<EventsResponse>> onSuccessListener = null;
+    public MapActivityListener mapActivityListener = null;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
 
-    private EventsRepository eventsRepository;
-    private SubscriptionsRepository subscriptionsRepository;
+    private final EventsRepository eventsRepository;
+    private final SubscriptionsRepository subscriptionsRepository;
 
-    public int event1ButtonVisibility = View.VISIBLE;
-    public int event2ButtonVisibility = View.VISIBLE;
+    public int eventWypadekButtonVisibility = View.VISIBLE;
+    public int eventKorekButtonVisibility = View.VISIBLE;
+    public int eventPatrolPolicjiButtonVisibility = View.VISIBLE;
+    public int eventRobotyDrogoweButtonVisibility = View.VISIBLE;
 
     public boolean addEventButtonClicked = false;
     private boolean isOnlySubs = false;
@@ -65,14 +68,12 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         return locationLiveData;
     }
 
-    public void onLocationChanged(LocationDetails location) {
-        if(!isOnlySubs) {
-            SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String userId = sharedPreferences.getString("user_id", "");
-            String token = sharedPreferences.getString("token", "");
-            eventsLiveData = eventsRepository.getEventsFromUserArea(userId, token, location.getLatitude(), location.getLongitude());
-            onSuccessListener.onSuccess(eventsLiveData);
+    public boolean onLocationChanged(LocationDetails location) {
+        if (!isOnlySubs) {
+            fetchNearbyEvents(location);
+            return true;
         }
+        return false;
     }
 
     public void onAddEventClicked() {
@@ -81,12 +82,20 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         notifyPropertyChanged(BR.addEventButtonClicked);
     }
 
-    public void onEvent1Clicked() {
-//        to implement
+    public void onEventWypadekClicked() {
+        addNewEvent("Wypadek");
     }
 
-    public void onEvent2Clicked() {
-//        to implement
+    public void onEventKorekClicked() {
+        addNewEvent("Korek");
+    }
+
+    public void onEventPatrolPolicjiClicked() {
+        addNewEvent("Patrol Policji");
+    }
+
+    public void onEventRobotyDrogoweClicked() {
+        addNewEvent("Roboty Drogowe");
     }
 
     public void onMenuClicked() {
@@ -96,13 +105,13 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     public void onShowAllEventsClicked(View view) {
         Log.d("SHOW_ALL_EVENTS", "saec  " + view.getVisibility());
         view.startAnimation(flipButtonOut);
-        if(isOnlySubs) { // switch to nearby events
+        if (isOnlySubs) { // switch to nearby events
             isOnlySubs = false;
-            ((FloatingActionButton)view).setImageResource(R.drawable.ic_switch_left);
+            ((FloatingActionButton) view).setImageResource(R.drawable.ic_switch_left);
             fetchNearbyEvents();
         } else {  // switch to subscribed events
             isOnlySubs = true;
-            ((FloatingActionButton)view).setImageResource(R.drawable.ic_switch_right);
+            ((FloatingActionButton) view).setImageResource(R.drawable.ic_switch_right);
             fetchSubscribedEvents();
         }
     }
@@ -142,22 +151,38 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         callbacks.notifyCallbacks(this, fieldId, null);
     }
 
-    private void fetchSubscribedEvents(){
+    private void fetchSubscribedEvents() {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
         eventsLiveData = subscriptionsRepository.getSubscribedEvents(token, userId);
-        onSuccessListener.onSuccess(eventsLiveData);
+        mapActivityListener.onGetEventsSuccess(eventsLiveData);
     }
 
     private void fetchNearbyEvents() {
         LocationDetails locationDetails = locationLiveData.getValue();
-        if(locationDetails != null) {
+        if (locationDetails != null) {
+            fetchNearbyEvents(locationDetails);
+        }
+    }
+
+    private void fetchNearbyEvents(LocationDetails locationDetails) {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String userId = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+        eventsLiveData = eventsRepository.getEventsFromUserArea(userId, token, locationDetails.getLatitude(), locationDetails.getLongitude());
+        mapActivityListener.onGetEventsSuccess(eventsLiveData);
+    }
+
+    private void addNewEvent(String type) {
+        LocationDetails locationDetails = locationLiveData.getValue();
+        if (locationDetails != null) {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
             String userId = sharedPreferences.getString("user_id", "");
             String token = sharedPreferences.getString("token", "");
-            eventsLiveData = eventsRepository.getEventsFromUserArea(userId, token, locationDetails.getLatitude(), locationDetails.getLongitude());
-            onSuccessListener.onSuccess(eventsLiveData);
+
+            LiveData<BasicResponse> addEventResponse = eventsRepository.addEventByGps(locationDetails, type, userId, token);
+            mapActivityListener.onAddNewEventSuccess(addEventResponse);
         }
     }
 }

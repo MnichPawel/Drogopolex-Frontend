@@ -11,8 +11,10 @@ import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
+import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.databinding.ActivityMapBinding;
+import com.example.drogopolex.events.listeners.MapActivityListener;
 import com.example.drogopolex.events.utils.EventsAction;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
@@ -25,7 +27,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -42,7 +43,7 @@ import static com.example.drogopolex.constants.AppConstant.PERMISSIONS_REQUEST_L
 
 public class MapActivity extends FragmentActivity
         implements OnMapReadyCallback,
-        OnSuccessListener<LiveData<EventsResponse>>,
+        MapActivityListener,
         SharedPreferencesHolder,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener {
@@ -60,7 +61,7 @@ public class MapActivity extends FragmentActivity
         activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
         activityMapBinding.setViewModel(new MapViewModel(getApplication()));
         activityMapBinding.executePendingBindings();
-        activityMapBinding.getViewModel().onSuccessListener = this;
+        activityMapBinding.getViewModel().mapActivityListener = this;
         activityMapBinding.getViewModel().sharedPreferencesHolder = this;
 
         activityMapBinding.getViewModel().getAction().observe(this, eventsAction -> {
@@ -112,7 +113,7 @@ public class MapActivity extends FragmentActivity
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
-                    new String[] {
+                    new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION
                     }, PERMISSIONS_REQUEST_LOCATION);
@@ -123,9 +124,9 @@ public class MapActivity extends FragmentActivity
 
     private void requestLocationUpdates() {
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
-            activityMapBinding.getViewModel().onLocationChanged(locationDetails);
+            boolean moveCameraToUser = activityMapBinding.getViewModel().onLocationChanged(locationDetails);
 
-            if (!firstLocalizationUpdateLoaded) {
+            if (!firstLocalizationUpdateLoaded || moveCameraToUser) {
                 firstLocalizationUpdateLoaded = true;
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
@@ -142,16 +143,33 @@ public class MapActivity extends FragmentActivity
     }
 
     @Override
-    public void onSuccess(LiveData<EventsResponse> eventsResponseLiveData) {
+    public void onAddNewEventSuccess(LiveData<BasicResponse> response) {
+        response.observe(this, basicResponse -> {
+            if (basicResponse != null) {
+                if ("true".equals(basicResponse.getSuccess())) {
+                    Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                } else {
+                    String errorMessage = basicResponse.getError();
+                    Toast.makeText(MapActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onGetEventsSuccess(LiveData<EventsResponse> eventsResponseLiveData) {
         eventsResponseLiveData.observe(this, eventsResponse -> {
-            if(eventsResponse != null) {
+            if (eventsResponse != null) {
                 eventListData.clear();
                 map.clear();
                 eventsResponse.getEvents()
                         .forEach(event -> {
                             VoteType userVoteType;
-                            if("1".equals(event.getUserVote())) userVoteType = VoteType.UPVOTED;
-                            else if("-1".equals(event.getUserVote())) userVoteType = VoteType.DOWNVOTED;
+                            if ("1".equals(event.getUserVote())) userVoteType = VoteType.UPVOTED;
+                            else if ("-1".equals(event.getUserVote()))
+                                userVoteType = VoteType.DOWNVOTED;
                             else userVoteType = VoteType.NO_VOTE;
 
                             LatLng coordinates = parseCoordinatesString(event.getCoordinates());
@@ -177,13 +195,13 @@ public class MapActivity extends FragmentActivity
 
     private LatLng parseCoordinatesString(String latLngString) {
         Pattern pattern = Pattern.compile("(.+),(.+)");
-        Matcher matcher = pattern.matcher(latLngString.replace("(","").replace(")",""));
-        if(matcher.find()){
+        Matcher matcher = pattern.matcher(latLngString.replace("(", "").replace(")", ""));
+        if (matcher.find()) {
             return new LatLng(
                     Double.parseDouble(matcher.group(1)),
                     Double.parseDouble(matcher.group(2)));
         }
-        return new LatLng(0.0,0.0); //TODO exception
+        return new LatLng(0.0, 0.0); //TODO exception
     }
 
     @Override
