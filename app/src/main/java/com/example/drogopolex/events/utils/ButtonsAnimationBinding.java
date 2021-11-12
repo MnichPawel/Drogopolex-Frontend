@@ -38,4 +38,12 @@ public class ButtonsAnimationBinding {
             view.startAnimation(buttonJiggleEnd);
         }
     }
+
+    @BindingAdapter("customVisibility")
+    public static void setVisibilityMenu(View view, boolean visibility) {
+        if(visibility)
+        view.setVisibility(View.VISIBLE);
+        else
+            view.setVisibility(View.INVISIBLE);
+    }
 }

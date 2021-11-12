@@ -13,6 +13,7 @@ import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.events.listeners.MapActivityListener;
+import com.example.drogopolex.events.utils.ButtonsAnimationBinding;
 import com.example.drogopolex.events.utils.EventsAction;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
@@ -22,6 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
 import androidx.databinding.Observable;
+import androidx.databinding.ObservableField;
 import androidx.databinding.PropertyChangeRegistry;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.AndroidViewModel;
@@ -43,6 +45,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public boolean addEventButtonClicked = false;
     private boolean isOnlySubs = false;
+    public ObservableField<Boolean> menuOpened = new ObservableField();
 
     private final Animation flipButtonOut;
 
@@ -94,7 +97,26 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onMenuClicked() {
-//        to implement
+
+
+        menuOpened.set(!menuOpened.get());
+        if(menuOpened.get()){
+            //ButtonsAnimationBinding.setVisibilityMenu(o tutaj chce sobie napisać ktory guzik,menuOpened.get());
+
+        }
+    }
+
+    public void onLogoutClicked() {
+
+        //        to implement
+    }
+
+    public void onGoToSubsClicked() {
+        //        to implement
+    }
+
+    public void onGoToProfileClicked() {
+        //        to implement
     }
 
     public void onShowAllEventsClicked(View view) {
