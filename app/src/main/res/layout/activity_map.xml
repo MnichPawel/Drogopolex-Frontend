@@ -127,36 +127,39 @@
             android:id="@+id/logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:clickable="true"
-            app:layout_constraintStart_toStartOf="@+id/goToProfile"
-            app:layout_constraintTop_toBottomOf="@+id/goToProfile"
+            android:onClick="@{(view)-> viewModel.onLogoutClicked()}"
             android:visibility="invisible"
             app:customVisibility="@{viewModel.menuOpened}"
-            android:onClick="@{(view)-> viewModel.onLogoutClicked()}"
+            app:layout_constraintStart_toStartOf="@+id/goToProfile"
+            app:layout_constraintTop_toBottomOf="@+id/goToProfile"
             app:srcCompat="@drawable/ic_logout" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToSubs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:clickable="true"
-            app:layout_constraintStart_toStartOf="@+id/menu"
-            app:layout_constraintTop_toBottomOf="@+id/menu"
+            android:onClick="@{(view)-> viewModel.onGoToSubsClicked()}"
             android:visibility="invisible"
             app:customVisibility="@{viewModel.menuOpened}"
-            android:onClick="@{(view)-> viewModel.onGoToSubsClicked()}"
+            app:layout_constraintStart_toStartOf="@+id/menu"
+            app:layout_constraintTop_toBottomOf="@+id/menu"
             app:srcCompat="@drawable/ic_subscriptions" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:clickable="true"
-            app:layout_constraintStart_toStartOf="@+id/goToSubs"
-            app:layout_constraintTop_toBottomOf="@+id/goToSubs"
+            android:onClick="@{(view)-> viewModel.onGoToProfileClicked()}"
             android:visibility="invisible"
             app:customVisibility="@{viewModel.menuOpened}"
-            android:onClick="@{(view)-> viewModel.onGoToProfileClicked()}"
+            app:layout_constraintStart_toStartOf="@+id/goToSubs"
+            app:layout_constraintTop_toBottomOf="@+id/goToSubs"
             app:srcCompat="@drawable/ic_profile" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

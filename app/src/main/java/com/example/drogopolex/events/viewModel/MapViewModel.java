@@ -45,7 +45,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public boolean addEventButtonClicked = false;
     private boolean isOnlySubs = false;
-    public ObservableField<Boolean> menuOpened = new ObservableField();
+    public ObservableField<Boolean> menuOpened = new ObservableField(false);
 
     private final Animation flipButtonOut;
 
