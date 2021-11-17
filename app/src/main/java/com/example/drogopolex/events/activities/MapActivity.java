@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -25,6 +28,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -32,9 +37,11 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
@@ -184,13 +191,37 @@ public class MapActivity extends FragmentActivity
                                     userVoteType
                             ));
 
-                            map.addMarker(new MarkerOptions().position(coordinates).title(event.getType()));
+                            map.addMarker(new MarkerOptions().position(coordinates).title(event.getType()).icon(findIconForType(event.getType())));
                         });
 
             } else {
                 Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private BitmapDescriptor svgToBitmap(@DrawableRes int id){
+        Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
+        assert vectorDrawable != null;
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+    private BitmapDescriptor findIconForType(String type){
+        if("Wypadek".equals(type)){
+            return svgToBitmap(R.drawable.ic_wypadek);
+        }
+        if("Korek".equals(type)){
+            return svgToBitmap(R.drawable.ic_korek);
+        }
+        if("Patrol Policji".equals(type)){
+            return svgToBitmap(R.drawable.ic_radar);
+        }
+        else{ //Roboty Drogowe
+            return svgToBitmap(R.drawable.ic_roboty);
+        }
     }
 
     private LatLng parseCoordinatesString(String latLngString) {

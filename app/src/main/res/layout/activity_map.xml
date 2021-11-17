@@ -42,13 +42,14 @@
             app:layout_constraintBottom_toBottomOf="@+id/dodajZdarzenie"
             app:layout_constraintStart_toEndOf="@+id/dodajZdarzenie"
             app:showEventButton="@{viewModel.addEventButtonClicked}"
-            app:srcCompat="@drawable/ic_pedal" />
+            app:srcCompat="@drawable/ic_wypadekround" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/event_korek"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_above="@id/map"
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()-> viewModel.onEventKorekClicked()}"
@@ -56,7 +57,10 @@
             app:layout_constraintBottom_toBottomOf="@+id/event_wypadek"
             app:layout_constraintStart_toEndOf="@+id/event_wypadek"
             app:showEventButton="@{viewModel.addEventButtonClicked}"
-            app:srcCompat="@drawable/thumb_down_checked" />
+            app:srcCompat="@drawable/ic_korekround"
+            android:background="@drawable/ic_korekround"
+            android:src="@drawable/ic_korekround"
+            tools:srcCompat="@drawable/ic_korekround"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/event_patrol_policji"
@@ -70,7 +74,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/event_korek"
             app:layout_constraintStart_toEndOf="@+id/event_korek"
             app:showEventButton="@{viewModel.addEventButtonClicked}"
-            app:srcCompat="@android:drawable/ic_dialog_map" />
+            app:srcCompat="@drawable/ic_radarround" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/event_roboty_drogowe"
@@ -84,7 +88,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/event_patrol_policji"
             app:layout_constraintStart_toEndOf="@+id/event_patrol_policji"
             app:showEventButton="@{viewModel.addEventButtonClicked}"
-            app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
+            app:srcCompat="@drawable/ic_robotyround" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/menu"
