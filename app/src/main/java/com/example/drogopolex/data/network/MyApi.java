@@ -39,19 +39,19 @@ public interface MyApi {
 
     @POST("logout")
     Call<BasicResponse> userLogout(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId);
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId);
 
     @POST("changeUserData")
     Call<BasicResponse> userChangeUserData(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body ChangeUserDataRequest body);
 
     @POST("myProfile")
     Call<ProfileResponse> userGetUserData(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId);
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId);
 
     /*
      * Events Requests
@@ -59,32 +59,32 @@ public interface MyApi {
 
     @POST("getEventsFromUserArea")
     Call<EventsResponse> eventsGetFromUserArea(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
+            @Header("User-Id") String userId,
+            @Header("Authorization-Token") String token,
             @Body EventsByGpsRequest body);
 
     @POST("addEvent")
     Call<BasicResponse> eventsAddEvent(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body AddEventRequest body);
 
     @POST("getEventsByLocalization")
     Call<EventsResponse> eventsGetEventsByLocalization(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
+            @Header("User-Id") String userId,
+            @Header("Authorization-Token") String token,
             @Body FilterEventsRequest body);
 
     @POST("getEventsByType")
     Call<EventsResponse> eventsGetEventsByType(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
+            @Header("User-Id") String userId,
+            @Header("Authorization-Token") String token,
             @Body FilterEventsRequest body);
 
     @POST("getEventsByTypeAndLoc")
     Call<EventsResponse> eventsGetEventsByTypeAndLocalization(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
+            @Header("User-Id") String userId,
+            @Header("Authorization-Token") String token,
             @Body FilterEventsRequest body);
 
     /*
@@ -93,26 +93,26 @@ public interface MyApi {
 
     @POST("subscribe")
     Call<BasicResponse> subscriptionSubscribe(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body SubscribeRequest body);
 
     @POST("subscriptions")
 
     Call<SubscriptionsResponse> subscriptionSubscriptions(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId);
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId);
 
     @POST("unsubscribe")
     Call<BasicResponse> subscriptionUnsubscribe(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body UnsubscribeRequest body);
 
     @POST("getEvents")
     Call<EventsResponse> subscriptionEvents(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body SubscriptionEventsRequest body);
 
 
@@ -122,20 +122,20 @@ public interface MyApi {
 
     @POST("vote")
     Call<BasicResponse> votesAddVote(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body AddVoteRequest body
         );
 
     @POST("change_vote")
     Call<BasicResponse> votesChangeVote(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body ChangeVoteRequest body);
 
     @POST("remove_vote")
     Call<BasicResponse> votesRemoveVote(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body RemoveVoteRequest body);
 }
