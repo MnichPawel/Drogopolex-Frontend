@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
+import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.auth.activities.ProfileActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
@@ -96,7 +97,11 @@ public class MapActivity extends FragmentActivity
                 startActivity(goToProfileIntent);
                 break;
             case MapAction.LOGOUT:
-
+                Intent goToLoginMenuIntent = new Intent(this, LoginMenuActivity.class);
+                startActivity(goToLoginMenuIntent);
+                break;
+            default:
+                Toast.makeText(MapActivity.this, "Nieznana akcja", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -42,6 +42,9 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
         mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_MAP));
     }
 
+    public void onGoToSubscibeClicked() {
+        mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_SUBSCRIBE));
+    }
 
     public LiveData<SubscriptionsAction> getAction() {
         return mAction;

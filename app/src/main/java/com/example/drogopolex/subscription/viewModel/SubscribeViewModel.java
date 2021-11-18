@@ -47,6 +47,6 @@ public class SubscribeViewModel extends ViewModel {
     }
 
     public void onReturnClicked(){
-        mAction.setValue(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIBED));
+        mAction.setValue(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIPTIONS));
     }
 }

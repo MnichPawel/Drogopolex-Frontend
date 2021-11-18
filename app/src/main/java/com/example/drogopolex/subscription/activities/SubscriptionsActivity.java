@@ -61,29 +61,34 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
 
         getSubscriptions();
     }
+
     @Override
     public SharedPreferences getSharedPreferences() {
         return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
+
     private void handleAction(SubscriptionsAction subscriptionsAction) {
         switch (subscriptionsAction.getValue()) {
             case SubscriptionsAction.SHOW_MAP:
                 Intent goToMapIntent = new Intent(this, MapActivity.class);
                 startActivity(goToMapIntent);
                 break;
-            case SubscriptionsAction.SHOW_SUBSCRIBED_EVENTS:
-                Intent goToSubscribedEventsIntent = new Intent(this, SubscribedEventsActivity.class);
-                startActivity(goToSubscribedEventsIntent);
+            case SubscriptionsAction.SHOW_SUBSCRIBE:
+                Intent goToSubscribeIntent = new Intent(this, SubscribeActivity.class);
+                startActivity(goToSubscribeIntent);
+                break;
         }
     }
 
     public void getSubscriptions() {
         activitySubscriptionsBinding.getViewModel().requestSubscriptions();
     }
+
     @Override
-    public void onFailure(String s){
+    public void onFailure(String s) {
         Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
     }
+
     @Override
     public void onSubscriptionsSuccess(LiveData<BasicResponse> subscriptionsResponseLiveData, int indexToDelete) {
         subscriptionsResponseLiveData.observe(this, subscriptionsResponse -> {

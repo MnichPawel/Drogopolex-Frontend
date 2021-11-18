@@ -28,4 +28,5 @@
     <string name="add_event_gps">Dodaj zdarzenie (GPS)</string>
     <string name="delete">Usuń</string>
     <string name="map">Mapa</string>
+    <string name="dodaj">Dodaj</string>
 </resources>
