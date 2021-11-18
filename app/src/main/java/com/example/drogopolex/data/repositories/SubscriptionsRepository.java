@@ -71,7 +71,7 @@ public class SubscriptionsRepository {
     public LiveData<EventsResponse> getSubscribedEvents(String token, String userId) {
         final MutableLiveData<EventsResponse> getSubscribedEventsResponse = new MutableLiveData<>();
 
-        myApi.subscriptionEvents(token, userId,new SubscriptionEventsRequest()).enqueue(new Callback<EventsResponse>() {
+        myApi.eventsGetEvents(token, userId,new SubscriptionEventsRequest()).enqueue(new Callback<EventsResponse>() {
             @Override
             public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
                 if(response.isSuccessful()){

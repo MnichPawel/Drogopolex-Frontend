@@ -13,7 +13,6 @@ import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.events.listeners.MapActivityListener;
-import com.example.drogopolex.events.utils.ButtonsAnimationBinding;
 import com.example.drogopolex.events.utils.EventsAction;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
@@ -45,7 +44,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public boolean addEventButtonClicked = false;
     private boolean isOnlySubs = false;
-    public ObservableField<Boolean> menuOpened = new ObservableField(false);
+    public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
 
     private final Animation flipButtonOut;
 

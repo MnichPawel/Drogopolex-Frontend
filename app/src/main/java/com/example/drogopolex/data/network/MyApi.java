@@ -4,13 +4,11 @@ import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.AddVoteRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.ChangeVoteRequest;
-import com.example.drogopolex.data.network.request.EventsByGpsRequest;
-import com.example.drogopolex.data.network.request.FilterEventsRequest;
+import com.example.drogopolex.data.network.request.GetEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.RemoveVoteRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
-import com.example.drogopolex.data.network.request.SubscriptionEventsRequest;
 import com.example.drogopolex.data.network.request.UnsubscribeRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
@@ -57,35 +55,17 @@ public interface MyApi {
      * Events Requests
      */
 
-    @POST("getEventsFromUserArea")
-    Call<EventsResponse> eventsGetFromUserArea(
+    @POST("getEvents")
+    Call<EventsResponse> eventsGetEvents(
             @Header("User-Id") String userId,
             @Header("Authorization-Token") String token,
-            @Body EventsByGpsRequest body);
+            @Body GetEventsRequest body);
 
     @POST("addEvent")
     Call<BasicResponse> eventsAddEvent(
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body AddEventRequest body);
-
-    @POST("getEventsByLocalization")
-    Call<EventsResponse> eventsGetEventsByLocalization(
-            @Header("User-Id") String userId,
-            @Header("Authorization-Token") String token,
-            @Body FilterEventsRequest body);
-
-    @POST("getEventsByType")
-    Call<EventsResponse> eventsGetEventsByType(
-            @Header("User-Id") String userId,
-            @Header("Authorization-Token") String token,
-            @Body FilterEventsRequest body);
-
-    @POST("getEventsByTypeAndLoc")
-    Call<EventsResponse> eventsGetEventsByTypeAndLocalization(
-            @Header("User-Id") String userId,
-            @Header("Authorization-Token") String token,
-            @Body FilterEventsRequest body);
 
     /*
      * Subscription Requests
@@ -108,13 +88,6 @@ public interface MyApi {
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body UnsubscribeRequest body);
-
-    @POST("getEvents")
-    Call<EventsResponse> subscriptionEvents(
-            @Header("Authorization-Token") String token,
-            @Header("User-Id") String userId,
-            @Body SubscriptionEventsRequest body);
-
 
     /*
      * Votes Requests

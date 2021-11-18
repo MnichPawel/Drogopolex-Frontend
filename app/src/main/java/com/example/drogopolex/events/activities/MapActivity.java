@@ -191,7 +191,10 @@ public class MapActivity extends FragmentActivity
                                     userVoteType
                             ));
 
-                            map.addMarker(new MarkerOptions().position(coordinates).title(event.getType()).icon(findIconForType(event.getType())));
+                            map.addMarker(new MarkerOptions()
+                                    .position(coordinates)
+                                    .title(event.getType())
+                                    .icon(findIconForType(event.getType())));
                         });
 
             } else {

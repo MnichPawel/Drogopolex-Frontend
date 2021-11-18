@@ -1,8 +1,6 @@
 package com.example.drogopolex.data.network.request;
 
-public class FilterEventsRequest {
-    final String localization;
-    final String type;
+public class FilterEventsRequest extends GetEventsRequest {
 
     public FilterEventsRequest(String localization, String type) {
         this.localization = localization;

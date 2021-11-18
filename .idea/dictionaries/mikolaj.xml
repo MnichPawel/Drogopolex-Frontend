@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="mikolaj">
     <words>
+      <w>bbox</w>
       <w>downvotes</w>
       <w>drogopolex</w>
       <w>drogowe</w>
@@ -9,6 +10,10 @@
       <w>roboty</w>
       <w>upvotes</w>
       <w>wypadek</w>
+      <w>xmax</w>
+      <w>xmin</w>
+      <w>ymax</w>
+      <w>ymin</w>
     </words>
   </dictionary>
 </component>

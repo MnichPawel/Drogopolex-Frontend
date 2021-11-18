@@ -1,8 +1,6 @@
 package com.example.drogopolex.data.network.request;
 
-public class EventsByGpsRequest {
-    final String latitude;
-    final String longitude;
+public class EventsByGpsRequest extends GetEventsRequest {
 
     public EventsByGpsRequest(String latitude, String longitude) {
         this.latitude = latitude;
