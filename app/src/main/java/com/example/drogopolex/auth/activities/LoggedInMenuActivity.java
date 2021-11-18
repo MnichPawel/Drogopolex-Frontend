@@ -87,23 +87,20 @@ public class LoggedInMenuActivity extends AppCompatActivity implements SharedPre
 
     @Override
     public void onSuccess(LiveData<BasicResponse> response) {
-        response.observe(this, new Observer<BasicResponse>() {
-            @Override
-            public void onChanged(BasicResponse result) {
-                if(result != null) {
-                    if ("true".equals(result.getSuccess())) {
-                        SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                        handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
-                    } else {
-                        SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                        Toast.makeText(LoggedInMenuActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
-                        handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
-                    }
-                } else {
-                    Toast.makeText(LoggedInMenuActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+        response.observe(this, result -> {
+            if (result != null) {
+                if ("true".equals(result.getSuccess())) {
                     SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
                     handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
+                } else {
+                    SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+                    Toast.makeText(LoggedInMenuActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
+                    handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
                 }
+            } else {
+                Toast.makeText(LoggedInMenuActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+                handleAction(new LoggedInMenuAction(LoggedInMenuAction.SHOW_LOGIN_MENU));
             }
         });
     }

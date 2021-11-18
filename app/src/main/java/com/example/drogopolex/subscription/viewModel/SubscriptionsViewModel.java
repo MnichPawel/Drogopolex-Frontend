@@ -39,7 +39,7 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
     }
 
     public void onReturnClicked() {
-        mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_LOGGED_IN));
+        mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_MAP));
     }
 
 

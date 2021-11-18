@@ -43,7 +43,7 @@ public class ProfileViewModel extends ViewModel {
     }
 
     public void onReturnClicked() {
-        mAction.setValue(new ProfileAction(ProfileAction.SHOW_LOGGED_IN));
+        mAction.setValue(new ProfileAction(ProfileAction.SHOW_MAP));
     }
 
     public void onChangeUsernameClicked() {

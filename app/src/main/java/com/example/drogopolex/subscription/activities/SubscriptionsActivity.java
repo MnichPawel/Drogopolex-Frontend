@@ -8,11 +8,11 @@ import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
-import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.databinding.ActivitySubscriptionsBinding;
+import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexSubscription;
 import com.example.drogopolex.subscription.listeners.SubscriptionListListener;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,25 +42,19 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         activitySubscriptionsBinding.setViewModel(new SubscriptionsViewModel(getApplication()));
         activitySubscriptionsBinding.executePendingBindings();
         activitySubscriptionsBinding.getViewModel().sharedPreferencesHolder = this;
-        //activitySubscriptionsBinding.getViewModel().onSuccessListener = this;
-//        listAdapter.subscriptionListListener = this;
         activitySubscriptionsBinding.getViewModel().subscriptionListListener = this;
 
 
-
-        activitySubscriptionsBinding.getViewModel().getAction().observe(this, new Observer<SubscriptionsAction>() {
-            @Override
-            public void onChanged(SubscriptionsAction subscriptionsAction) {
-                if(subscriptionsAction != null){
-                    handleAction(subscriptionsAction);
-                }
+        activitySubscriptionsBinding.getViewModel().getAction().observe(this, subscriptionsAction -> {
+            if (subscriptionsAction != null) {
+                handleAction(subscriptionsAction);
             }
         });
 
         subscriptionsRecyclerView = findViewById(R.id.subscriptionsView);
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        if(!sp.getBoolean("loggedIn", false)){
+        if (!sp.getBoolean("loggedIn", false)) {
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
         }
@@ -74,9 +67,9 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
     }
     private void handleAction(SubscriptionsAction subscriptionsAction) {
         switch (subscriptionsAction.getValue()) {
-            case SubscriptionsAction.SHOW_LOGGED_IN:
-                Intent goToLoggedInIntent = new Intent(this, LoggedInMenuActivity.class);
-                startActivity(goToLoggedInIntent);
+            case SubscriptionsAction.SHOW_MAP:
+                Intent goToMapIntent = new Intent(this, MapActivity.class);
+                startActivity(goToMapIntent);
                 break;
             case SubscriptionsAction.SHOW_SUBSCRIBED_EVENTS:
                 Intent goToSubscribedEventsIntent = new Intent(this, SubscribedEventsActivity.class);
@@ -93,43 +86,37 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
     }
     @Override
     public void onSubscriptionsSuccess(LiveData<BasicResponse> subscriptionsResponseLiveData, int indexToDelete) {
-        subscriptionsResponseLiveData.observe(this, new Observer<BasicResponse>() {
-            @Override
-            public void onChanged(BasicResponse subscriptionsResponse) {
-                if(subscriptionsResponse != null) {
-                    subscriptions.remove(indexToDelete);
-                } else {
-                    Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
-                }
+        subscriptionsResponseLiveData.observe(this, subscriptionsResponse -> {
+            if (subscriptionsResponse != null) {
+                subscriptions.remove(indexToDelete);
+            } else {
+                Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public void onSuccess(LiveData<SubscriptionsResponse> subscriptionsResponseLiveData) {
-        subscriptionsResponseLiveData.observe(this, new Observer<SubscriptionsResponse>() {
-            @Override
-            public void onChanged(SubscriptionsResponse subscriptionsResponse) {
-                if(subscriptionsResponse != null) {
-                    subscriptions.clear();
-                    subscriptionsResponse.getSubscriptions()
-                            .forEach(subscription -> {
-                                subscriptions.add(new DrogopolexSubscription(
-                                        Integer.parseInt(subscription.getId()),
-                                        subscription.getLocalization()
-                                ));
-                            });
-                    if(listAdapter != null) {
-                        listAdapter.notifyDataSetChanged();
-                    } else {
-                        listAdapter = new SubscriptionsListAdapter(subscriptions, SubscriptionsActivity.this);
-                        listAdapter.subscriptionsListener = SubscriptionsActivity.this;
-                        subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(SubscriptionsActivity.this));
-                        subscriptionsRecyclerView.setAdapter(listAdapter);
-                    }
+        subscriptionsResponseLiveData.observe(this, subscriptionsResponse -> {
+            if (subscriptionsResponse != null) {
+                subscriptions.clear();
+                subscriptionsResponse.getSubscriptions()
+                        .forEach(subscription -> {
+                            subscriptions.add(new DrogopolexSubscription(
+                                    Integer.parseInt(subscription.getId()),
+                                    subscription.getLocalization()
+                            ));
+                        });
+                if (listAdapter != null) {
+                    listAdapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                    listAdapter = new SubscriptionsListAdapter(subscriptions, SubscriptionsActivity.this);
+                    listAdapter.subscriptionsListener = SubscriptionsActivity.this;
+                    subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(SubscriptionsActivity.this));
+                    subscriptionsRecyclerView.setAdapter(listAdapter);
                 }
+            } else {
+                Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }

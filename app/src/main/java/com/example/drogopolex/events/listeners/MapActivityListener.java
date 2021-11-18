@@ -7,5 +7,10 @@ import androidx.lifecycle.LiveData;
 
 public interface MapActivityListener {
     void onAddNewEventSuccess(LiveData<BasicResponse> response);
+
     void onGetEventsSuccess(LiveData<EventsResponse> eventsResponseLiveData);
+
+    void onLogoutSuccess(LiveData<BasicResponse> responseLiveData);
+
+    void onLogoutFailure(String message);
 }

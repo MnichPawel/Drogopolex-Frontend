@@ -13,16 +13,18 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.auth.activities.LoggedInMenuActivity;
+import com.example.drogopolex.auth.activities.ProfileActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
-import com.example.drogopolex.events.utils.EventsAction;
+import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
+import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
+import com.example.drogopolex.utils.SharedPreferencesUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -83,15 +85,18 @@ public class MapActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
     }
 
-    private void handleAction(EventsAction eventsAction) {
-        switch (eventsAction.getValue()) {
-            case EventsAction.SHOW_LOGGED_IN:
-                Intent goToLoggedInIntent = new Intent(this, LoggedInMenuActivity.class);
-                startActivity(goToLoggedInIntent);
+    private void handleAction(MapAction aMapAction) {
+        switch (aMapAction.getValue()) {
+            case MapAction.SHOW_SUBSCRIPTIONS:
+                Intent goToSubscriptionsIntent = new Intent(this, SubscriptionsActivity.class);
+                startActivity(goToSubscriptionsIntent);
                 break;
-            case EventsAction.SHOW_EVENTS_SEARCH:
-                Intent goToEventsSearchIntent = new Intent(this, EventsSearchActivity.class);
-                startActivity(goToEventsSearchIntent);
+            case MapAction.SHOW_PROFILE:
+                Intent goToProfileIntent = new Intent(this, ProfileActivity.class);
+                startActivity(goToProfileIntent);
+                break;
+            case MapAction.LOGOUT:
+
         }
     }
 
@@ -202,7 +207,35 @@ public class MapActivity extends FragmentActivity
             }
         });
     }
-    private BitmapDescriptor svgToBitmap(@DrawableRes int id){
+
+    @Override
+    public void onLogoutSuccess(LiveData<BasicResponse> responseLiveData) {
+        responseLiveData.observe(this, result -> {
+            if (result != null) {
+                if ("true".equals(result.getSuccess())) {
+                    SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+                    handleAction(new MapAction(MapAction.LOGOUT));
+                } else {
+                    SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+                    Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
+                    handleAction(new MapAction(MapAction.LOGOUT));
+                }
+            } else {
+                Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+                handleAction(new MapAction(MapAction.LOGOUT));
+            }
+        });
+    }
+
+    @Override
+    public void onLogoutFailure(String message) {
+        Toast.makeText(MapActivity.this, message, Toast.LENGTH_SHORT).show();
+        SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+        handleAction(new MapAction(MapAction.LOGOUT));
+    }
+
+    private BitmapDescriptor svgToBitmap(@DrawableRes int id) {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
         assert vectorDrawable != null;
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
@@ -212,17 +245,17 @@ public class MapActivity extends FragmentActivity
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
-    private BitmapDescriptor findIconForType(String type){
-        if("Wypadek".equals(type)){
+
+    private BitmapDescriptor findIconForType(String type) {
+        if ("Wypadek".equals(type)) {
             return svgToBitmap(R.drawable.ic_wypadek);
         }
-        if("Korek".equals(type)){
+        if ("Korek".equals(type)) {
             return svgToBitmap(R.drawable.ic_korek);
         }
-        if("Patrol Policji".equals(type)){
+        if ("Patrol Policji".equals(type)) {
             return svgToBitmap(R.drawable.ic_radar);
-        }
-        else{ //Roboty Drogowe
+        } else { //Roboty Drogowe
             return svgToBitmap(R.drawable.ic_roboty);
         }
     }
@@ -235,7 +268,7 @@ public class MapActivity extends FragmentActivity
                     Double.parseDouble(matcher.group(1)),
                     Double.parseDouble(matcher.group(2)));
         }
-        return new LatLng(0.0, 0.0); //TODO exception
+        return new LatLng(0.0, 0.0);
     }
 
     @Override

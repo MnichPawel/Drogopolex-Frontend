@@ -12,8 +12,9 @@ import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
+import com.example.drogopolex.data.repositories.UserRepository;
 import com.example.drogopolex.events.listeners.MapActivityListener;
-import com.example.drogopolex.events.utils.EventsAction;
+import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
@@ -32,7 +33,7 @@ import androidx.lifecycle.MutableLiveData;
 public class MapViewModel extends AndroidViewModel implements Observable {
     private PropertyChangeRegistry callbacks = new PropertyChangeRegistry();
 
-    private MutableLiveData<EventsAction> mAction = new MutableLiveData<>();
+    private MutableLiveData<MapAction> mAction = new MutableLiveData<>();
     private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
     private LocationLiveData locationLiveData;
 
@@ -41,6 +42,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     private final EventsRepository eventsRepository;
     private final SubscriptionsRepository subscriptionsRepository;
+    private final UserRepository userRepository;
 
     public boolean addEventButtonClicked = false;
     private boolean isOnlySubs = false;
@@ -53,11 +55,12 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         locationLiveData = new LocationLiveData(application);
         eventsRepository = new EventsRepository();
         subscriptionsRepository = new SubscriptionsRepository();
+        userRepository = new UserRepository();
 
         flipButtonOut = AnimationUtils.loadAnimation(application.getApplicationContext(), R.anim.flip_button_out);
     }
 
-    public LiveData<EventsAction> getAction() {
+    public LiveData<MapAction> getAction() {
         return mAction;
     }
 
@@ -96,26 +99,32 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onMenuClicked() {
-
-
         menuOpened.set(!menuOpened.get());
         if(menuOpened.get()){
             //ButtonsAnimationBinding.setVisibilityMenu(o tutaj chce sobie napisać ktory guzik,menuOpened.get());
-
         }
     }
 
     public void onLogoutClicked() {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        boolean loggedIn = sharedPreferences.getBoolean("loggedIn", false);
+        String user_id = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
 
-        //        to implement
+        if (!loggedIn) {
+            mapActivityListener.onLogoutFailure("Użytkownik nie jest zalogowany");
+        }
+
+        LiveData<BasicResponse> response = userRepository.userLogout(user_id, token);
+        mapActivityListener.onLogoutSuccess(response);
     }
 
     public void onGoToSubsClicked() {
-        //        to implement
+        mAction.setValue(new MapAction(MapAction.SHOW_SUBSCRIPTIONS));
     }
 
     public void onGoToProfileClicked() {
-        //        to implement
+        mAction.setValue(new MapAction(MapAction.SHOW_PROFILE));
     }
 
     public void onShowAllEventsClicked(View view) {

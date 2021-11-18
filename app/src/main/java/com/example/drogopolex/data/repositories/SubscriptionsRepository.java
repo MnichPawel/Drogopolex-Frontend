@@ -21,8 +21,8 @@ public class SubscriptionsRepository {
 
     private MyApi myApi;
 
-    public SubscriptionsRepository(){
-        myApi =  RetrofitUtils.getRetrofitInstance().create(MyApi.class);
+    public SubscriptionsRepository() {
+        myApi = RetrofitUtils.getRetrofitInstance().create(MyApi.class);
     }
 
     public LiveData<BasicResponse> subscriptionSubscribe(String localization, String coordinates, String user_id, String token) {
@@ -32,7 +32,7 @@ public class SubscriptionsRepository {
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             userSubscribeResponse.setValue(response.body());
                         } else {
                             userSubscribeResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
@@ -46,6 +46,7 @@ public class SubscriptionsRepository {
                 });
         return userSubscribeResponse;
     }
+
     public LiveData<SubscriptionsResponse> getSubscriptions(String token, String user_id) {
         final MutableLiveData<SubscriptionsResponse> eventsResponse = new MutableLiveData<>();
 
@@ -53,7 +54,7 @@ public class SubscriptionsRepository {
                 .enqueue(new Callback<SubscriptionsResponse>() {
                     @Override
                     public void onResponse(Call<SubscriptionsResponse> call, Response<SubscriptionsResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             eventsResponse.setValue(response.body());
                         } else {
                             eventsResponse.setValue(null);
@@ -71,10 +72,10 @@ public class SubscriptionsRepository {
     public LiveData<EventsResponse> getSubscribedEvents(String token, String userId) {
         final MutableLiveData<EventsResponse> getSubscribedEventsResponse = new MutableLiveData<>();
 
-        myApi.eventsGetEvents(token, userId,new SubscriptionEventsRequest()).enqueue(new Callback<EventsResponse>() {
+        myApi.eventsGetEvents(userId, token, new SubscriptionEventsRequest()).enqueue(new Callback<EventsResponse>() {
             @Override
             public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     getSubscribedEventsResponse.setValue(response.body());
                 } else {
                     getSubscribedEventsResponse.setValue(null);
@@ -95,7 +96,7 @@ public class SubscriptionsRepository {
         myApi.subscriptionUnsubscribe(token, userId, new UnsubscribeRequest(idToDelete)).enqueue(new Callback<BasicResponse>() {
             @Override
             public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     unsubscribeResponse.setValue(response.body());
                 } else {
                     unsubscribeResponse.setValue(null);
