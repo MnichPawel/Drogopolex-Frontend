@@ -18,6 +18,7 @@ import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
@@ -100,7 +101,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public void onMenuClicked() {
         menuOpened.set(!menuOpened.get());
-        if(menuOpened.get()){
+        if (menuOpened.get()) {
             //ButtonsAnimationBinding.setVisibilityMenu(o tutaj chce sobie napisać ktory guzik,menuOpened.get());
         }
     }
@@ -139,6 +140,14 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             ((FloatingActionButton) view).setImageResource(R.drawable.ic_switch_right);
             fetchSubscribedEvents();
         }
+    }
+
+    public void onQuickNewRouteClicked() {
+        LocationDetails locationDetails = locationLiveData.getValue();
+        if (locationDetails != null)
+            mapActivityListener.onChoosePointModeEntered(new LatLng(
+                    Double.parseDouble(locationDetails.getLatitude()),
+                    Double.parseDouble(locationDetails.getLongitude())));
     }
 
     @Bindable

@@ -34,6 +34,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -64,6 +65,8 @@ public class MapActivity extends FragmentActivity
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
 
     boolean firstLocalizationUpdateLoaded = false;
+
+    private Marker routeDestinationMarker = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -238,6 +241,16 @@ public class MapActivity extends FragmentActivity
         Toast.makeText(MapActivity.this, message, Toast.LENGTH_SHORT).show();
         SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
         handleAction(new MapAction(MapAction.LOGOUT));
+    }
+
+    @Override
+    public void onChoosePointModeEntered(LatLng location) {
+        routeDestinationMarker = map.addMarker(new MarkerOptions()
+                .position(location)
+                .title("Cel"));
+
+        map.setOnMapClickListener(latLng ->
+                routeDestinationMarker.setPosition(latLng));
     }
 
     private BitmapDescriptor svgToBitmap(@DrawableRes int id) {
