@@ -66,6 +66,7 @@ public class MapActivity extends FragmentActivity
 
     boolean firstLocalizationUpdateLoaded = false;
 
+    private MarkerOptions routeDestinationMarkerOptions = null;
     private Marker routeDestinationMarker = null;
 
     @Override
@@ -184,6 +185,8 @@ public class MapActivity extends FragmentActivity
             if (eventsResponse != null) {
                 eventListData.clear();
                 map.clear();
+                if (routeDestinationMarkerOptions != null)
+                    routeDestinationMarker = map.addMarker(routeDestinationMarkerOptions);
                 eventsResponse.getEvents()
                         .forEach(event -> {
                             VoteType userVoteType;
@@ -245,12 +248,17 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void onChoosePointModeEntered(LatLng location) {
-        routeDestinationMarker = map.addMarker(new MarkerOptions()
+        routeDestinationMarkerOptions = new MarkerOptions()
                 .position(location)
-                .title("Cel"));
+                .title("Cel");
 
-        map.setOnMapClickListener(latLng ->
-                routeDestinationMarker.setPosition(latLng));
+        routeDestinationMarker = map.addMarker(routeDestinationMarkerOptions);
+
+        map.setOnMapClickListener(latLng -> {
+            routeDestinationMarkerOptions.position(latLng);
+            routeDestinationMarker.remove();
+            routeDestinationMarker = map.addMarker(routeDestinationMarkerOptions);
+        });
     }
 
     private BitmapDescriptor svgToBitmap(@DrawableRes int id) {

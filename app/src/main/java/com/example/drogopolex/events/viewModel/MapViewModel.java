@@ -47,6 +47,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public boolean addEventButtonClicked = false;
     private boolean isOnlySubs = false;
+    private boolean isChoosePointMode = false;
     public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
 
     private final Animation flipButtonOut;
@@ -72,9 +73,8 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     public boolean onLocationChanged(LocationDetails location) {
         if (!isOnlySubs) {
             fetchNearbyEvents(location);
-            return true;
         }
-        return false;
+        return !(isOnlySubs || isChoosePointMode);
     }
 
     public void onAddEventClicked() {
@@ -144,10 +144,12 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public void onQuickNewRouteClicked() {
         LocationDetails locationDetails = locationLiveData.getValue();
-        if (locationDetails != null)
+        if (locationDetails != null) {
+            isChoosePointMode = true;
             mapActivityListener.onChoosePointModeEntered(new LatLng(
                     Double.parseDouble(locationDetails.getLatitude()),
                     Double.parseDouble(locationDetails.getLongitude())));
+        }
     }
 
     @Bindable
