@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
@@ -17,6 +18,7 @@ import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.auth.activities.ProfileActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.data.network.response.RouteResponse;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
 import com.example.drogopolex.events.utils.MapAction;
@@ -36,6 +38,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -68,6 +74,8 @@ public class MapActivity extends FragmentActivity
 
     private MarkerOptions routeDestinationMarkerOptions = null;
     private Marker routeDestinationMarker = null;
+
+    private JSONObject routeGeoJson = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -187,6 +195,8 @@ public class MapActivity extends FragmentActivity
                 map.clear();
                 if (routeDestinationMarkerOptions != null)
                     routeDestinationMarker = map.addMarker(routeDestinationMarkerOptions);
+                if (routeGeoJson != null)
+                    drawRouteOnMap(routeGeoJson);
                 eventsResponse.getEvents()
                         .forEach(event -> {
                             VoteType userVoteType;
@@ -261,6 +271,23 @@ public class MapActivity extends FragmentActivity
         });
     }
 
+    @Override
+    public LatLng getChosenPoint() {
+        return routeDestinationMarker.getPosition();
+    }
+
+    @Override
+    public void drawRoute(LiveData<RouteResponse> routeResponseLiveData) {
+        routeResponseLiveData.observe(this, routeResponse -> {
+            Log.d("DRAW_ROUTE", "observe");
+            if (routeResponse != null) {
+                Log.d("DRAW_ROUTE", "response not null");
+                routeGeoJson = new JSONObject((LinkedTreeMap) routeResponse.getGeometria());
+                drawRouteOnMap(routeGeoJson);
+            }
+        });
+    }
+
     private BitmapDescriptor svgToBitmap(@DrawableRes int id) {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
         assert vectorDrawable != null;
@@ -308,5 +335,10 @@ public class MapActivity extends FragmentActivity
         LatLng currentUserLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         Toast.makeText(getApplicationContext(), "onmlc " + currentUserLatLng.latitude + " - " + currentUserLatLng.longitude, Toast.LENGTH_SHORT).show();
         map.moveCamera(CameraUpdateFactory.newLatLng(currentUserLatLng));
+    }
+
+    private void drawRouteOnMap(JSONObject geoJson) {
+        GeoJsonLayer geoJsonLayer = new GeoJsonLayer(map, geoJson);
+        geoJsonLayer.addLayerToMap();
     }
 }

@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.data.network.response.RouteResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.data.repositories.UserRepository;
@@ -149,6 +150,22 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             mapActivityListener.onChoosePointModeEntered(new LatLng(
                     Double.parseDouble(locationDetails.getLatitude()),
                     Double.parseDouble(locationDetails.getLongitude())));
+        }
+    }
+
+    public void onConfirmQuickRouteClicked() {
+        LatLng chosenPoint = mapActivityListener.getChosenPoint();
+        LocationDetails userLocation = locationLiveData.getValue();
+
+        if (userLocation != null) {
+            SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+            String user_id = sharedPreferences.getString("user_id", "");
+            String token = sharedPreferences.getString("token", "");
+
+            LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
+            LiveData<RouteResponse> routeResponseLiveData = eventsRepository.generateRoute("coords", from, chosenPoint, user_id, token);
+
+            mapActivityListener.drawRoute(routeResponseLiveData);
         }
     }
 

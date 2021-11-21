@@ -4,6 +4,7 @@ import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.AddVoteRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.ChangeVoteRequest;
+import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.request.GetEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
@@ -14,6 +15,7 @@ import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
+import com.example.drogopolex.data.network.response.RouteResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
 import retrofit2.Call;
@@ -67,6 +69,11 @@ public interface MyApi {
             @Header("User-Id") String userId,
             @Body AddEventRequest body);
 
+    @POST("generateRoute")
+    Call<RouteResponse> eventsGenerateRoute(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
+            @Body GenerateRouteRequest body);
     /*
      * Subscription Requests
      */

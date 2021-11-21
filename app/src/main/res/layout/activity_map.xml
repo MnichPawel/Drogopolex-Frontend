@@ -131,6 +131,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:drawable/arrow_up_float" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/confirmQuickRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onConfirmQuickRouteClicked()}"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/event_korek"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@android:drawable/checkbox_on_background" />
+
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"

@@ -5,12 +5,15 @@ import android.util.Log;
 import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
+import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
+import com.example.drogopolex.data.network.response.RouteResponse;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 import com.example.drogopolex.model.LocationDetails;
+import com.google.android.gms.maps.model.LatLng;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -74,5 +77,28 @@ public class EventsRepository {
             }
         });
         return addEventResponse;
+    }
+
+    public LiveData<RouteResponse> generateRoute(String type, LatLng from, LatLng to, String userId, String token) {
+        final MutableLiveData<RouteResponse> generateRouteResponse = new MutableLiveData<>();
+
+        myApi.eventsGenerateRoute(token, userId,
+                new GenerateRouteRequest(type, from, to))
+                .enqueue(new Callback<RouteResponse>() {
+                    @Override
+                    public void onResponse(Call<RouteResponse> call, Response<RouteResponse> response) {
+                        if (response.isSuccessful()) {
+                            generateRouteResponse.setValue(response.body());
+                        } else {
+                            generateRouteResponse.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RouteResponse> call, Throwable t) {
+                        generateRouteResponse.setValue(null);
+                    }
+                });
+        return generateRouteResponse;
     }
 }
