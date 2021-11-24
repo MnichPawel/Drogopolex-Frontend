@@ -16,6 +16,13 @@ import com.example.drogopolex.databinding.ActivityProfileBinding;
 import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.listeners.BasicListener;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
+import com.mopub.common.MoPub;
+import com.mopub.common.SdkConfiguration;
+import com.mopub.common.SdkInitializationListener;
+import com.mopub.mobileads.MoPubView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +32,10 @@ import androidx.lifecycle.Observer;
 
 public class ProfileActivity extends AppCompatActivity implements SharedPreferencesHolder, BasicListener {
 
+    //ads
+    private String adIdMopub= "b195f8dd8ded45fe847ad89ed1d016da";
+    MoPubView adBanner;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +44,10 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
         activityProfileBinding.executePendingBindings();
         activityProfileBinding.getViewModel().sharedPreferencesHolder = this;
         activityProfileBinding.getViewModel().basicListener = this;
+
+        adBanner = findViewById(R.id.profileAdBanner);
+        adBanner.setAdUnitId(adIdMopub);
+        initialiseMopubSDK(adIdMopub);
 
         activityProfileBinding.getViewModel().getAction().observe(this, new Observer<ProfileAction>() {
             @Override
@@ -98,5 +113,30 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
     @Override
     public SharedPreferences getSharedPreferences() {
         return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+    }
+
+    private void initialiseMopubSDK(String idAd){
+        Map<String, String> mediatedNetworkConfig1 = new HashMap<>();
+        mediatedNetworkConfig1.put("<custom-adapter-class-data-key>","<custom-adapter-class-data-value>");
+        Map<String, String> mediatedNetworkConfig2 = new HashMap<>();
+        mediatedNetworkConfig2.put("<custom-adapter-class-data-key>","<custom-adapter-class-data-value>");
+
+        SdkConfiguration sdkConfiguration =new SdkConfiguration.Builder(idAd)
+                .withLegitimateInterestAllowed(false)
+                .build();
+        MoPub.initializeSdk(ProfileActivity.this,sdkConfiguration,initialiseSdkListener());
+    }
+    private SdkInitializationListener initialiseSdkListener(){
+        return new SdkInitializationListener() {
+            @Override
+            public void onInitializationFinished() {
+                adBanner.loadAd();
+            }
+        };
+    }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        adBanner.destroy();
     }
 }
