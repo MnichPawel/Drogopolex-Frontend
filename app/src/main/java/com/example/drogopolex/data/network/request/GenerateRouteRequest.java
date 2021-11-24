@@ -10,22 +10,22 @@ public class GenerateRouteRequest {
     String name;
     String type;
     String fromName;
-    List<Double> from;
+    List<Double> fromGPS;
     String toName;
-    List<Double> to;
+    List<Double> toGPS;
     Avoid avoid;
 
-    public GenerateRouteRequest(String type, LatLng from, LatLng to) {
+    public GenerateRouteRequest(String type, LatLng fromGPS, LatLng toGPS) {
         this.type = type;
-        this.from = new ArrayList<>(Arrays.asList(from.longitude, from.latitude));
-        this.to = new ArrayList<>(Arrays.asList(to.longitude, to.latitude));
+        this.fromGPS = new ArrayList<>(Arrays.asList(fromGPS.longitude, fromGPS.latitude));
+        this.toGPS = new ArrayList<>(Arrays.asList(toGPS.longitude, toGPS.latitude));
     }
 
-    public GenerateRouteRequest(String name, String type, LatLng from, LatLng to) {
+    public GenerateRouteRequest(String name, String type, LatLng fromGPS, LatLng toGPS) {
         this.name = name;
         this.type = type;
-        this.from = new ArrayList<>(Arrays.asList(from.longitude, from.latitude));
-        this.to = new ArrayList<>(Arrays.asList(to.longitude, to.latitude));
+        this.fromGPS = new ArrayList<>(Arrays.asList(fromGPS.longitude, fromGPS.latitude));
+        this.toGPS = new ArrayList<>(Arrays.asList(toGPS.longitude, toGPS.latitude));
     }
 
     public GenerateRouteRequest(String name, String type, String fromName, String toName) {
