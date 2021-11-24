@@ -11,6 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
@@ -130,14 +132,23 @@ public class MapActivity extends FragmentActivity
         map.setMyLocationEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
         map.setOnMyLocationClickListener(this);
+        map.setTrafficEnabled(true);
+
 
         UiSettings mapSettings = map.getUiSettings();
         mapSettings.setZoomControlsEnabled(true);
         mapSettings.setMapToolbarEnabled(false);
 
         mapSettings.setMyLocationButtonEnabled(true);
+        changePositionOfMyLocationButton();
 
         prepRequestLocationUpdates();
+    }
+
+    private void changePositionOfMyLocationButton() { //TODO better location of button
+        View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
     }
 
     private void prepRequestLocationUpdates() {
