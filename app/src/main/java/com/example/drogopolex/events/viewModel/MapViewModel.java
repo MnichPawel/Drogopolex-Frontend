@@ -169,6 +169,10 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         }
     }
 
+    public void onQuitQuickRouteClicked() {
+        mAction.setValue(new MapAction(MapAction.RESET_ROUTE));
+    }
+
     @Bindable
     public boolean isAddEventButtonClicked() {
         return addEventButtonClicked;

@@ -112,6 +112,9 @@ public class MapActivity extends FragmentActivity
                 Intent goToLoginMenuIntent = new Intent(this, LoginMenuActivity.class);
                 startActivity(goToLoginMenuIntent);
                 break;
+            case MapAction.RESET_ROUTE:
+                resetMap();
+                break;
             default:
                 Toast.makeText(MapActivity.this, "Nieznana akcja", Toast.LENGTH_SHORT).show();
         }
@@ -217,10 +220,7 @@ public class MapActivity extends FragmentActivity
                                     userVoteType
                             ));
 
-                            map.addMarker(new MarkerOptions()
-                                    .position(coordinates)
-                                    .title(event.getType())
-                                    .icon(findIconForType(event.getType())));
+                            addEventToMap(coordinates, event.getType());
                         });
 
             } else {
@@ -340,5 +340,23 @@ public class MapActivity extends FragmentActivity
     private void drawRouteOnMap(JSONObject geoJson) {
         GeoJsonLayer geoJsonLayer = new GeoJsonLayer(map, geoJson);
         geoJsonLayer.addLayerToMap();
+    }
+
+    private void resetMap() {
+        routeDestinationMarkerOptions = null;
+        routeDestinationMarker = null;
+        routeGeoJson = null;
+        map.clear();
+
+        for (DrogopolexEvent event : eventListData) {
+            addEventToMap(event.getCoordinates(), event.getType());
+        }
+    }
+
+    private void addEventToMap(LatLng coordinates, String type) {
+        map.addMarker(new MarkerOptions()
+                .position(coordinates)
+                .title(type)
+                .icon(findIconForType(type)));
     }
 }
