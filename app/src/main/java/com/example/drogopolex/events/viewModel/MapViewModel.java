@@ -8,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.example.drogopolex.R;
+import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.RouteResponse;
@@ -163,7 +164,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             String token = sharedPreferences.getString("token", "");
 
             LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
-            LiveData<RouteResponse> routeResponseLiveData = eventsRepository.generateRoute("coords", from, chosenPoint, user_id, token);
+            LiveData<RouteResponse> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint), user_id, token);
 
             mapActivityListener.drawRoute(routeResponseLiveData);
         }

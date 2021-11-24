@@ -1,7 +1,7 @@
 package com.example.drogopolex.events.utils;
 
 public class AddRouteAction {
-    public static final int SHOW_MAP = 0;
+    public static final int SHOW_ROUTES_LIST = 0;
     private final int mAction;
 
     public AddRouteAction(int action) {

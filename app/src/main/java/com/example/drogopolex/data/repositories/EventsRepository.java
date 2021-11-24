@@ -13,7 +13,6 @@ import com.example.drogopolex.data.network.response.RouteResponse;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 import com.example.drogopolex.model.LocationDetails;
-import com.google.android.gms.maps.model.LatLng;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -79,11 +78,10 @@ public class EventsRepository {
         return addEventResponse;
     }
 
-    public LiveData<RouteResponse> generateRoute(String type, LatLng from, LatLng to, String userId, String token) {
+    public LiveData<RouteResponse> generateRoute(GenerateRouteRequest request, String userId, String token) {
         final MutableLiveData<RouteResponse> generateRouteResponse = new MutableLiveData<>();
 
-        myApi.eventsGenerateRoute(token, userId,
-                new GenerateRouteRequest(type, from, to))
+        myApi.eventsGenerateRoute(token, userId, request)
                 .enqueue(new Callback<RouteResponse>() {
                     @Override
                     public void onResponse(Call<RouteResponse> call, Response<RouteResponse> response) {
