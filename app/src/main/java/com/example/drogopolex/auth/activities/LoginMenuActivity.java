@@ -9,6 +9,7 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.auth.utils.LoginMenuAction;
 import com.example.drogopolex.auth.viewModel.LoginMenuViewModel;
 import com.example.drogopolex.databinding.ActivityLoginMenuBinding;
+import com.example.drogopolex.events.activities.MapActivity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,9 +35,9 @@ public class LoginMenuActivity extends AppCompatActivity {
         });
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        if(sp.getBoolean("loggedIn", false)){
-            Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
-            startActivity(goToLoggedInMenuActivityIntent);
+        if(sp.getBoolean("loggedIn", false)) {
+            Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
+            startActivity(goToMapActivityIntent);
         }
     }
 

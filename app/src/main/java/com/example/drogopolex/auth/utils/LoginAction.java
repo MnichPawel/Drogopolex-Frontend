@@ -1,7 +1,7 @@
 package com.example.drogopolex.auth.utils;
 
 public class LoginAction {
-    public static final int SHOW_LOGGED_IN= 0;
+    public static final int SHOW_MAP = 0;
     public static final int SHOW_LOGIN_MENU = 1;
     private final int mAction;
 

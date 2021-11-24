@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
+import com.example.drogopolex.subscription.listeners.SubscriptionListListener;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -18,9 +18,12 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
     private LiveData<SubscriptionsResponse> subscriptionsLiveData = new MutableLiveData<>();
 
     public SharedPreferencesHolder sharedPreferencesHolder = null;
-    public OnSuccessListener<LiveData<SubscriptionsResponse>> onSuccessListener = null;
+//    public OnSuccessListener<LiveData<SubscriptionsResponse>> onSuccessListener = null;
+    public SubscriptionListListener subscriptionListListener = null;
+
 
     private SubscriptionsRepository subscriptionsRepository;
+
 
     public SubscriptionsViewModel(Application application) {
         super(application);
@@ -32,13 +35,16 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
         String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
         subscriptionsLiveData = subscriptionsRepository.getSubscriptions(token, userId);
-        onSuccessListener.onSuccess(subscriptionsLiveData);
+        subscriptionListListener.onSuccess(subscriptionsLiveData);
     }
 
     public void onReturnClicked() {
-        mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_LOGGED_IN));
+        mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_MAP));
     }
 
+    public void onGoToSubscibeClicked() {
+        mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_SUBSCRIBE));
+    }
 
     public LiveData<SubscriptionsAction> getAction() {
         return mAction;

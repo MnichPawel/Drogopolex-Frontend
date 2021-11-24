@@ -4,17 +4,18 @@ import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.AddVoteRequest;
 import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.ChangeVoteRequest;
-import com.example.drogopolex.data.network.request.EventsByGpsRequest;
-import com.example.drogopolex.data.network.request.FilterEventsRequest;
+import com.example.drogopolex.data.network.request.GenerateRouteRequest;
+import com.example.drogopolex.data.network.request.GetEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.RemoveVoteRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
-import com.example.drogopolex.data.network.request.SubscriptionEventsRequest;
+import com.example.drogopolex.data.network.request.UnsubscribeRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
+import com.example.drogopolex.data.network.response.RouteResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
 import retrofit2.Call;
@@ -38,76 +39,62 @@ public interface MyApi {
 
     @POST("logout")
     Call<BasicResponse> userLogout(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId);
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId);
 
     @POST("changeUserData")
     Call<BasicResponse> userChangeUserData(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body ChangeUserDataRequest body);
 
     @POST("myProfile")
     Call<ProfileResponse> userGetUserData(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId);
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId);
 
     /*
      * Events Requests
      */
 
-    @POST("getEventsFromUserArea")
-    Call<EventsResponse> eventsGetFromUserArea(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
-            @Body EventsByGpsRequest body);
+    @POST("getEvents")
+    Call<EventsResponse> eventsGetEvents(
+            @Header("User-Id") String userId,
+            @Header("Authorization-Token") String token,
+            @Body GetEventsRequest body);
 
     @POST("addEvent")
     Call<BasicResponse> eventsAddEvent(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body AddEventRequest body);
 
-    @POST("getEventsByLocalization")
-    Call<EventsResponse> eventsGetEventsByLocalization(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
-            @Body FilterEventsRequest body);
-
-    @POST("getEventsByType")
-    Call<EventsResponse> eventsGetEventsByType(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
-            @Body FilterEventsRequest body);
-
-    @POST("getEventsByTypeAndLoc")
-    Call<EventsResponse> eventsGetEventsByTypeAndLocalization(
-            @Header("UserId") String userId,
-            @Header("AuthorizationToken") String token,
-            @Body FilterEventsRequest body);
-
+    @POST("generateRoute")
+    Call<RouteResponse> eventsGenerateRoute(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
+            @Body GenerateRouteRequest body);
     /*
      * Subscription Requests
      */
 
     @POST("subscribe")
     Call<BasicResponse> subscriptionSubscribe(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body SubscribeRequest body);
 
     @POST("subscriptions")
 
     Call<SubscriptionsResponse> subscriptionSubscriptions(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId);
-  
-    @POST("getEvents")
-    Call<EventsResponse> subscriptionEvents(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
-            @Body SubscriptionEventsRequest body);
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId);
 
+    @POST("unsubscribe")
+    Call<BasicResponse> subscriptionUnsubscribe(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
+            @Body UnsubscribeRequest body);
 
     /*
      * Votes Requests
@@ -115,20 +102,20 @@ public interface MyApi {
 
     @POST("vote")
     Call<BasicResponse> votesAddVote(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body AddVoteRequest body
         );
 
     @POST("change_vote")
     Call<BasicResponse> votesChangeVote(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body ChangeVoteRequest body);
 
     @POST("remove_vote")
     Call<BasicResponse> votesRemoveVote(
-            @Header("AuthorizationToken") String token,
-            @Header("UserId") String userId,
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
             @Body RemoveVoteRequest body);
 }

@@ -1,5 +1,7 @@
 package com.example.drogopolex.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class DrogopolexEvent {
     private String type;
     private String location;
@@ -7,12 +9,14 @@ public class DrogopolexEvent {
     private int id;
     private VoteType userVoteType;
     private int valueOfVotes;
+    private LatLng coordinates;
 
-    public DrogopolexEvent(String type, String location, String street, int id, int valueOfVotes, VoteType userVoteType) {
+    public DrogopolexEvent(String type, String location, String street, int id, LatLng coordinates, int valueOfVotes, VoteType userVoteType) {
         this.type = type;
         this.location = location;
         this.street = street;
         this.id = id;
+        this.coordinates = coordinates;
         this.valueOfVotes = valueOfVotes;
         this.userVoteType = userVoteType;
     }
@@ -43,5 +47,9 @@ public class DrogopolexEvent {
 
     public int getValueOfVotes() {
         return valueOfVotes;
+    }
+
+    public LatLng getCoordinates() {
+        return coordinates;
     }
 }

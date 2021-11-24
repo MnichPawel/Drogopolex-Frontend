@@ -13,6 +13,7 @@ import com.example.drogopolex.auth.viewModel.ProfileViewModel;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.databinding.ActivityProfileBinding;
+import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.listeners.BasicListener;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 
@@ -68,26 +69,23 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
     }
 
     private void handleAction(ProfileAction profileAction) {
-        if (ProfileAction.SHOW_LOGGED_IN == profileAction.getValue()) {
-            Intent goToLoggedInMenuActivityIntent = new Intent(this, LoggedInMenuActivity.class);
-            startActivity(goToLoggedInMenuActivityIntent);
+        if (ProfileAction.SHOW_MAP == profileAction.getValue()) {
+            Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
+            startActivity(goToMapActivityIntent);
         }
     }
 
     @Override
     public void onSuccess(LiveData<BasicResponse> response) {
-        response.observe(this, new Observer<BasicResponse>() {
-            @Override
-            public void onChanged(BasicResponse result) {
-                if(result != null) {
-                    if ("true".equals(result.getSuccess())) {
-                        Toast.makeText(ProfileActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(ProfileActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
-                    }
+        response.observe(this, result -> {
+            if (result != null) {
+                if ("true".equals(result.getSuccess())) {
+                    Toast.makeText(ProfileActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }

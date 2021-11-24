@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 public class SubscribeActivity extends AppCompatActivity implements SharedPreferencesHolder, SubscribeListener {
 
@@ -32,12 +31,7 @@ public class SubscribeActivity extends AppCompatActivity implements SharedPrefer
         activitySubscribeBinding.getViewModel().sharedPreferencesHolder = this;
         activitySubscribeBinding.getViewModel().subscribeListener = this;
 
-        activitySubscribeBinding.getViewModel().getAction().observe(this, new Observer<SubscribeAction>() {
-            @Override
-            public void onChanged(SubscribeAction subscribeAction) {
-                handleAction(subscribeAction);
-            }
-        });
+        activitySubscribeBinding.getViewModel().getAction().observe(this, this::handleAction);
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if (!sp.getBoolean("loggedIn", false)) {
@@ -47,27 +41,24 @@ public class SubscribeActivity extends AppCompatActivity implements SharedPrefer
     }
 
     private void handleAction(SubscribeAction subscribeAction) {
-        if(subscribeAction.getValue() == SubscribeAction.SHOW_SUBSCRIBED) {
-            Intent goToSubscribedEventsIntent = new Intent(this, SubscribedEventsActivity.class);
-            startActivity(goToSubscribedEventsIntent);
+        if (subscribeAction.getValue() == SubscribeAction.SHOW_SUBSCRIPTIONS) {
+            Intent goToSubscriptionsIntent = new Intent(this, SubscriptionsActivity.class);
+            startActivity(goToSubscriptionsIntent);
         }
     }
 
     @Override
     public void onSuccess(LiveData<BasicResponse> response) {
-        response.observe(this, new Observer<BasicResponse>() {
-            @Override
-            public void onChanged(BasicResponse result) {
-                if (result != null) {
-                    if ("true".equals(result.getSuccess())) {
-                        Toast.makeText(SubscribeActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
-                        handleAction(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIBED));
-                    } else {
-                        Toast.makeText(SubscribeActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
-                    }
+        response.observe(this, result -> {
+            if (result != null) {
+                if ("true".equals(result.getSuccess())) {
+                    Toast.makeText(SubscribeActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                    handleAction(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIPTIONS));
                 } else {
-                    Toast.makeText(SubscribeActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SubscribeActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(SubscribeActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }

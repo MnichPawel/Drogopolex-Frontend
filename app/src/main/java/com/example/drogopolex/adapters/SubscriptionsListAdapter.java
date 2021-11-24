@@ -7,27 +7,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.drogopolex.R;
-import com.example.drogopolex.RequestSingleton;
+import com.example.drogopolex.data.network.response.BasicResponse;
+import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.model.DrogopolexSubscription;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.drogopolex.subscription.listeners.SubscriptionsListener;
 
 import java.util.ArrayList;
 
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
     private static ArrayList<DrogopolexSubscription> localDataSubs;
     private final Context context;
+    public Integer indexToUnsubscribeTo;
+    public SubscriptionsListener subscriptionsListener;
+    private SubscriptionsRepository subscriptionsRepository;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView subscriptionText;
@@ -41,8 +38,9 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
             unsubscribe.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    DrogopolexSubscription drogopolexSubscription = localDataSubs.get(getAdapterPosition());
-                    unsubscribeRequest(drogopolexSubscription.getId_sub().toString());
+                    int adapterPosition = getAdapterPosition();
+                    DrogopolexSubscription drogopolexSubscription = localDataSubs.get(adapterPosition);
+                    unsubscribeRequest(drogopolexSubscription.getId_sub().toString(), adapterPosition);
                 }
             });
         }
@@ -55,6 +53,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
     public SubscriptionsListAdapter( ArrayList<DrogopolexSubscription> data, Context context) {
         localDataSubs = data;
         this.context = context;
+        this.subscriptionsRepository = new SubscriptionsRepository();
     }
 
     @Override
@@ -76,99 +75,12 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         return localDataSubs.size();
     }
 
-    public void unsubscribeRequest(String subId){
-        SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String userId = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id_to_del",subId);
-            jsonObject.put("user_id",userId);
-            jsonObject.put("token", token);
-
-
-            String url = "http://10.0.2.2:5000/unsubscribe";
-            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    boolean isSuccess = false;
-                    String stringError = "";
-
-                    try {
-                        isSuccess = response.getBoolean("success");
-                        if(!isSuccess) {
-                            stringError = response.getString("error");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    if(isSuccess){
-                        Toast.makeText(context,"Subskrypcja usunieta",Toast.LENGTH_LONG).show();
-                        resetSubscriptions();
-
-
-                    }else{
-                        Toast.makeText(context, stringError, Toast.LENGTH_LONG).show();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context,"Error",Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(context).addToRequestQueue(objectRequest);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void resetSubscriptions() {
-        JSONObject jsonObject = new JSONObject();
-        String url = "http://10.0.2.2:5000/subscriptions";
-
+    public void unsubscribeRequest(String subId, int subIndex){
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        try {
-            jsonObject.put("token", token);
-            jsonObject.put("user_id", userId);
-
-            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray resp = response.getJSONArray("subscriptions");
-                        localDataSubs.clear();
-                        for (int i = 0; i < resp.length(); i++) {
-                            JSONObject item = resp.getJSONObject(i);
-                            String localization_str = item.getString("localization");
-                            //localDataSet.add(localization_str);
-                            String sub_id_str = item.getString("id_sub");
-                            DrogopolexSubscription drogopolexSubscription = new DrogopolexSubscription(Integer.parseInt(sub_id_str),localization_str);
-                            localDataSubs.add(drogopolexSubscription);
-                        }
-                        notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Error", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            RequestSingleton.getInstance(context).addToRequestQueue(objectRequest);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        LiveData<BasicResponse> responseLiveData = subscriptionsRepository.unsubscribeSubscriptions(token, userId, subId);
+        subscriptionsListener.onSubscriptionsSuccess(responseLiveData, subIndex);
     }
 }
