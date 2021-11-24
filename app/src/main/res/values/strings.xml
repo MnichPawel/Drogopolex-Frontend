@@ -29,4 +29,6 @@
     <string name="delete">Usuń</string>
     <string name="map">Mapa</string>
     <string name="dodaj">Dodaj</string>
+    <string name="source_place">Punkt początkowy</string>
+    <string name="destination_place">Punkt docelowy</string>
 </resources>

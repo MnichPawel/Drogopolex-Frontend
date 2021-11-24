@@ -19,14 +19,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Drogopolex">
 
-        <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="@string/map_key"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/map_key" />
 
         <activity android:name="com.example.drogopolex.auth.activities.ProfileActivity" />
         <activity android:name="com.example.drogopolex.subscription.activities.SubscribeActivity" />
         <activity android:name="com.example.drogopolex.auth.activities.RegisterActivity" />
         <activity android:name="com.example.drogopolex.events.activities.MapActivity" />
-        <activity android:name="com.example.drogopolex.subscription.activities.SubscriptionsActivity"/>
+        <activity android:name="com.example.drogopolex.events.activities.RoutesListActivity" />
+        <activity android:name="com.example.drogopolex.events.activities.AddRouteActivity" />
+        <activity android:name="com.example.drogopolex.subscription.activities.SubscriptionsActivity" />
         <activity
             android:name="com.example.drogopolex.auth.activities.LoginActivity"
             android:label="@string/app_name" />
