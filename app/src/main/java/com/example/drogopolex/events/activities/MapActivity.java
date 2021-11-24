@@ -278,6 +278,8 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void drawRoute(LiveData<RouteResponse> routeResponseLiveData) {
+        map.setOnMapClickListener(null);
+
         routeResponseLiveData.observe(this, routeResponse -> {
             Log.d("DRAW_ROUTE", "observe");
             if (routeResponse != null) {
