@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
     private static List<DrogopolexSubscription> localDataSubs;
     private final Context context;
-    public Integer indexToUnsubscribeTo;
     public SubscriptionsListener subscriptionsListener;
     private final SubscriptionsRepository subscriptionsRepository;
 
