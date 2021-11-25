@@ -14,17 +14,18 @@ import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.model.DrogopolexSubscription;
 import com.example.drogopolex.subscription.listeners.SubscriptionsListener;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
-    private static ArrayList<DrogopolexSubscription> localDataSubs;
+    private static List<DrogopolexSubscription> localDataSubs;
     private final Context context;
     public Integer indexToUnsubscribeTo;
     public SubscriptionsListener subscriptionsListener;
-    private SubscriptionsRepository subscriptionsRepository;
+    private final SubscriptionsRepository subscriptionsRepository;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView subscriptionText;
@@ -35,13 +36,10 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
             subscriptionText = (TextView) view.findViewById(R.id.subscription_row_text);
             Button unsubscribe = (Button) view.findViewById(R.id.unsubBtn);
-            unsubscribe.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    int adapterPosition = getAdapterPosition();
-                    DrogopolexSubscription drogopolexSubscription = localDataSubs.get(adapterPosition);
-                    unsubscribeRequest(drogopolexSubscription.getId_sub().toString(), adapterPosition);
-                }
+            unsubscribe.setOnClickListener(v -> {
+                int adapterPosition = getAdapterPosition();
+                DrogopolexSubscription drogopolexSubscription = localDataSubs.get(adapterPosition);
+                unsubscribeRequest(drogopolexSubscription.getId_sub().toString(), adapterPosition);
             });
         }
 
@@ -50,12 +48,13 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         }
     }
 
-    public SubscriptionsListAdapter( ArrayList<DrogopolexSubscription> data, Context context) {
+    public SubscriptionsListAdapter(List<DrogopolexSubscription> data, Context context) {
         localDataSubs = data;
         this.context = context;
         this.subscriptionsRepository = new SubscriptionsRepository();
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())

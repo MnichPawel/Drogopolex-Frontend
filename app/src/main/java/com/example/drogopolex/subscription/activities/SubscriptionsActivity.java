@@ -94,6 +94,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
         subscriptionsResponseLiveData.observe(this, subscriptionsResponse -> {
             if (subscriptionsResponse != null) {
                 subscriptions.remove(indexToDelete);
+                listAdapter.notifyDataSetChanged();
             } else {
                 Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
