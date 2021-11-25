@@ -180,6 +180,19 @@
             android:onClick="@{()-> viewModel.onLogoutClicked()}"
             android:visibility="invisible"
             app:customVisibility="@{viewModel.menuOpened}"
+            app:layout_constraintStart_toStartOf="@+id/goToRoutesList"
+            app:layout_constraintTop_toBottomOf="@+id/goToRoutesList"
+            app:srcCompat="@drawable/ic_logout" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/goToRoutesList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:onClick="@{()-> viewModel.onGoToRoutesListClicked()}"
+            android:visibility="invisible"
+            app:customVisibility="@{viewModel.menuOpened}"
             app:layout_constraintStart_toStartOf="@+id/goToProfile"
             app:layout_constraintTop_toBottomOf="@+id/goToProfile"
             app:srcCompat="@drawable/ic_logout" />

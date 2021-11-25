@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
@@ -62,7 +63,10 @@ public class AddRouteActivity extends AppCompatActivity implements SharedPrefere
     @Override
     public void onSuccessAddRoute(LiveData<RouteResponse> routeResponseLiveData) {
         routeResponseLiveData.observe(this, routeResponse -> {
-//            to implement
+            if (routeResponse != null) {
+                Toast.makeText(AddRouteActivity.this, "Wyznaczono trasę.", Toast.LENGTH_SHORT).show();
+                handleAction(new AddRouteAction(AddRouteAction.SHOW_ROUTES_LIST));
+            }
         });
     }
 }

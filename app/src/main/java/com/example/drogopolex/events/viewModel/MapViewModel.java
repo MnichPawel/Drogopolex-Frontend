@@ -130,6 +130,10 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         mAction.setValue(new MapAction(MapAction.SHOW_PROFILE));
     }
 
+    public void onGoToRoutesListClicked() {
+        mAction.setValue(new MapAction(MapAction.SHOW_ROUTES_LIST));
+    }
+
     public void onShowAllEventsClicked(View view) {
         Log.d("SHOW_ALL_EVENTS", "saec  " + view.getVisibility());
         view.startAnimation(flipButtonOut);

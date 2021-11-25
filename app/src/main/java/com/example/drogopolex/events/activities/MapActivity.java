@@ -110,6 +110,10 @@ public class MapActivity extends FragmentActivity
                 Intent goToProfileIntent = new Intent(this, ProfileActivity.class);
                 startActivity(goToProfileIntent);
                 break;
+            case MapAction.SHOW_ROUTES_LIST:
+                Intent goToRoutesListIntent = new Intent(this, RoutesListActivity.class);
+                startActivity(goToRoutesListIntent);
+                break;
             case MapAction.LOGOUT:
                 Intent goToLoginMenuIntent = new Intent(this, LoginMenuActivity.class);
                 startActivity(goToLoginMenuIntent);
