@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
-import com.example.drogopolex.data.network.response.RouteResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.databinding.ActivityAddRouteBinding;
 import com.example.drogopolex.events.listeners.AddRouteActivityListener;
 import com.example.drogopolex.events.utils.AddRouteAction;
@@ -61,7 +61,7 @@ public class AddRouteActivity extends AppCompatActivity implements SharedPrefere
     }
 
     @Override
-    public void onSuccessAddRoute(LiveData<RouteResponse> routeResponseLiveData) {
+    public void onSuccessAddRoute(LiveData<RouteValue> routeResponseLiveData) {
         routeResponseLiveData.observe(this, routeResponse -> {
             if (routeResponse != null) {
                 Toast.makeText(AddRouteActivity.this, "Wyznaczono trasę.", Toast.LENGTH_SHORT).show();

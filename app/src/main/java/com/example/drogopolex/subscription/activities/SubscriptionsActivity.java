@@ -21,6 +21,7 @@ import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.example.drogopolex.subscription.viewModel.SubscriptionsViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -33,7 +34,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
     ActivitySubscriptionsBinding activitySubscriptionsBinding;
     SubscriptionsListAdapter listAdapter;
 
-    ArrayList<DrogopolexSubscription> subscriptions = new ArrayList<>();
+    List<DrogopolexSubscription> subscriptions = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

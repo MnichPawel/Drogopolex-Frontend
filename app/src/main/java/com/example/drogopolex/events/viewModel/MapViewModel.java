@@ -11,7 +11,7 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
-import com.example.drogopolex.data.network.response.RouteResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.data.repositories.UserRepository;
@@ -168,7 +168,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             String token = sharedPreferences.getString("token", "");
 
             LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
-            LiveData<RouteResponse> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint), user_id, token);
+            LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint), user_id, token);
 
             mapActivityListener.drawRoute(routeResponseLiveData);
         }

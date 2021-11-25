@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/layout/activity_routes_list.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_subscribed_events.xml" value="0.10520275439938791" />
         <entry key="app/src/main/res/layout/activity_subscriptions.xml" value="0.10520275439938791" />
+        <entry key="app/src/main/res/layout/row_routes_list.xml" value="0.1403688524590164" />
       </map>
     </option>
   </component>

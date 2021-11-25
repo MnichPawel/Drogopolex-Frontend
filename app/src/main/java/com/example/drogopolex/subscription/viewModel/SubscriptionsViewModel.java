@@ -18,7 +18,6 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
     private LiveData<SubscriptionsResponse> subscriptionsLiveData = new MutableLiveData<>();
 
     public SharedPreferencesHolder sharedPreferencesHolder = null;
-//    public OnSuccessListener<LiveData<SubscriptionsResponse>> onSuccessListener = null;
     public SubscriptionListListener subscriptionListListener = null;
 
 
@@ -42,7 +41,7 @@ public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewMode
         mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_MAP));
     }
 
-    public void onGoToSubscibeClicked() {
+    public void onGoToSubscribeClicked() {
         mAction.setValue(new SubscriptionsAction(SubscriptionsAction.SHOW_SUBSCRIBE));
     }
 

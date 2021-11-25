@@ -3,7 +3,7 @@ package com.example.drogopolex.events.viewModel;
 import android.content.SharedPreferences;
 
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
-import com.example.drogopolex.data.network.response.RouteResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.events.listeners.AddRouteActivityListener;
 import com.example.drogopolex.events.utils.AddRouteAction;
@@ -41,7 +41,7 @@ public class AddRouteViewModel extends ViewModel {
         String name = nameOfRoute.getValue();
         String source = sourcePlace.getValue();
         String dest = destinationPlace.getValue();
-        LiveData<RouteResponse> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(name, source, dest), user_id, token);
+        LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(name, source, dest), user_id, token);
 
         addRouteActivityListener.onSuccessAddRoute(routeResponseLiveData);
     }
