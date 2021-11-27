@@ -35,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
     //ads
     private String adIdMopub= "b195f8dd8ded45fe847ad89ed1d016da";
     MoPubView adBanner;
+    MoPubView adBanner2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +48,10 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
 
         adBanner = findViewById(R.id.profileAdBanner);
         adBanner.setAdUnitId(adIdMopub);
+
+
+        adBanner2 = findViewById(R.id.profileAdBanner2);
+        adBanner2.setAdUnitId(adIdMopub);
         initialiseMopubSDK(adIdMopub);
 
         activityProfileBinding.getViewModel().getAction().observe(this, new Observer<ProfileAction>() {
@@ -130,6 +135,7 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
         return new SdkInitializationListener() {
             @Override
             public void onInitializationFinished() {
+                adBanner2.loadAd();
                 adBanner.loadAd();
             }
         };
@@ -138,5 +144,6 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
     protected void onDestroy(){
         super.onDestroy();
         adBanner.destroy();
+        adBanner2.destroy();
     }
 }
