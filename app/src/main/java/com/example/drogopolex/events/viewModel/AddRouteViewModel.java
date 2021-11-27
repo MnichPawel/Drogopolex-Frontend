@@ -46,6 +46,10 @@ public class AddRouteViewModel extends ViewModel {
         addRouteActivityListener.onSuccessAddRoute(routeResponseLiveData);
     }
 
+    public void onPopupClicked() {
+        mAction.setValue(new AddRouteAction(AddRouteAction.SHOW_POPUP));
+    }
+
     public LiveData<AddRouteAction> getAction() {
         return mAction;
     }
