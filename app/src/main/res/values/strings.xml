@@ -32,4 +32,6 @@
     <string name="source_place">Punkt początkowy</string>
     <string name="destination_place">Punkt docelowy</string>
     <string name="name_of_route">Nazwa trasy</string>
+    <string name="cancel">Anuluj</string>
+    <string name="accept">Zatwierdź</string>
 </resources>

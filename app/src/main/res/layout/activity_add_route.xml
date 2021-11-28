@@ -76,39 +76,73 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/editTextSource"
+                <LinearLayout
+                    android:id="@+id/lEditTextSource"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="50dp"
                     android:layout_marginEnd="50dp"
-                    android:ems="10"
-                    android:hint="@string/source_place"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:text="@={viewModel.sourcePlace}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/editTextNameOfRoute"
-                    app:layout_constraintBottom_toTopOf="@+id/editTextDestination" />
+                    app:layout_constraintBottom_toTopOf="@+id/lEditTextDestination">
 
-                <EditText
-                    android:id="@+id/editTextDestination"
+                    <EditText
+                        android:id="@+id/editTextSource"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/source_place"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:text="@={viewModel.sourcePlace}" />
+
+                    <ImageButton
+                        android:id="@+id/imageButtonSource"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="7"
+                        android:src="@android:drawable/ic_dialog_map"
+                        android:tint="#673AB7"
+                        android:onClick="@{()-> viewModel.onSourceByMapClicked()}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lEditTextDestination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="50dp"
                     android:layout_marginEnd="50dp"
-                    android:ems="10"
-                    android:hint="@string/destination_place"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:text="@={viewModel.destinationPlace}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextSource" />
+                    app:layout_constraintTop_toBottomOf="@+id/lEditTextSource">
+
+                    <EditText
+                        android:id="@+id/editTextDestination"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/destination_place"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:text="@={viewModel.destinationPlace}" />
+
+                    <ImageButton
+                        android:id="@+id/imageButtonDestination"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="7"
+                        android:src="@android:drawable/ic_dialog_map"
+                        android:tint="#673AB7"
+                        android:onClick="@{()-> viewModel.onDestinationByMapClicked()}" />
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

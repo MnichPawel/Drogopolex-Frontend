@@ -36,6 +36,18 @@ public class GenerateRouteRequest {
         this.avoid = avoid;
     }
 
+    public GenerateRouteRequest(String name, LatLng fromGps, String toName) {
+        this.name = name;
+        this.from = new LocationRequest(fromGps.latitude, fromGps.longitude);
+        this.to = new LocationRequest(toName);
+    }
+
+    public GenerateRouteRequest(String name, String fromName, LatLng toGps) {
+        this.name = name;
+        this.from = new LocationRequest(fromName);
+        this.to = new LocationRequest(toGps.latitude, toGps.longitude);
+    }
+
     static class Avoid {
         List<PointToAvoid> points;
         List<String> events;
