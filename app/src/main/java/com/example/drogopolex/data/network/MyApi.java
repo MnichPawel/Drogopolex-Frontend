@@ -15,7 +15,7 @@ import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
-import com.example.drogopolex.data.network.response.RouteResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
 import retrofit2.Call;
@@ -70,7 +70,7 @@ public interface MyApi {
             @Body AddEventRequest body);
 
     @POST("generateRoute")
-    Call<RouteResponse> eventsGenerateRoute(
+    Call<RouteValue> eventsGenerateRoute(
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body GenerateRouteRequest body);

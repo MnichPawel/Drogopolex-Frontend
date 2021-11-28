@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class RouteResponse {
+public class RouteValue {
 
     @SerializedName("bbox_koniec")
     @Expose

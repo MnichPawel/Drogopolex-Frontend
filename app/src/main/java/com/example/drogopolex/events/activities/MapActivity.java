@@ -20,7 +20,7 @@ import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.auth.activities.ProfileActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
-import com.example.drogopolex.data.network.response.RouteResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
 import com.example.drogopolex.events.utils.MapAction;
@@ -288,7 +288,7 @@ public class MapActivity extends FragmentActivity
     }
 
     @Override
-    public void drawRoute(LiveData<RouteResponse> routeResponseLiveData) {
+    public void drawRoute(LiveData<RouteValue> routeResponseLiveData) {
         map.setOnMapClickListener(null);
 
         routeResponseLiveData.observe(this, routeResponse -> {

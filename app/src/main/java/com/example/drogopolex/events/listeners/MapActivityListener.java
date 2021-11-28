@@ -2,7 +2,7 @@ package com.example.drogopolex.events.listeners;
 
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
-import com.example.drogopolex.data.network.response.RouteResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.google.android.gms.maps.model.LatLng;
 
 import androidx.lifecycle.LiveData;
@@ -20,5 +20,5 @@ public interface MapActivityListener {
 
     LatLng getChosenPoint();
 
-    void drawRoute(LiveData<RouteResponse> routeResponseLiveData);
+    void drawRoute(LiveData<RouteValue> routeResponseLiveData);
 }

@@ -9,7 +9,7 @@ import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
-import com.example.drogopolex.data.network.response.RouteResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 import com.example.drogopolex.model.LocationDetails;
@@ -79,14 +79,14 @@ public class EventsRepository {
         return addEventResponse;
     }
 
-    public LiveData<RouteResponse> generateRoute(LatLng from, LatLng to, String userId, String token) {
-        final MutableLiveData<RouteResponse> generateRouteResponse = new MutableLiveData<>();
+    public LiveData<RouteValue> generateRoute(LatLng from, LatLng to, String userId, String token) {
+        final MutableLiveData<RouteValue> generateRouteResponse = new MutableLiveData<>();
 
         myApi.eventsGenerateRoute(token, userId,
                 new GenerateRouteRequest(from, to))
-                .enqueue(new Callback<RouteResponse>() {
+                .enqueue(new Callback<RouteValue>() {
                     @Override
-                    public void onResponse(Call<RouteResponse> call, Response<RouteResponse> response) {
+                    public void onResponse(Call<RouteValue> call, Response<RouteValue> response) {
                         if (response.isSuccessful()) {
                             generateRouteResponse.setValue(response.body());
                         } else {
@@ -95,7 +95,7 @@ public class EventsRepository {
                     }
 
                     @Override
-                    public void onFailure(Call<RouteResponse> call, Throwable t) {
+                    public void onFailure(Call<RouteValue> call, Throwable t) {
                         generateRouteResponse.setValue(null);
                     }
                 });
