@@ -79,7 +79,7 @@ public class EventsRepository {
         });
         return addEventResponse;
     }
-
+  
     public LiveData<RouteValue> generateRoute(GenerateRouteRequest request, String userId, String token) {
         final MutableLiveData<RouteValue> generateRouteResponse = new MutableLiveData<>();
 

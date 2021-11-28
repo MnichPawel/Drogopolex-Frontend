@@ -84,6 +84,22 @@
             android:layout_marginStart="8dp"
             android:text="@string/change_password"
             android:onClick="@{()-> viewModel.onChangePasswordClicked()}"/>
+        <EditText
+            android:id="@+id/profile_change_email_textfield"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/email"
+            android:importantForAutofill="no"
+            android:inputType="textEmailAddress"
+            android:text="@={viewModel.email}"/>
+        <Button
+            android:id="@+id/profile_change_email_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/change_email"
+            android:onClick="@{()-> viewModel.onChangeEmailClicked()}"/>
     </LinearLayout>
 
 <LinearLayout
@@ -93,23 +109,13 @@
     android:orientation="vertical"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp">
-    <EditText
-        android:id="@+id/profile_change_email_textfield"
+    <com.mopub.mobileads.MoPubView
+        android:id="@+id/profileAdBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/email"
-        android:importantForAutofill="no"
-        android:inputType="textEmailAddress"
-        android:text="@={viewModel.email}"/>
-    <Button
-        android:id="@+id/profile_change_email_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/change_email"
-        android:onClick="@{()-> viewModel.onChangeEmailClicked()}"/>
-
+        android:layout_marginTop="10dp"
+        app:moPubAdSize="match_view"
+    />
 </LinearLayout>
 
 </LinearLayout>
