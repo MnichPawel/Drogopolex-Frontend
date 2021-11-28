@@ -163,7 +163,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             String token = sharedPreferences.getString("token", "");
 
             LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
-            LiveData<RouteResponse> routeResponseLiveData = eventsRepository.generateRoute("coords", from, chosenPoint, user_id, token);
+            LiveData<RouteResponse> routeResponseLiveData = eventsRepository.generateRoute(from, chosenPoint, user_id, token);
 
             mapActivityListener.drawRoute(routeResponseLiveData);
         }

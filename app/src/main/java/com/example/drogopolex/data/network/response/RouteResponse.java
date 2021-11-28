@@ -3,6 +3,8 @@ package com.example.drogopolex.data.network.response;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class RouteResponse {
 
     @SerializedName("bbox_koniec")
@@ -26,12 +28,15 @@ public class RouteResponse {
     @SerializedName("nazwa")
     @Expose
     private String nazwa;
-    @SerializedName("start_raw")
+    @SerializedName("from")
     @Expose
-    private String startRaw;
-    @SerializedName("stop_raw")
+    private LocationResponse from;
+    @SerializedName("to")
     @Expose
-    private String stopRaw;
+    private LocationResponse to;
+    @SerializedName("via")
+    @Expose
+    private List<LocationResponse> via;
 
     public String getBboxKoniec() {
         return bboxKoniec;
@@ -89,20 +94,27 @@ public class RouteResponse {
         this.nazwa = nazwa;
     }
 
-    public String getStartRaw() {
-        return startRaw;
+    public LocationResponse getFrom() {
+        return from;
     }
 
-    public void setStartRaw(String startRaw) {
-        this.startRaw = startRaw;
+    public void setFrom(LocationResponse from) {
+        this.from = from;
     }
 
-    public String getStopRaw() {
-        return stopRaw;
+    public LocationResponse getTo() {
+        return to;
     }
 
-    public void setStopRaw(String stopRaw) {
-        this.stopRaw = stopRaw;
+    public void setTo(LocationResponse to) {
+        this.to = to;
     }
 
+    public List<LocationResponse> getVia() {
+        return via;
+    }
+
+    public void setVia(List<LocationResponse> via) {
+        this.via = via;
+    }
 }

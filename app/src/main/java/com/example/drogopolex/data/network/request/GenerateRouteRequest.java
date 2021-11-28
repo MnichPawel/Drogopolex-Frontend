@@ -2,44 +2,37 @@ package com.example.drogopolex.data.network.request;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GenerateRouteRequest {
     String name;
-    String type;
-    String fromName;
-    List<Double> fromGPS;
-    String toName;
-    List<Double> toGPS;
+    LocationRequest from;
+    LocationRequest to;
     Avoid avoid;
+    List<LocationRequest> via;
+    String drivingProfile;
 
-    public GenerateRouteRequest(String type, LatLng fromGPS, LatLng toGPS) {
-        this.type = type;
-        this.fromGPS = new ArrayList<>(Arrays.asList(fromGPS.longitude, fromGPS.latitude));
-        this.toGPS = new ArrayList<>(Arrays.asList(toGPS.longitude, toGPS.latitude));
+    public GenerateRouteRequest(LatLng fromGPS, LatLng toGPS) {
+        this.from = new LocationRequest(fromGPS.latitude, fromGPS.longitude);
+        this.to = new LocationRequest(toGPS.latitude, toGPS.longitude);
     }
 
-    public GenerateRouteRequest(String name, String type, LatLng fromGPS, LatLng toGPS) {
+    public GenerateRouteRequest(String name, LatLng fromGPS, LatLng toGPS) {
         this.name = name;
-        this.type = type;
-        this.fromGPS = new ArrayList<>(Arrays.asList(fromGPS.longitude, fromGPS.latitude));
-        this.toGPS = new ArrayList<>(Arrays.asList(toGPS.longitude, toGPS.latitude));
+        this.from = new LocationRequest(fromGPS.latitude, fromGPS.longitude);
+        this.to = new LocationRequest(toGPS.latitude, toGPS.longitude);
     }
 
-    public GenerateRouteRequest(String name, String type, String fromName, String toName) {
+    public GenerateRouteRequest(String name, String fromName, String toName) {
         this.name = name;
-        this.type = type;
-        this.fromName = fromName;
-        this.toName = toName;
+        this.from = new LocationRequest(fromName);
+        this.to = new LocationRequest(toName);
     }
 
-    public GenerateRouteRequest(String name, String type, String fromName, String toName, Avoid avoid) {
+    public GenerateRouteRequest(String name, String fromName, String toName, Avoid avoid) {
         this.name = name;
-        this.type = type;
-        this.fromName = fromName;
-        this.toName = toName;
+        this.from = new LocationRequest(fromName);
+        this.to = new LocationRequest(toName);
         this.avoid = avoid;
     }
 

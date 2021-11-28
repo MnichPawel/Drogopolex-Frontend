@@ -79,11 +79,11 @@ public class EventsRepository {
         return addEventResponse;
     }
 
-    public LiveData<RouteResponse> generateRoute(String type, LatLng from, LatLng to, String userId, String token) {
+    public LiveData<RouteResponse> generateRoute(LatLng from, LatLng to, String userId, String token) {
         final MutableLiveData<RouteResponse> generateRouteResponse = new MutableLiveData<>();
 
         myApi.eventsGenerateRoute(token, userId,
-                new GenerateRouteRequest(type, from, to))
+                new GenerateRouteRequest(from, to))
                 .enqueue(new Callback<RouteResponse>() {
                     @Override
                     public void onResponse(Call<RouteResponse> call, Response<RouteResponse> response) {
