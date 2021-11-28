@@ -8,6 +8,7 @@ import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.request.GetEventsRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
+import com.example.drogopolex.data.network.request.RemoveRouteRequest;
 import com.example.drogopolex.data.network.request.RemoveVoteRequest;
 import com.example.drogopolex.data.network.request.SubscribeRequest;
 import com.example.drogopolex.data.network.request.UnsubscribeRequest;
@@ -16,6 +17,7 @@ import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
+import com.example.drogopolex.data.network.response.RoutesResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
 import retrofit2.Call;
@@ -74,6 +76,17 @@ public interface MyApi {
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body GenerateRouteRequest body);
+
+    @POST("getUserRoutes")
+    Call<RoutesResponse> eventsGetRoutes(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId);
+
+    @POST("removeUserRoute")
+    Call<BasicResponse> eventsRemoveRoute(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
+            @Body RemoveRouteRequest body);
     /*
      * Subscription Requests
      */

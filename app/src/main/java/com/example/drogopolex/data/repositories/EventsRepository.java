@@ -6,14 +6,15 @@ import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
+import com.example.drogopolex.data.network.request.RemoveRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.response.RouteValue;
+import com.example.drogopolex.data.network.response.RoutesResponse;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 import com.example.drogopolex.model.LocationDetails;
-import com.google.android.gms.maps.model.LatLng;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -78,12 +79,11 @@ public class EventsRepository {
         });
         return addEventResponse;
     }
-
-    public LiveData<RouteValue> generateRoute(LatLng from, LatLng to, String userId, String token) {
+  
+    public LiveData<RouteValue> generateRoute(GenerateRouteRequest request, String userId, String token) {
         final MutableLiveData<RouteValue> generateRouteResponse = new MutableLiveData<>();
 
-        myApi.eventsGenerateRoute(token, userId,
-                new GenerateRouteRequest(from, to))
+        myApi.eventsGenerateRoute(token, userId, request)
                 .enqueue(new Callback<RouteValue>() {
                     @Override
                     public void onResponse(Call<RouteValue> call, Response<RouteValue> response) {
@@ -100,5 +100,49 @@ public class EventsRepository {
                     }
                 });
         return generateRouteResponse;
+    }
+
+    public LiveData<RoutesResponse> getRoutes(String userId, String token) {
+        final MutableLiveData<RoutesResponse> getRoutesResponse = new MutableLiveData<>();
+
+        myApi.eventsGetRoutes(token, userId)
+                .enqueue(new Callback<RoutesResponse>() {
+                    @Override
+                    public void onResponse(Call<RoutesResponse> call, Response<RoutesResponse> response) {
+                        if (response.isSuccessful()) {
+                            getRoutesResponse.setValue(response.body());
+                        } else {
+                            getRoutesResponse.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RoutesResponse> call, Throwable t) {
+                        getRoutesResponse.setValue(null);
+                    }
+                });
+        return getRoutesResponse;
+    }
+
+    public LiveData<BasicResponse> removeRoute(String userId, String token, String routeId) {
+        final MutableLiveData<BasicResponse> removeRouteResponse = new MutableLiveData<>();
+
+        myApi.eventsRemoveRoute(token, userId, new RemoveRouteRequest(routeId))
+                .enqueue(new Callback<BasicResponse>() {
+                    @Override
+                    public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
+                        if (response.isSuccessful()) {
+                            removeRouteResponse.setValue(response.body());
+                        } else {
+                            removeRouteResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<BasicResponse> call, Throwable t) {
+                        removeRouteResponse.setValue(null);
+                    }
+                });
+        return removeRouteResponse;
     }
 }

@@ -8,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.example.drogopolex.R;
+import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
@@ -129,6 +130,10 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         mAction.setValue(new MapAction(MapAction.SHOW_PROFILE));
     }
 
+    public void onGoToRoutesListClicked() {
+        mAction.setValue(new MapAction(MapAction.SHOW_ROUTES_LIST));
+    }
+
     public void onShowAllEventsClicked(View view) {
         Log.d("SHOW_ALL_EVENTS", "saec  " + view.getVisibility());
         view.startAnimation(flipButtonOut);
@@ -163,7 +168,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             String token = sharedPreferences.getString("token", "");
 
             LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
-            LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(from, chosenPoint, user_id, token);
+            LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint), user_id, token);
 
             mapActivityListener.drawRoute(routeResponseLiveData);
         }
