@@ -6,6 +6,7 @@ import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.ChangeVoteRequest;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.request.GetEventsRequest;
+import com.example.drogopolex.data.network.request.GetRouteRequest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.RemoveRouteRequest;
@@ -77,6 +78,12 @@ public interface MyApi {
             @Header("User-Id") String userId,
             @Body GenerateRouteRequest body);
 
+    @POST("getUserRoute")
+    Call<RouteValue> eventsGetRoute(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
+            @Body GetRouteRequest body);
+
     @POST("getUserRoutes")
     Call<RoutesResponse> eventsGetRoutes(
             @Header("Authorization-Token") String token,
@@ -98,7 +105,6 @@ public interface MyApi {
             @Body SubscribeRequest body);
 
     @POST("subscriptions")
-
     Call<SubscriptionsResponse> subscriptionSubscriptions(
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId);
@@ -118,7 +124,7 @@ public interface MyApi {
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body AddVoteRequest body
-        );
+    );
 
     @POST("change_vote")
     Call<BasicResponse> votesChangeVote(

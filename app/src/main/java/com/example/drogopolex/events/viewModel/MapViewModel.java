@@ -247,4 +247,14 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             mapActivityListener.onAddNewEventSuccess(addEventResponse);
         }
     }
+
+    public void getRouteById(String routeId) {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String user_id = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+
+        LiveData<RouteValue> routeResponseLiveData = eventsRepository.getRoute(user_id, token, routeId);
+
+        mapActivityListener.drawRoute(routeResponseLiveData);
+    }
 }

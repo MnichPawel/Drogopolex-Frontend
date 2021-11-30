@@ -34,4 +34,5 @@
     <string name="name_of_route">Nazwa trasy</string>
     <string name="cancel">Anuluj</string>
     <string name="accept">Zatwierdź</string>
+    <string name="choose">Wybierz</string>
 </resources>

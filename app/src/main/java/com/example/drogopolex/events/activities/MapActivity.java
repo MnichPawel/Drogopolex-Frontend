@@ -146,6 +146,11 @@ public class MapActivity extends FragmentActivity
         mapSettings.setMyLocationButtonEnabled(true);
         changePositionOfMyLocationButton();
 
+        if (getIntent().hasExtra("routeId")) {
+            String selectedRouteId = (String) getIntent().getSerializableExtra("routeId");
+            activityMapBinding.getViewModel().getRouteById(selectedRouteId);
+        }
+
         prepRequestLocationUpdates();
     }
 

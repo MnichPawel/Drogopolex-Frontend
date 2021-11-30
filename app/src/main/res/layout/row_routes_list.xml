@@ -27,14 +27,30 @@
             android:textColor="@color/black" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/removeRouteButton"
-        style="@style/Widget.AppCompat.Button"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="?attr/colorError"
-        android:text="@string/delete"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/showRouteButton"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorSecondary"
+            android:text="@string/choose"
+            android:layout_marginHorizontal="5dp" />
+
+        <Button
+            android:id="@+id/removeRouteButton"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?attr/colorError"
+            android:text="@string/delete"
+            android:layout_marginHorizontal="5dp" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
