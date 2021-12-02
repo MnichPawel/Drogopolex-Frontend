@@ -38,6 +38,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.internal.LinkedTreeMap;
@@ -73,6 +74,7 @@ public class MapActivity extends FragmentActivity
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
 
     boolean firstLocalizationUpdateLoaded = false;
+    boolean displayingSelectedRoute = false;
 
     private MarkerOptions routeDestinationMarkerOptions = null;
     private Marker routeDestinationMarker = null;
@@ -147,6 +149,7 @@ public class MapActivity extends FragmentActivity
         changePositionOfMyLocationButton();
 
         if (getIntent().hasExtra("routeId")) {
+            displayingSelectedRoute = true;
             String selectedRouteId = (String) getIntent().getSerializableExtra("routeId");
             activityMapBinding.getViewModel().getRouteById(selectedRouteId);
         }
@@ -176,9 +179,9 @@ public class MapActivity extends FragmentActivity
 
     private void requestLocationUpdates() {
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
-            boolean moveCameraToUser = activityMapBinding.getViewModel().onLocationChanged(locationDetails);
+            boolean isNearbyEvents = activityMapBinding.getViewModel().onLocationChanged(locationDetails);
 
-            if (!firstLocalizationUpdateLoaded || moveCameraToUser) {
+            if (!firstLocalizationUpdateLoaded || isNearbyEvents || !displayingSelectedRoute) {
                 firstLocalizationUpdateLoaded = true;
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
@@ -306,6 +309,10 @@ public class MapActivity extends FragmentActivity
                 Log.d("DRAW_ROUTE", "response not null");
                 routeGeoJson = new JSONObject((LinkedTreeMap) routeResponse.getGeometria());
                 drawRouteOnMap(routeGeoJson);
+                moveCameraToBbox(
+                        routeResponse.getBboxStart(),
+                        routeResponse.getBboxKoniec()
+                );
             }
         });
     }
@@ -333,6 +340,14 @@ public class MapActivity extends FragmentActivity
         } else { //Roboty Drogowe
             return svgToBitmap(R.drawable.ic_roboty);
         }
+    }
+
+    private void moveCameraToBbox(String bboxStartString, String bboxEndString) {
+        LatLng bboxStart = parseCoordinatesString(bboxStartString);
+        LatLng bboxEnd = parseCoordinatesString(bboxEndString);
+
+        LatLngBounds bbox = new LatLngBounds(bboxStart, bboxEnd);
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
     }
 
     private LatLng parseCoordinatesString(String latLngString) {
