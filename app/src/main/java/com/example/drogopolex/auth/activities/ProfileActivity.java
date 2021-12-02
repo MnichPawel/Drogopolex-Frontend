@@ -19,11 +19,13 @@ import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.mopub.common.MoPub;
 import com.mopub.common.SdkConfiguration;
 import com.mopub.common.SdkInitializationListener;
+import com.mopub.mobileads.MoPubErrorCode;
 import com.mopub.mobileads.MoPubView;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -46,13 +48,16 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
         activityProfileBinding.getViewModel().sharedPreferencesHolder = this;
         activityProfileBinding.getViewModel().basicListener = this;
 
-        adBanner = findViewById(R.id.profileAdBanner);
-        adBanner.setAdUnitId(adIdMopub);
 
 
-        adBanner2 = findViewById(R.id.profileAdBanner2);
+
+        adBanner2 = (MoPubView) findViewById(R.id.profileAdBanner2);
         adBanner2.setAdUnitId(adIdMopub);
-        initialiseMopubSDK(adIdMopub);
+        adBanner2.loadAd();
+        adBanner = (MoPubView) findViewById(R.id.profileAdBanner);
+        adBanner.setAdUnitId(adIdMopub); // Enter your Ad Unit ID from www.mopub.com
+        adBanner.loadAd();
+        //initialiseMopubSDK(adIdMopub);
 
         activityProfileBinding.getViewModel().getAction().observe(this, new Observer<ProfileAction>() {
             @Override
@@ -120,30 +125,13 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
         return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
     }
 
-    private void initialiseMopubSDK(String idAd){
-        Map<String, String> mediatedNetworkConfig1 = new HashMap<>();
-        mediatedNetworkConfig1.put("<custom-adapter-class-data-key>","<custom-adapter-class-data-value>");
-        Map<String, String> mediatedNetworkConfig2 = new HashMap<>();
-        mediatedNetworkConfig2.put("<custom-adapter-class-data-key>","<custom-adapter-class-data-value>");
 
-        SdkConfiguration sdkConfiguration =new SdkConfiguration.Builder(idAd)
-                .withLegitimateInterestAllowed(false)
-                .build();
-        MoPub.initializeSdk(ProfileActivity.this,sdkConfiguration,initialiseSdkListener());
-    }
-    private SdkInitializationListener initialiseSdkListener(){
-        return new SdkInitializationListener() {
-            @Override
-            public void onInitializationFinished() {
-                adBanner2.loadAd();
-                adBanner.loadAd();
-            }
-        };
-    }
     @Override
     protected void onDestroy(){
         super.onDestroy();
         adBanner.destroy();
         adBanner2.destroy();
     }
+
+
 }
