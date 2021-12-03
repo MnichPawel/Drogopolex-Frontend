@@ -76,19 +76,20 @@
             app:showEventButton="@{viewModel.addEventButtonClicked}"
             app:srcCompat="@drawable/ic_radarround" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/event_roboty_drogowe"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginStart="10dp"
+            android:src="@drawable/ic_robotyround"
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()-> viewModel.onEventRobotyDrogoweClicked()}"
-            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/event_patrol_policji"
             app:layout_constraintStart_toEndOf="@+id/event_patrol_policji"
             app:showEventButton="@{viewModel.addEventButtonClicked}"
-            app:srcCompat="@drawable/ic_robotyround" />
+            android:visibility="visible"
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/menu"
@@ -223,4 +224,9 @@
             app:layout_constraintTop_toBottomOf="@+id/goToSubs"
             app:srcCompat="@drawable/ic_profile" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_robotyround"
+        />
 </layout>

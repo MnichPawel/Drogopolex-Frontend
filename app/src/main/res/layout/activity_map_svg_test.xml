@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.drogopolex.events.viewModel.MapViewModel" />
+    </data>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="550dp"
+        tools:context=".events.activities.MapActivity">
+
+            <ImageView
+                android:id="@+id/quitQuickRoute"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
+                android:src="@android:drawable/ic_delete"
+                android:visibility="visible"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+
+        <ImageView
+            android:id="@+id/confirmQuickRoute"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="50dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
+            android:src="@drawable/ic_starttrasy"
+            android:visibility="visible"
+            app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/quickNewRoute"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="0dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_centerHorizontal="true"
+            android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
+            android:src="@drawable/ic_szybkatrasa"
+            android:visibility="visible"
+            app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}"
+            android:layout_margin="0dp"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".events.activities.MapActivity">
+
+            <!--Layout z menu bocznym lewym-->
+            <ImageView
+                android:id="@+id/menu"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onMenuClicked()}"
+                android:src="@drawable/ic_menu"
+                android:visibility="visible"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+
+            <ImageView
+                android:id="@+id/goToRoutesList"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onGoToRoutesListClicked()}"
+                android:src="@drawable/ic_pedal"
+                android:visibility="visible"
+                app:customVisibility="@{viewModel.menuOpened}"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+
+            <ImageView
+                android:id="@+id/goToSubs"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onGoToSubsClicked()}"
+                android:src="@drawable/ic_subscriptions"
+                android:visibility="visible"
+                app:customVisibility="@{viewModel.menuOpened}"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+
+            <ImageView
+                android:id="@+id/goToProfile"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onGoToProfileClicked()}"
+                android:src="@drawable/ic_profile"
+                android:visibility="visible"
+                app:customVisibility="@{viewModel.menuOpened}"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+
+            <ImageView
+                android:id="@+id/logout"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onLogoutClicked()}"
+                android:src="@drawable/ic_logout"
+                android:visibility="visible"
+                app:customVisibility="@{viewModel.menuOpened}"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+
+
+            <!--Layout z przyciskami dodawania zdarzen-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="400dp"
+                android:orientation="horizontal"
+                tools:context=".events.activities.MapActivity">
+
+
+                <ImageView
+                    android:id="@+id/dodajZdarzenie"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()-> viewModel.onAddEventClicked()}"
+                    android:src="@drawable/ic_add"
+                    android:visibility="visible"
+                    app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
+
+                <ImageView
+                    android:id="@+id/event_wypadek"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()-> viewModel.onEventWypadekClicked()}"
+                    android:src="@drawable/ic_wypadekround"
+                    android:visibility="visible"
+                    app:showEventButton="@{viewModel.addEventButtonClicked}" />
+
+                <ImageView
+                    android:id="@+id/event_korek"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()-> viewModel.onEventKorekClicked()}"
+                    android:src="@drawable/ic_korekround"
+                    android:visibility="visible"
+                    app:showEventButton="@{viewModel.addEventButtonClicked}" />
+
+                <ImageView
+                    android:id="@+id/event_patrol_policji"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()-> viewModel.onEventPatrolPolicjiClicked()}"
+                    android:src="@drawable/ic_radarround"
+                    android:visibility="visible"
+                    app:showEventButton="@{viewModel.addEventButtonClicked}" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()-> viewModel.onEventRobotyDrogoweClicked()}"
+                    android:src="@drawable/ic_robotyround"
+                    android:visibility="visible"
+                    app:showEventButton="@{viewModel.addEventButtonClicked}" />
+
+
+                <!--
+                        <fragment
+                            android:id="@+id/map"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="1.0" />-->
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>
