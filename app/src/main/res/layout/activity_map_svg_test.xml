@@ -9,6 +9,7 @@
             name="viewModel"
             type="com.example.drogopolex.events.viewModel.MapViewModel" />
     </data>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -25,37 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
 
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="550dp"
-        tools:context=".events.activities.MapActivity">
 
-            <ImageView
-                android:id="@+id/quitQuickRoute"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
-                android:src="@android:drawable/ic_delete"
-                android:visibility="visible"
-                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
-
-        <ImageView
-            android:id="@+id/confirmQuickRoute"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="50dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
-            android:src="@drawable/ic_starttrasy"
-            android:visibility="visible"
-            app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
-        </LinearLayout>
         <ImageView
             android:id="@+id/quickNewRoute"
             android:layout_width="50dp"
@@ -63,6 +34,7 @@
             android:layout_marginStart="0dp"
             android:clickable="true"
             android:focusable="true"
+
             android:layout_centerHorizontal="true"
             android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
             android:src="@drawable/ic_szybkatrasa"
@@ -229,6 +201,38 @@
             </LinearLayout>
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="550dp"
+            android:layout_marginLeft="200dp"
+            tools:context=".events.activities.MapActivity">
+            <ImageView
+                android:id="@+id/confirmQuickRoute"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
+                android:src="@drawable/ic_starttrasy"
+                android:visibility="visible"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}"
+                android:layout_marginLeft="60dp"/>
+            <ImageView
+                android:id="@+id/quitQuickRoute"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
+                android:src="@android:drawable/ic_delete"
+                android:visibility="visible"
+                app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
 
+
+        </LinearLayout>
     </RelativeLayout>
+
 </layout>
