@@ -224,9 +224,4 @@
             app:layout_constraintTop_toBottomOf="@+id/goToSubs"
             app:srcCompat="@drawable/ic_profile" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_robotyround"
-        />
 </layout>
