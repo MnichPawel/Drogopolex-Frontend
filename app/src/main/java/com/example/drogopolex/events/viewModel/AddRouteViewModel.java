@@ -94,7 +94,7 @@ public class AddRouteViewModel extends AndroidViewModel {
         mAction.setValue(new AddRouteAction(AddRouteAction.CHOOSE_DESTINATION_POINT));
     }
 
-    public void onPopupClicked() {
+    public void onAddRuleClicked() {
         mAction.setValue(new AddRouteAction(AddRouteAction.CHOOSE_SOURCE_POINT));
     }
 

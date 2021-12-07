@@ -38,17 +38,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
-                android:onClick="@{()-> viewModel.onPopupClicked()}"
-                android:text="popup"
+                android:onClick="@{()-> viewModel.onAddRuleClicked()}"
+                android:text="@string/add_rule"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Space
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rulesView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3" />
+            android:layout_weight="6"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="16dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -151,17 +155,11 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginVertical="20dp"
             android:layout_weight="3"
             android:text="@string/dodaj"
             android:onClick="@{()-> viewModel.onAddRouteClicked()}" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3" />
 
     </LinearLayout>
 </layout>
