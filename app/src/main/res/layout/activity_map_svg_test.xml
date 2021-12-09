@@ -71,7 +71,7 @@
                 android:focusable="true"
                 android:onClick="@{()-> viewModel.onGoToRoutesListClicked()}"
                 android:src="@drawable/ic_pedal"
-                android:visibility="visible"
+                android:visibility="invisible"
                 app:customVisibility="@{viewModel.menuOpened}"
                 app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
 
@@ -84,7 +84,7 @@
                 android:focusable="true"
                 android:onClick="@{()-> viewModel.onGoToSubsClicked()}"
                 android:src="@drawable/ic_subscriptions"
-                android:visibility="visible"
+                android:visibility="invisible"
                 app:customVisibility="@{viewModel.menuOpened}"
                 app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
 
@@ -97,7 +97,7 @@
                 android:focusable="true"
                 android:onClick="@{()-> viewModel.onGoToProfileClicked()}"
                 android:src="@drawable/ic_profile"
-                android:visibility="visible"
+                android:visibility="invisible"
                 app:customVisibility="@{viewModel.menuOpened}"
                 app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
 
@@ -110,7 +110,7 @@
                 android:focusable="true"
                 android:onClick="@{()-> viewModel.onLogoutClicked()}"
                 android:src="@drawable/ic_logout"
-                android:visibility="visible"
+                android:visibility="invisible"
                 app:customVisibility="@{viewModel.menuOpened}"
                 app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}" />
 
@@ -234,5 +234,219 @@
 
         </LinearLayout>
     </RelativeLayout>
+    <!-- <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".events.activities.MapActivity">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/dodajZdarzenie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onAddEventClicked()}"
+            android:tint="@color/white"
+            app:jiggleAddEventButton="@{viewModel.addEventButtonClicked}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/event_wypadek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onEventWypadekClicked()}"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/dodajZdarzenie"
+            app:layout_constraintStart_toEndOf="@+id/dodajZdarzenie"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            app:srcCompat="@drawable/ic_wypadekround" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/event_korek"
+            android:layout_marginStart="10dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_above="@id/map"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onEventKorekClicked()}"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/event_wypadek"
+            app:layout_constraintStart_toEndOf="@+id/event_wypadek"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            app:srcCompat="@drawable/ic_korekround"
+            android:background="@drawable/ic_korekround"
+            android:src="@drawable/ic_korekround"
+            tools:srcCompat="@drawable/ic_korekround"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/event_patrol_policji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onEventPatrolPolicjiClicked()}"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/event_korek"
+            app:layout_constraintStart_toEndOf="@+id/event_korek"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            app:srcCompat="@drawable/ic_radarround" />
+
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_robotyround"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onEventRobotyDrogoweClicked()}"
+            app:layout_constraintBottom_toBottomOf="@+id/event_patrol_policji"
+            app:layout_constraintStart_toEndOf="@+id/event_patrol_policji"
+            app:showEventButton="@{viewModel.addEventButtonClicked}"
+            android:visibility="visible"
+            />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onMenuClicked()}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_menu" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/allEventsShown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{(view)-> viewModel.onShowAllEventsClicked(view)}"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_switch_left" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/quickNewRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onQuickNewRouteClicked()}"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@+id/allEventsShown"
+            app:layout_constraintStart_toEndOf="@+id/menu"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/arrow_up_float" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/confirmQuickRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onConfirmQuickRouteClicked()}"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/event_korek"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@android:drawable/checkbox_on_background" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/quitQuickRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/event_korek"
+            app:layout_constraintStart_toEndOf="@+id/confirmQuickRoute"
+            app:srcCompat="@android:drawable/ic_delete" />
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:onClick="@{()-> viewModel.onLogoutClicked()}"
+            android:visibility="invisible"
+            app:customVisibility="@{viewModel.menuOpened}"
+            app:layout_constraintStart_toStartOf="@+id/goToRoutesList"
+            app:layout_constraintTop_toBottomOf="@+id/goToRoutesList"
+            app:srcCompat="@drawable/ic_logout" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/goToRoutesList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:onClick="@{()-> viewModel.onGoToRoutesListClicked()}"
+            android:visibility="invisible"
+            app:customVisibility="@{viewModel.menuOpened}"
+            app:layout_constraintStart_toStartOf="@+id/goToProfile"
+            app:layout_constraintTop_toBottomOf="@+id/goToProfile"
+            app:srcCompat="@drawable/ic_logout" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/goToSubs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:onClick="@{()-> viewModel.onGoToSubsClicked()}"
+            android:visibility="invisible"
+            app:customVisibility="@{viewModel.menuOpened}"
+            app:layout_constraintStart_toStartOf="@+id/menu"
+            app:layout_constraintTop_toBottomOf="@+id/menu"
+            app:srcCompat="@drawable/ic_subscriptions" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/goToProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:onClick="@{()-> viewModel.onGoToProfileClicked()}"
+            android:visibility="invisible"
+            app:customVisibility="@{viewModel.menuOpened}"
+            app:layout_constraintStart_toStartOf="@+id/goToSubs"
+            app:layout_constraintTop_toBottomOf="@+id/goToSubs"
+            app:srcCompat="@drawable/ic_profile" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    -->
 </layout>

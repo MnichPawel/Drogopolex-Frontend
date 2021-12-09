@@ -48,6 +48,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private final UserRepository userRepository;
 
     public boolean addEventButtonClicked = false;
+    public ObservableField<Boolean>  addQuickRouteClicked = new ObservableField<>(false);
     private boolean isOnlySubs = false;
     private boolean isChoosePointMode = false;
     public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
@@ -85,11 +86,13 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         notifyPropertyChanged(BR.addEventButtonClicked);
     }
 
+
     public void onEventWypadekClicked() {
         addNewEvent("Wypadek");
     }
 
     public void onEventKorekClicked() {
+        Log.d("MAP_LAYOUT_DEBUG", "onEventKorekClicked");
         addNewEvent("Korek");
     }
 
@@ -149,6 +152,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onQuickNewRouteClicked() {
+        addQuickRouteClicked.set(!addQuickRouteClicked.get());
         LocationDetails locationDetails = locationLiveData.getValue();
         if (locationDetails != null) {
             isChoosePointMode = true;
@@ -175,6 +179,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onQuitQuickRouteClicked() {
+        addQuickRouteClicked.set(!addQuickRouteClicked.get());
         mAction.setValue(new MapAction(MapAction.RESET_ROUTE));
     }
 
