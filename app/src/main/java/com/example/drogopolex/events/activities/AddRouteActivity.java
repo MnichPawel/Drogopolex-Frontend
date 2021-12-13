@@ -9,7 +9,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
@@ -18,6 +23,7 @@ import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.databinding.ActivityAddRouteBinding;
 import com.example.drogopolex.events.listeners.AddRouteActivityListener;
 import com.example.drogopolex.events.utils.AddRouteAction;
+import com.example.drogopolex.events.utils.AddRuleAction;
 import com.example.drogopolex.events.viewModel.AddRouteViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,10 +35,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 
@@ -45,8 +56,18 @@ public class AddRouteActivity extends AppCompatActivity
 
     ActivityAddRouteBinding activityAddRouteBinding;
     GoogleMap map;
-    Dialog fbDialogue = null;
     private Marker chosenPointMarker = null;
+
+    Dialog choosePointDialog = null;
+    Dialog addRuleDialog = null;
+
+    String[] rules = {
+            AddRuleAction.AVOID_BY_NAME.getValue(),
+            AddRuleAction.AVOID_BY_POINT.getValue(),
+            AddRuleAction.AVOID_EVENT_TYPE.getValue(),
+            AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue(),
+            AddRuleAction.NAVIGATE_THROUGH_BY_POINT.getValue()
+    };
 
     LatLng chosenSourceLatLng = null;
     LatLng chosenDestinationLatLng = null;
@@ -79,7 +100,7 @@ public class AddRouteActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        fbDialogue.dismiss();
+        choosePointDialog.dismiss();
         super.onDestroy();
     }
 
@@ -91,20 +112,58 @@ public class AddRouteActivity extends AppCompatActivity
                 break;
             case AddRouteAction.CHOOSE_SOURCE_POINT:
                 isChooseSourceMode = true;
-                showPopup();
+                showChoosePointPopup();
                 break;
             case AddRouteAction.CHOOSE_DESTINATION_POINT:
                 isChooseSourceMode = false;
-                showPopup();
+                showChoosePointPopup();
                 break;
             case AddRouteAction.ACCEPT_POPUP:
                 updateEditText(chosenPointMarker.getPosition());
-                fbDialogue.hide();
+                choosePointDialog.hide();
                 break;
             case AddRouteAction.CANCEL_POPUP:
-                fbDialogue.hide();
+                choosePointDialog.hide();
+                break;
+            case AddRouteAction.SHOW_ADD_RULE_POPUP:
+                showAddRulePopup();
                 break;
         }
+    }
+
+    private void showAddRulePopup() {
+        if (addRuleDialog == null) {
+            addRuleDialog = new Dialog(AddRouteActivity.this, android.R.style.Theme_Black_NoTitleBar);
+            addRuleDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+            addRuleDialog.setContentView(R.layout.popup_add_rule);
+            addRuleDialog.setCancelable(true);
+            addRuleDialog.show();
+
+            ListView addRuleListView = addRuleDialog.findViewById(R.id.addRuleListView);
+            addRuleListView.setAdapter(new ArrayAdapter<>(this, R.layout.row_add_rule, Arrays.asList(rules)));
+            addRuleListView.setOnItemClickListener((adapterView, view, i, l) -> {
+                handleAddRuleListItemClick(i);
+                view.setBackgroundColor(ResourcesCompat.getColor(getResources(),R.color.main_theme, null));
+            });
+        } else {
+            addRuleDialog.show();
+        }
+    }
+
+    private void handleAddRuleListItemClick(int i) {
+        String action = rules[i];
+        if (action.equals(AddRuleAction.AVOID_BY_NAME.getValue())) {
+            Log.d("AddRuleAction", AddRuleAction.AVOID_BY_NAME.getValue());
+        } else if (action.equals(AddRuleAction.AVOID_BY_POINT.getValue())) {
+            Log.d("AddRuleAction", AddRuleAction.AVOID_BY_POINT.getValue());
+        } else if (action.equals(AddRuleAction.AVOID_EVENT_TYPE.getValue())) {
+            Log.d("AddRuleAction", AddRuleAction.AVOID_EVENT_TYPE.getValue());
+        } else if (action.equals(AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue())) {
+            Log.d("AddRuleAction", AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue());
+        } else if (action.equals(AddRuleAction.NAVIGATE_THROUGH_BY_POINT.getValue())) {
+            Log.d("AddRuleAction", AddRuleAction.NAVIGATE_THROUGH_BY_POINT.getValue());
+        }
+        addRuleDialog.dismiss();
     }
 
     private void updateEditText(LatLng latLng) {
@@ -117,17 +176,17 @@ public class AddRouteActivity extends AppCompatActivity
         }
     }
 
-    private void showPopup() {
-        if (fbDialogue == null) {
-            fbDialogue = new Dialog(AddRouteActivity.this, android.R.style.Theme_Black_NoTitleBar);
-            fbDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
-            fbDialogue.setContentView(R.layout.popup_choose_point);
-            fbDialogue.setCancelable(true);
-            fbDialogue.show();
+    private void showChoosePointPopup() {
+        if (choosePointDialog == null) {
+            choosePointDialog = new Dialog(AddRouteActivity.this, android.R.style.Theme_Black_NoTitleBar);
+            choosePointDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
+            choosePointDialog.setContentView(R.layout.popup_choose_point);
+            choosePointDialog.setCancelable(true);
+            choosePointDialog.show();
 
-            Button closeButton = (Button) fbDialogue.findViewById(R.id.cancel_popup_button);
+            Button closeButton = (Button) choosePointDialog.findViewById(R.id.cancel_popup_button);
             closeButton.setOnClickListener(v -> handleAction(new AddRouteAction(AddRouteAction.CANCEL_POPUP)));
-            Button acceptButton = (Button) fbDialogue.findViewById(R.id.accept_popup_button);
+            Button acceptButton = (Button) choosePointDialog.findViewById(R.id.accept_popup_button);
             acceptButton.setOnClickListener(v -> handleAction(new AddRouteAction(AddRouteAction.ACCEPT_POPUP)));
 
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -136,7 +195,7 @@ public class AddRouteActivity extends AppCompatActivity
             mapFragment.getMapAsync(this);
         } else {
             map.clear();
-            fbDialogue.show();
+            choosePointDialog.show();
         }
     }
 

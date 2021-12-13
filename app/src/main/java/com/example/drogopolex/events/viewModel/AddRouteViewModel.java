@@ -95,7 +95,7 @@ public class AddRouteViewModel extends AndroidViewModel {
     }
 
     public void onAddRuleClicked() {
-        mAction.setValue(new AddRouteAction(AddRouteAction.CHOOSE_SOURCE_POINT));
+        mAction.setValue(new AddRouteAction(AddRouteAction.SHOW_ADD_RULE_POPUP));
     }
 
     public LiveData<AddRouteAction> getAction() {
