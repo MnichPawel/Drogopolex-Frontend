@@ -357,8 +357,105 @@ public class MapActivity extends FragmentActivity
         }
         if ("Patrol Policji".equals(type)) {
             return svgToBitmap(R.drawable.ic_radar);
-        } else { //Roboty Drogowe
+        }
+        if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
             return svgToBitmap(R.drawable.ic_roboty);
+        }
+        if ("hotel".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel);
+        }
+        if ("gallery".equals(type)) {
+            return svgToBitmap(R.drawable.ic_galeriahandlowa);
+        }
+        if ("library".equals(type)) {
+            return svgToBitmap(R.drawable.ic_biblioteka);
+        }
+        if ("museum".equals(type)) {
+            return svgToBitmap(R.drawable.ic_galeriasztuki);
+        }
+        if ("college".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("kindergarten".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("school".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("university".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("bank".equals(type)) {
+            return svgToBitmap(R.drawable.ic_bank);
+        }
+        if ("dentist".equals(type)) {
+            return svgToBitmap(R.drawable.ic_dentysta);
+        }
+        if ("hospital".equals(type)) {
+            return svgToBitmap(R.drawable.ic_szpital);
+        }
+        if ("pharmacy".equals(type)) {
+            return svgToBitmap(R.drawable.ic_szpital); //TODO: ikonka dla apteki chyba
+        }
+        if ("fitness_centre".equals(type)) {
+            return svgToBitmap(R.drawable.ic_sport);
+        }
+        if ("swimming_pool".equals(type)) {
+            return svgToBitmap(R.drawable.ic_sport);
+        }
+        if ("stadium".equals(type)) {
+            return svgToBitmap(R.drawable.ic_sport);
+        }
+        if ("cinema".equals(type)) {
+            return svgToBitmap(R.drawable.ic_galeriasztuki); //TODO: ikonka dla kina (must have)
+        }
+        if ("park".equals(type)) {
+            return svgToBitmap(R.drawable.ic_park);
+        }
+        if ("zoo".equals(type)) {
+            return svgToBitmap(R.drawable.ic_park); //TODO: ikonka dla zoo chyba
+        }
+        if ("fire_station".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla strazy pozarnej (must have)
+        }
+        if ("police".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla policji (must have)
+        }
+        if ("post_office".equals(type)) {
+            return svgToBitmap(R.drawable.ic_poczta);
+        }
+        if ("townhall".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla ratusza
+        }
+        if ("hairdresser".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonak dla fryzjera
+        }
+        if ("bar".equals(type)) {
+            return svgToBitmap(R.drawable.ic_pub);
+        }
+        if ("fast_food".equals(type)) {
+            return svgToBitmap(R.drawable.ic_jedzenie);
+        }
+        if ("pub".equals(type)) {
+            return svgToBitmap(R.drawable.ic_pub);
+        }
+        if ("restaurant".equals(type)) {
+            return svgToBitmap(R.drawable.ic_jedzenie);
+        }
+        if ("fuel".equals(type)) {
+            return svgToBitmap(R.drawable.ic_paliwo);
+        }
+        if ("parking".equals(type)) {
+            return svgToBitmap(R.drawable.ic_parking);
+        }
+        if ("railway_station".equals(type)) {
+            return svgToBitmap(R.drawable.ic_busy);
+        }
+        if ("public_transport_station".equals(type)) {
+            return svgToBitmap(R.drawable.ic_ciapolongi);
+        }
+        else {
+            return svgToBitmap(R.drawable.ic_fontanna); // fountain
         }
     }
 
