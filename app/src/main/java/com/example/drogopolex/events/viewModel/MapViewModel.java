@@ -11,8 +11,10 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.repositories.EventsRepository;
+import com.example.drogopolex.data.repositories.PointsOfInterestRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.data.repositories.UserRepository;
 import com.example.drogopolex.events.listeners.MapActivityListener;
@@ -39,6 +41,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private MutableLiveData<MapAction> mAction = new MutableLiveData<>();
     private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
     private LocationLiveData locationLiveData;
+    private LiveData<PointsOfInterestResponse> poiLiveData = new MutableLiveData<>();
 
     public MapActivityListener mapActivityListener = null;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
@@ -46,6 +49,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private final EventsRepository eventsRepository;
     private final SubscriptionsRepository subscriptionsRepository;
     private final UserRepository userRepository;
+    private final PointsOfInterestRepository pointsOfInterestRepository;
 
     public boolean addEventButtonClicked = false;
     public ObservableField<Boolean>  addQuickRouteClicked = new ObservableField<>(false);
@@ -61,6 +65,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         eventsRepository = new EventsRepository();
         subscriptionsRepository = new SubscriptionsRepository();
         userRepository = new UserRepository();
+        pointsOfInterestRepository = new PointsOfInterestRepository();
 
         flipButtonOut = AnimationUtils.loadAnimation(application.getApplicationContext(), R.anim.flip_button_out);
     }
@@ -74,6 +79,11 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public boolean onLocationChanged(LocationDetails location) {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String user_id = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+        poiLiveData = pointsOfInterestRepository.getPointsFromUserArea(user_id, token, location.getLatitude(), location.getLongitude());
+        mapActivityListener.onGetPOISuccess(poiLiveData);
         if (!isOnlySubs) {
             fetchNearbyEvents(location);
         }

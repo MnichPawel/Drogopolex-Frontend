@@ -6,7 +6,9 @@ import com.example.drogopolex.data.network.request.ChangeUserDataRequest;
 import com.example.drogopolex.data.network.request.ChangeVoteRequest;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.request.GetEventsRequest;
+import com.example.drogopolex.data.network.request.GetPointsOfInterest;
 import com.example.drogopolex.data.network.request.LoginRequest;
+import com.example.drogopolex.data.network.request.PointsOfInterestRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
 import com.example.drogopolex.data.network.request.RemoveRouteRequest;
 import com.example.drogopolex.data.network.request.RemoveVoteRequest;
@@ -15,6 +17,7 @@ import com.example.drogopolex.data.network.request.UnsubscribeRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LoginResponse;
+import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.network.response.RoutesResponse;
@@ -131,4 +134,13 @@ public interface MyApi {
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body RemoveVoteRequest body);
+
+    /*
+     * Recommendations
+     */
+    @POST("venuesRecommendation")
+    Call<PointsOfInterestResponse> recommendationPointsOfInterest(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId,
+            @Body PointsOfInterestRequest body);
 }
