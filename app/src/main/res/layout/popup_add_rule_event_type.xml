@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/main_theme">
+
+    <RadioGroup
+        android:id="@+id/eventTypeRadioButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="25dp">
+        <RadioButton android:id="@+id/radio_korek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Korek"
+            android:onClick="onAddRuleByEventTypeRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_radar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Radar"
+            android:onClick="onAddRuleByEventTypeRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_roboty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Roboty drogowe"
+            android:onClick="onAddRuleByEventTypeRadioButtonClicked"/>
+        <RadioButton android:id="@+id/radio_wypadek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wypadek"
+            android:onClick="onAddRuleByEventTypeRadioButtonClicked"/>
+    </RadioGroup>
+
+</RelativeLayout>

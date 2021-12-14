@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/main_theme">
+
+    <EditText
+        android:id="@+id/placeNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:ems="10"
+        android:hint="Nazwa miejsca"
+        android:importantForAutofill="no"
+        android:layout_alignParentTop="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/placeNameEditText">
+
+        <Button
+            android:id="@+id/cancel_rule_by_name_popup_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/accept_rule_by_name_popup_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:text="@string/accept" />
+
+    </LinearLayout>
+
+</RelativeLayout>

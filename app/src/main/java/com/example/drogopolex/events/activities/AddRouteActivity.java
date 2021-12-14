@@ -10,14 +10,21 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
+import com.example.drogopolex.adapters.RulesListAdapter;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.databinding.ActivityAddRouteBinding;
@@ -26,6 +33,10 @@ import com.example.drogopolex.events.utils.AddRouteAction;
 import com.example.drogopolex.events.utils.AddRuleAction;
 import com.example.drogopolex.events.viewModel.AddRouteViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
+import com.example.drogopolex.model.rules.DrogopolexEventTypeRule;
+import com.example.drogopolex.model.rules.DrogopolexNameRule;
+import com.example.drogopolex.model.rules.DrogopolexPointRule;
+import com.example.drogopolex.model.rules.DrogopolexRule;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,6 +57,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import static com.example.drogopolex.constants.AppConstant.PERMISSIONS_REQUEST_LOCATION;
 
@@ -53,6 +65,10 @@ public class AddRouteActivity extends AppCompatActivity
         implements SharedPreferencesHolder,
         AddRouteActivityListener,
         OnMapReadyCallback {
+    public static final String TAG = "AddRouteActivity";
+
+    RulesListAdapter listAdapter;
+    List<DrogopolexRule> drogopolexRules = new ArrayList<>();
 
     ActivityAddRouteBinding activityAddRouteBinding;
     GoogleMap map;
@@ -60,6 +76,8 @@ public class AddRouteActivity extends AppCompatActivity
 
     Dialog choosePointDialog = null;
     Dialog addRuleDialog = null;
+
+    PopupWindow addRuleByEventTypePopup;
 
     String[] rules = {
             AddRuleAction.AVOID_BY_NAME.getValue(),
@@ -73,7 +91,7 @@ public class AddRouteActivity extends AppCompatActivity
     LatLng chosenDestinationLatLng = null;
 
     boolean firstLocalizationUpdateLoaded = false;
-    boolean isChooseSourceMode = true;
+    int choosePointPopupRole = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,6 +108,10 @@ public class AddRouteActivity extends AppCompatActivity
                 handleAction(routesListAction);
             }
         });
+
+        listAdapter = new RulesListAdapter(drogopolexRules);
+        activityAddRouteBinding.rulesView.setLayoutManager(new LinearLayoutManager(AddRouteActivity.this));
+        activityAddRouteBinding.rulesView.setAdapter(listAdapter);
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         if (!sp.getBoolean("loggedIn", false)) {
@@ -111,15 +133,14 @@ public class AddRouteActivity extends AppCompatActivity
                 startActivity(goToRoutesIntent);
                 break;
             case AddRouteAction.CHOOSE_SOURCE_POINT:
-                isChooseSourceMode = true;
-                showChoosePointPopup();
-                break;
             case AddRouteAction.CHOOSE_DESTINATION_POINT:
-                isChooseSourceMode = false;
+            case AddRouteAction.AVOID_BY_POINT:
+            case AddRouteAction.NAVIGATE_THROUGH_BY_POINT:
+                choosePointPopupRole = addRouteAction.getValue();
                 showChoosePointPopup();
                 break;
             case AddRouteAction.ACCEPT_POPUP:
-                updateEditText(chosenPointMarker.getPosition());
+                onPointChosen(chosenPointMarker.getPosition());
                 choosePointDialog.hide();
                 break;
             case AddRouteAction.CANCEL_POPUP:
@@ -143,7 +164,6 @@ public class AddRouteActivity extends AppCompatActivity
             addRuleListView.setAdapter(new ArrayAdapter<>(this, R.layout.row_add_rule, Arrays.asList(rules)));
             addRuleListView.setOnItemClickListener((adapterView, view, i, l) -> {
                 handleAddRuleListItemClick(i);
-                view.setBackgroundColor(ResourcesCompat.getColor(getResources(),R.color.main_theme, null));
             });
         } else {
             addRuleDialog.show();
@@ -152,27 +172,32 @@ public class AddRouteActivity extends AppCompatActivity
 
     private void handleAddRuleListItemClick(int i) {
         String action = rules[i];
-        if (action.equals(AddRuleAction.AVOID_BY_NAME.getValue())) {
-            Log.d("AddRuleAction", AddRuleAction.AVOID_BY_NAME.getValue());
+        if (action.equals(AddRuleAction.AVOID_BY_NAME.getValue())
+                || action.equals(AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue())) {
+            showAddRuleByNamePopup(action);
         } else if (action.equals(AddRuleAction.AVOID_BY_POINT.getValue())) {
-            Log.d("AddRuleAction", AddRuleAction.AVOID_BY_POINT.getValue());
+            handleAction(new AddRouteAction(AddRouteAction.AVOID_BY_POINT));
         } else if (action.equals(AddRuleAction.AVOID_EVENT_TYPE.getValue())) {
-            Log.d("AddRuleAction", AddRuleAction.AVOID_EVENT_TYPE.getValue());
-        } else if (action.equals(AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue())) {
-            Log.d("AddRuleAction", AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue());
+            showAddRuleByEventTypePopup();
         } else if (action.equals(AddRuleAction.NAVIGATE_THROUGH_BY_POINT.getValue())) {
-            Log.d("AddRuleAction", AddRuleAction.NAVIGATE_THROUGH_BY_POINT.getValue());
+            handleAction(new AddRouteAction(AddRouteAction.NAVIGATE_THROUGH_BY_POINT));
         }
         addRuleDialog.dismiss();
     }
 
-    private void updateEditText(LatLng latLng) {
-        if (isChooseSourceMode) {
+    private void onPointChosen(LatLng latLng) {
+        if (AddRouteAction.CHOOSE_SOURCE_POINT == choosePointPopupRole) {
             activityAddRouteBinding.editTextSource.setText(latLng.toString());
             chosenSourceLatLng = latLng;
-        } else {
+        } else if (AddRouteAction.CHOOSE_DESTINATION_POINT == choosePointPopupRole) {
             activityAddRouteBinding.editTextDestination.setText(latLng.toString());
             chosenDestinationLatLng = latLng;
+        } else if (AddRouteAction.AVOID_BY_POINT == choosePointPopupRole) {
+            drogopolexRules.add(new DrogopolexPointRule(true, "omijaj " + latLng.toString(), latLng));
+            listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
+        } else if (AddRouteAction.NAVIGATE_THROUGH_BY_POINT == choosePointPopupRole) {
+            drogopolexRules.add(new DrogopolexPointRule(false, "prowadź przez " + latLng.toString(), latLng));
+            listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
         }
     }
 
@@ -197,6 +222,83 @@ public class AddRouteActivity extends AppCompatActivity
             map.clear();
             choosePointDialog.show();
         }
+    }
+
+    public void showAddRuleByNamePopup(String action) {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_add_rule_by_name, null);
+
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        popupWindow.setElevation(20);
+
+        EditText placeNameEditText = (EditText) popupView.findViewById(R.id.placeNameEditText);
+
+        Button acceptBtn = (Button) popupView.findViewById(R.id.accept_rule_by_name_popup_button);
+        Button cancelBtn = (Button) popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
+
+        popupWindow.showAtLocation(activityAddRouteBinding.getRoot(), Gravity.CENTER, 0, 0);
+
+        acceptBtn.setOnClickListener(v -> {
+            String placeName = placeNameEditText.getText().toString();
+            if (AddRuleAction.AVOID_BY_NAME.getValue().equals(action)) {
+                drogopolexRules.add(new DrogopolexNameRule(true, "omijaj " + placeName, placeName));
+                listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
+            } else if (AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue().equals(action)) {
+                drogopolexRules.add(new DrogopolexNameRule(false, "prowadź przez " + placeName, placeName));
+                listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
+            }
+            popupWindow.dismiss();
+        });
+        cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
+    }
+
+    public void showAddRuleByEventTypePopup() {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_add_rule_event_type, null);
+
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+        addRuleByEventTypePopup = new PopupWindow(popupView, width, height, true);
+
+        addRuleByEventTypePopup.setElevation(20);
+
+        addRuleByEventTypePopup.showAtLocation(activityAddRouteBinding.getRoot(), Gravity.CENTER, 0, 0);
+    }
+
+    public void onAddRuleByEventTypeRadioButtonClicked(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+
+        switch(view.getId()) {
+            case R.id.radio_korek:
+                if (checked)
+                    addAvoidEventTypeRule("omijaj korki", "Korek");
+                    break;
+            case R.id.radio_radar:
+                if (checked)
+                    addAvoidEventTypeRule("omijaj radary", "Radar");
+                    break;
+            case R.id.radio_roboty:
+                if (checked)
+                    addAvoidEventTypeRule("omijaj roboty drogowe", "Roboty drogowe");
+                    break;
+            case R.id.radio_wypadek:
+                if (checked)
+                    addAvoidEventTypeRule("omijaj wypadki", "Wypadek");
+                break;
+        }
+    }
+
+    private void addAvoidEventTypeRule(String description, String eventType) {
+        drogopolexRules.add(new DrogopolexEventTypeRule(description, eventType));
+        listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
+        addRuleByEventTypePopup.dismiss();
     }
 
     private void prepRequestLocationUpdates() {
