@@ -449,10 +449,10 @@ public class MapActivity extends FragmentActivity
             return svgToBitmap(R.drawable.ic_parking);
         }
         if ("railway_station".equals(type)) {
-            return svgToBitmap(R.drawable.ic_busy);
+            return svgToBitmap(R.drawable.ic_ciapolongi);
         }
         if ("public_transport_station".equals(type)) {
-            return svgToBitmap(R.drawable.ic_ciapolongi);
+            return svgToBitmap(R.drawable.ic_busy);
         }
         else {
             return svgToBitmap(R.drawable.ic_fontanna); // fountain
