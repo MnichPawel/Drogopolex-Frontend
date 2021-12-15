@@ -9,10 +9,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -54,7 +52,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -65,7 +62,6 @@ public class AddRouteActivity extends AppCompatActivity
         implements SharedPreferencesHolder,
         AddRouteActivityListener,
         OnMapReadyCallback {
-    public static final String TAG = "AddRouteActivity";
 
     RulesListAdapter listAdapter;
     List<DrogopolexRule> drogopolexRules = new ArrayList<>();
@@ -80,7 +76,6 @@ public class AddRouteActivity extends AppCompatActivity
     PopupWindow addRuleByEventTypePopup;
 
     String[] rules = {
-            AddRuleAction.AVOID_BY_NAME.getValue(),
             AddRuleAction.AVOID_BY_POINT.getValue(),
             AddRuleAction.AVOID_EVENT_TYPE.getValue(),
             AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue(),
@@ -172,9 +167,8 @@ public class AddRouteActivity extends AppCompatActivity
 
     private void handleAddRuleListItemClick(int i) {
         String action = rules[i];
-        if (action.equals(AddRuleAction.AVOID_BY_NAME.getValue())
-                || action.equals(AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue())) {
-            showAddRuleByNamePopup(action);
+        if (action.equals(AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue())) {
+            showAddRuleByNamePopup();
         } else if (action.equals(AddRuleAction.AVOID_BY_POINT.getValue())) {
             handleAction(new AddRouteAction(AddRouteAction.AVOID_BY_POINT));
         } else if (action.equals(AddRuleAction.AVOID_EVENT_TYPE.getValue())) {
@@ -224,7 +218,7 @@ public class AddRouteActivity extends AppCompatActivity
         }
     }
 
-    public void showAddRuleByNamePopup(String action) {
+    public void showAddRuleByNamePopup() {
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_add_rule_by_name, null);
@@ -245,13 +239,8 @@ public class AddRouteActivity extends AppCompatActivity
 
         acceptBtn.setOnClickListener(v -> {
             String placeName = placeNameEditText.getText().toString();
-            if (AddRuleAction.AVOID_BY_NAME.getValue().equals(action)) {
-                drogopolexRules.add(new DrogopolexNameRule(true, "omijaj " + placeName, placeName));
-                listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
-            } else if (AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue().equals(action)) {
                 drogopolexRules.add(new DrogopolexNameRule(false, "prowadź przez " + placeName, placeName));
                 listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
-            }
             popupWindow.dismiss();
         });
         cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
@@ -352,6 +341,11 @@ public class AddRouteActivity extends AppCompatActivity
             return chosenSourceLatLng;
         else
             return chosenDestinationLatLng;
+    }
+
+    @Override
+    public List<DrogopolexRule> getRules() {
+        return drogopolexRules;
     }
 
     @Override

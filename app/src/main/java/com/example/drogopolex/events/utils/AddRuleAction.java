@@ -1,7 +1,6 @@
 package com.example.drogopolex.events.utils;
 
 public enum AddRuleAction {
-    AVOID_BY_NAME("Omijaj (nazwa)"),
     AVOID_BY_POINT("Omijaj (punkt)"),
     AVOID_EVENT_TYPE("Omijaj (typ zdarzenia)"),
     NAVIGATE_THROUGH_BY_NAME("Prowadź przez (nazwa)"),
