@@ -224,7 +224,7 @@
                 android:onClick="@{()-> viewModel.onQuitQuickRouteClicked()}"
                 android:src="@android:drawable/ic_delete"
 
-                app:customVisibility="@{viewModel.addQuickRouteClicked}"
+                app:customVisibility="@{viewModel.confirmQuickRouteClicked}"
                 android:visibility="invisible"
                  />
 

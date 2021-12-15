@@ -53,6 +53,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public boolean addEventButtonClicked = false;
     public ObservableField<Boolean>  addQuickRouteClicked = new ObservableField<>(false);
+    public ObservableField<Boolean>  confirmQuickRouteClicked = new ObservableField<>(false);
     private boolean isOnlySubs = false;
     private boolean isChoosePointMode = false;
     public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
@@ -162,17 +163,23 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onQuickNewRouteClicked() {
-        addQuickRouteClicked.set(!addQuickRouteClicked.get());
-        LocationDetails locationDetails = locationLiveData.getValue();
-        if (locationDetails != null) {
-            isChoosePointMode = true;
-            mapActivityListener.onChoosePointModeEntered(new LatLng(
-                    Double.parseDouble(locationDetails.getLatitude()),
-                    Double.parseDouble(locationDetails.getLongitude())));
+        if(confirmQuickRouteClicked.get()){ //if we are already showing a route, don't make another, hide existing one instead
+            onQuitQuickRouteClicked();
+        }else {
+            addQuickRouteClicked.set(!addQuickRouteClicked.get());
+            LocationDetails locationDetails = locationLiveData.getValue();
+            if (locationDetails != null) {
+                isChoosePointMode = true;
+                mapActivityListener.onChoosePointModeEntered(new LatLng(
+                        Double.parseDouble(locationDetails.getLatitude()),
+                        Double.parseDouble(locationDetails.getLongitude())));
+            }
         }
     }
 
     public void onConfirmQuickRouteClicked() {
+        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
+        addQuickRouteClicked.set(!addQuickRouteClicked.get());
         LatLng chosenPoint = mapActivityListener.getChosenPoint();
         LocationDetails userLocation = locationLiveData.getValue();
 
@@ -189,7 +196,8 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onQuitQuickRouteClicked() {
-        addQuickRouteClicked.set(!addQuickRouteClicked.get());
+        //addQuickRouteClicked.set(!addQuickRouteClicked.get());
+        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
         mAction.setValue(new MapAction(MapAction.RESET_ROUTE));
     }
 
