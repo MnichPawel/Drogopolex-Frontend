@@ -75,7 +75,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         DrogopolexSubscription drogopolexSubscription = localDataSubs.get(position);
         viewHolder.getSubscriptionTextView().setText(drogopolexSubscription.getLocation());
         if(localDataSubs.get(position).getRec()) {
-            viewHolder.getUnsubscribeButton().setText("DODAJ");
+            viewHolder.getUnsubscribeButton().setText("Dodaj");
 
             Drawable buttonDrawable = viewHolder.getUnsubscribeButton().getBackground();
             buttonDrawable = DrawableCompat. wrap(buttonDrawable);
@@ -85,6 +85,17 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
             viewHolder.getUnsubscribeButton().setOnClickListener(v -> {
                 DrogopolexSubscription dSubscription = localDataSubs.get(position);
                 subscribeRequest(dSubscription.getLocation(), position);
+
+                viewHolder.getUnsubscribeButton().setText("Usuń");
+
+                Drawable buttonDrawable_new = viewHolder.getUnsubscribeButton().getBackground();
+                buttonDrawable_new = DrawableCompat. wrap(buttonDrawable_new);
+                DrawableCompat.setTint(buttonDrawable_new, Color.parseColor("#B00020"));
+                viewHolder.getUnsubscribeButton().setBackground(buttonDrawable_new);
+                viewHolder.getUnsubscribeButton().setOnClickListener(v_new -> {
+                    DrogopolexSubscription drogopolexSubscription_new = localDataSubs.get(position);
+                    unsubscribeRequest(drogopolexSubscription_new.getId_sub().toString(), position);
+                });
             });
         }
     }
