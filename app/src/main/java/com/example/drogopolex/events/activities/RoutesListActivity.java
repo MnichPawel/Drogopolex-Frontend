@@ -95,6 +95,8 @@ public class RoutesListActivity extends AppCompatActivity implements SharedPrefe
                         .forEach(route -> routes.add(new DrogopolexRoute(
                                 String.valueOf(route.getId()),
                                 route.getNazwa(),
+                                route.getFrom().getName(),
+                                route.getTo().getName(),
                                 route.getCzas(),
                                 route.getDystans()
                         )));

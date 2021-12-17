@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.drogopolex.R;
@@ -30,21 +31,26 @@ public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView routeNameTextView;
+        private final TextView sourceTextView;
+        private final TextView destinationTextView;
         private final TextView routeLengthTextView;
 
         public ViewHolder(View view) {
             super(view);
 
             routeNameTextView = (TextView) view.findViewById(R.id.routeNameText);
+            sourceTextView = (TextView) view.findViewById(R.id.sourceText);
+            destinationTextView = (TextView) view.findViewById(R.id.destinationText);
             routeLengthTextView = (TextView) view.findViewById(R.id.routeLengthText);
-            Button deleteRouteButton = (Button) view.findViewById(R.id.removeRouteButton);
+
+            ImageView deleteRouteButton = (ImageView) view.findViewById(R.id.removeRouteButton);
             deleteRouteButton.setOnClickListener(v -> {
                 int adapterPosition = getAdapterPosition();
                 DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
                 deleteRouteRequest(drogopolexRoute.getRouteId(), adapterPosition);
             });
 
-            Button showRouteButton = (Button) view.findViewById(R.id.showRouteButton);
+            ImageView showRouteButton = (ImageView) view.findViewById(R.id.showRouteButton);
             showRouteButton.setOnClickListener(v -> {
                 int adapterPosition = getAdapterPosition();
                 DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
@@ -56,6 +62,14 @@ public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.Vi
 
         public TextView getRouteTextView() {
             return routeNameTextView;
+        }
+
+        public TextView getSourceTextView() {
+            return sourceTextView;
+        }
+
+        public TextView getDestinationTextView() {
+            return destinationTextView;
         }
 
         public TextView getRouteLengthTextView() {
@@ -82,6 +96,12 @@ public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.Vi
     public void onBindViewHolder(RoutesListAdapter.ViewHolder viewHolder, final int position) {
         DrogopolexRoute drogopolexRoute = localDataRoutes.get(position);
         viewHolder.getRouteTextView().setText(drogopolexRoute.getName());
+
+        String sourceString = "Trasa z " + drogopolexRoute.getSourceName();
+        String destinationString = "Trasa do " + drogopolexRoute.getDestinationName();
+        viewHolder.getSourceTextView().setText(sourceString);
+        viewHolder.getDestinationTextView().setText(destinationString);
+
         String routeLengthString = drogopolexRoute.getDistance() + "m, "
                 + convertSecondsToHoursMinutesSecondsFormat(drogopolexRoute.getTime());
         viewHolder.getRouteLengthTextView().setText(routeLengthString);
