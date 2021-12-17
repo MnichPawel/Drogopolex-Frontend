@@ -28,8 +28,9 @@ public class RulesListAdapter extends RecyclerView.Adapter<RulesListAdapter.View
             Button deleteRuleBtn = (Button) view.findViewById(R.id.delete_rule_button);
             deleteRuleBtn.setOnClickListener(v -> {
                 int adapterPosition = getAdapterPosition();
-                DrogopolexRule drogopolexRule = localDataRules.get(adapterPosition);
-                //delete  rule
+                localDataRules.remove(adapterPosition);
+                notifyItemRemoved(adapterPosition);
+                notifyItemRangeChanged(adapterPosition, localDataRules.size());
             });
         }
 
