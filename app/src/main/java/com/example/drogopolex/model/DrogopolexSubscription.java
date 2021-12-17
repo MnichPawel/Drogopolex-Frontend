@@ -3,9 +3,11 @@ package com.example.drogopolex.model;
 public class DrogopolexSubscription {
     private Integer id_sub;
     private String location;
-    public DrogopolexSubscription(Integer id_sub, String location){
+    private Boolean rec;
+    public DrogopolexSubscription(Integer id_sub, String location, Boolean rec){
         this.id_sub=id_sub;
         this.location=location;
+        this.rec=rec;
     }
     public Integer getId_sub(){
         return id_sub;
@@ -13,5 +15,9 @@ public class DrogopolexSubscription {
 
     public String getLocation(){
         return location;
+    }
+
+    public Boolean getRec() {
+        return rec;
     }
 }

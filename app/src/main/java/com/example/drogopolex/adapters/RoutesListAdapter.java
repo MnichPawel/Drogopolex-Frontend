@@ -97,7 +97,7 @@ public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.Vi
         String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        LiveData<BasicResponse> responseLiveData = eventsRepository.removeRoute(token, userId, routeId);
+        LiveData<BasicResponse> responseLiveData = eventsRepository.removeRoute(userId, token, routeId);
         routesListListener.onRouteDeleteSuccess(responseLiveData, routeIndex);
     }
 

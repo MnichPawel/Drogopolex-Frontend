@@ -11,8 +11,10 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.repositories.EventsRepository;
+import com.example.drogopolex.data.repositories.PointsOfInterestRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.data.repositories.UserRepository;
 import com.example.drogopolex.events.listeners.MapActivityListener;
@@ -39,6 +41,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private MutableLiveData<MapAction> mAction = new MutableLiveData<>();
     private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
     private LocationLiveData locationLiveData;
+    private LiveData<PointsOfInterestResponse> poiLiveData = new MutableLiveData<>();
 
     public MapActivityListener mapActivityListener = null;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
@@ -46,8 +49,11 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private final EventsRepository eventsRepository;
     private final SubscriptionsRepository subscriptionsRepository;
     private final UserRepository userRepository;
+    private final PointsOfInterestRepository pointsOfInterestRepository;
 
     public boolean addEventButtonClicked = false;
+    public ObservableField<Boolean>  addQuickRouteClicked = new ObservableField<>(false);
+    public ObservableField<Boolean>  confirmQuickRouteClicked = new ObservableField<>(false);
     private boolean isOnlySubs = false;
     private boolean isChoosePointMode = false;
     public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
@@ -60,6 +66,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         eventsRepository = new EventsRepository();
         subscriptionsRepository = new SubscriptionsRepository();
         userRepository = new UserRepository();
+        pointsOfInterestRepository = new PointsOfInterestRepository();
 
         flipButtonOut = AnimationUtils.loadAnimation(application.getApplicationContext(), R.anim.flip_button_out);
     }
@@ -73,6 +80,11 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public boolean onLocationChanged(LocationDetails location) {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String user_id = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+        poiLiveData = pointsOfInterestRepository.getPointsFromUserArea(user_id, token, location.getLatitude(), location.getLongitude());
+        mapActivityListener.onGetPOISuccess(poiLiveData);
         if (!isOnlySubs) {
             fetchNearbyEvents(location);
         }
@@ -85,11 +97,13 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         notifyPropertyChanged(BR.addEventButtonClicked);
     }
 
+
     public void onEventWypadekClicked() {
         addNewEvent("Wypadek");
     }
 
     public void onEventKorekClicked() {
+        Log.d("MAP_LAYOUT_DEBUG", "onEventKorekClicked");
         addNewEvent("Korek");
     }
 
@@ -149,16 +163,23 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onQuickNewRouteClicked() {
-        LocationDetails locationDetails = locationLiveData.getValue();
-        if (locationDetails != null) {
-            isChoosePointMode = true;
-            mapActivityListener.onChoosePointModeEntered(new LatLng(
-                    Double.parseDouble(locationDetails.getLatitude()),
-                    Double.parseDouble(locationDetails.getLongitude())));
+        if(confirmQuickRouteClicked.get()){ //if we are already showing a route, don't make another, hide existing one instead
+            onQuitQuickRouteClicked();
+        }else {
+            addQuickRouteClicked.set(!addQuickRouteClicked.get());
+            LocationDetails locationDetails = locationLiveData.getValue();
+            if (locationDetails != null) {
+                isChoosePointMode = true;
+                mapActivityListener.onChoosePointModeEntered(new LatLng(
+                        Double.parseDouble(locationDetails.getLatitude()),
+                        Double.parseDouble(locationDetails.getLongitude())));
+            }
         }
     }
 
     public void onConfirmQuickRouteClicked() {
+        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
+        addQuickRouteClicked.set(!addQuickRouteClicked.get());
         LatLng chosenPoint = mapActivityListener.getChosenPoint();
         LocationDetails userLocation = locationLiveData.getValue();
 
@@ -175,6 +196,8 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onQuitQuickRouteClicked() {
+        //addQuickRouteClicked.set(!addQuickRouteClicked.get());
+        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
         mAction.setValue(new MapAction(MapAction.RESET_ROUTE));
     }
 

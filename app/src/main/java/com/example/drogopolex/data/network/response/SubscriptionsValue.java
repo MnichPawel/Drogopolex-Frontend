@@ -10,6 +10,9 @@ public class SubscriptionsValue {
     @SerializedName("id_sub")
     @Expose
     private String id_sub;
+    @SerializedName("rec")
+    @Expose
+    private String rec;
 
     public String getId() {
         return id_sub;
@@ -25,5 +28,13 @@ public class SubscriptionsValue {
 
     public void setLocalization(String localization) {
         this.localization = localization;
+    }
+
+    public String getRec() {
+        return rec;
+    }
+
+    public void setRec(String rec) {
+        this.rec = rec;
     }
 }

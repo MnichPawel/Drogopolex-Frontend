@@ -111,7 +111,8 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
                         .forEach(subscription -> {
                             subscriptions.add(new DrogopolexSubscription(
                                     Integer.parseInt(subscription.getId()),
-                                    subscription.getLocalization()
+                                    subscription.getLocalization(),
+                                    Boolean.parseBoolean(subscription.getRec())
                             ));
                         });
                 if (listAdapter != null) {

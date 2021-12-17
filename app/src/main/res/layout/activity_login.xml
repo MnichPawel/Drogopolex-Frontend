@@ -91,6 +91,7 @@
             android:layout_weight="3"
             android:text="@string/login_button"
             android:onClick="@{()-> viewModel.onLoginClicked()}"/>
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"

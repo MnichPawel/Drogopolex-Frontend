@@ -20,6 +20,8 @@ import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.auth.activities.ProfileActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
+import com.example.drogopolex.data.network.response.PointsOfInterestValue;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
@@ -47,6 +49,8 @@ import com.google.maps.android.data.geojson.GeoJsonLayer;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,6 +82,7 @@ public class MapActivity extends FragmentActivity
 
     private MarkerOptions routeDestinationMarkerOptions = null;
     private Marker routeDestinationMarker = null;
+    private List<PointsOfInterestValue> pois = null;
 
     private JSONObject routeGeoJson = null;
 
@@ -213,6 +218,8 @@ public class MapActivity extends FragmentActivity
         });
     }
 
+
+
     @Override
     public void onGetEventsSuccess(LiveData<EventsResponse> eventsResponseLiveData) {
         eventsResponseLiveData.observe(this, eventsResponse -> {
@@ -223,6 +230,11 @@ public class MapActivity extends FragmentActivity
                     routeDestinationMarker = map.addMarker(routeDestinationMarkerOptions);
                 if (routeGeoJson != null)
                     drawRouteOnMap(routeGeoJson);
+                if (pois != null)
+                    pois.forEach(poi -> {
+                        LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
+                        addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
+                    });
                 eventsResponse.getEvents()
                         .forEach(event -> {
                             VoteType userVoteType;
@@ -317,6 +329,26 @@ public class MapActivity extends FragmentActivity
         });
     }
 
+    @Override
+    public void onGetPOISuccess(LiveData<PointsOfInterestResponse> pointsOfInterestResponseLiveData) {
+        pointsOfInterestResponseLiveData.observe(this, pointsOfInterestResponse -> {
+            if(pointsOfInterestResponseLiveData.getValue() != null) {
+                if (pois == null) {
+                    pois = pointsOfInterestResponseLiveData.getValue().getPois();
+                    if(pois != null) {
+                        pois.forEach(poi -> {
+                            LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
+                            Log.d("onGetPOISuccess", coordinates.toString());
+                            addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
+                        });
+                    }
+                } else {
+                    pois = pointsOfInterestResponseLiveData.getValue().getPois();
+                }
+            }
+        });
+    }
+
     private BitmapDescriptor svgToBitmap(@DrawableRes int id) {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
         assert vectorDrawable != null;
@@ -337,8 +369,105 @@ public class MapActivity extends FragmentActivity
         }
         if ("Patrol Policji".equals(type)) {
             return svgToBitmap(R.drawable.ic_radar);
-        } else { //Roboty Drogowe
+        }
+        if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
             return svgToBitmap(R.drawable.ic_roboty);
+        }
+        if ("hotel".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel);
+        }
+        if ("gallery".equals(type)) {
+            return svgToBitmap(R.drawable.ic_galeriahandlowa);
+        }
+        if ("library".equals(type)) {
+            return svgToBitmap(R.drawable.ic_biblioteka);
+        }
+        if ("museum".equals(type)) {
+            return svgToBitmap(R.drawable.ic_galeriasztuki);
+        }
+        if ("college".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("kindergarten".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("school".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("university".equals(type)) {
+            return svgToBitmap(R.drawable.ic_uczelnia);
+        }
+        if ("bank".equals(type)) {
+            return svgToBitmap(R.drawable.ic_bank);
+        }
+        if ("dentist".equals(type)) {
+            return svgToBitmap(R.drawable.ic_dentysta);
+        }
+        if ("hospital".equals(type)) {
+            return svgToBitmap(R.drawable.ic_szpital);
+        }
+        if ("pharmacy".equals(type)) {
+            return svgToBitmap(R.drawable.ic_szpital); //TODO: ikonka dla apteki chyba
+        }
+        if ("fitness_centre".equals(type)) {
+            return svgToBitmap(R.drawable.ic_sport);
+        }
+        if ("swimming_pool".equals(type)) {
+            return svgToBitmap(R.drawable.ic_sport);
+        }
+        if ("stadium".equals(type)) {
+            return svgToBitmap(R.drawable.ic_sport);
+        }
+        if ("cinema".equals(type)) {
+            return svgToBitmap(R.drawable.ic_galeriasztuki); //TODO: ikonka dla kina (must have)
+        }
+        if ("park".equals(type)) {
+            return svgToBitmap(R.drawable.ic_park);
+        }
+        if ("zoo".equals(type)) {
+            return svgToBitmap(R.drawable.ic_park); //TODO: ikonka dla zoo chyba
+        }
+        if ("fire_station".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla strazy pozarnej (must have)
+        }
+        if ("police".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla policji (must have)
+        }
+        if ("post_office".equals(type)) {
+            return svgToBitmap(R.drawable.ic_poczta);
+        }
+        if ("townhall".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla ratusza
+        }
+        if ("hairdresser".equals(type)) {
+            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonak dla fryzjera
+        }
+        if ("bar".equals(type)) {
+            return svgToBitmap(R.drawable.ic_pub);
+        }
+        if ("fast_food".equals(type)) {
+            return svgToBitmap(R.drawable.ic_jedzenie);
+        }
+        if ("pub".equals(type)) {
+            return svgToBitmap(R.drawable.ic_pub);
+        }
+        if ("restaurant".equals(type)) {
+            return svgToBitmap(R.drawable.ic_jedzenie);
+        }
+        if ("fuel".equals(type)) {
+            return svgToBitmap(R.drawable.ic_paliwo);
+        }
+        if ("parking".equals(type)) {
+            return svgToBitmap(R.drawable.ic_parking);
+        }
+        if ("railway_station".equals(type)) {
+            return svgToBitmap(R.drawable.ic_ciapolongi);
+        }
+        if ("public_transport_station".equals(type)) {
+            return svgToBitmap(R.drawable.ic_busy);
+        }
+        else {
+            return svgToBitmap(R.drawable.ic_fontanna); // fountain
         }
     }
 
@@ -385,6 +514,13 @@ public class MapActivity extends FragmentActivity
         routeGeoJson = null;
         map.clear();
 
+        if (pois != null) {
+            pois.forEach(poi -> {
+                LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
+                addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
+            });
+        }
+
         for (DrogopolexEvent event : eventListData) {
             addEventToMap(event.getCoordinates(), event.getType());
         }
@@ -394,6 +530,13 @@ public class MapActivity extends FragmentActivity
         map.addMarker(new MarkerOptions()
                 .position(coordinates)
                 .title(type)
+                .icon(findIconForType(type)));
+    }
+
+    private void addPOIToMap(LatLng coordinates, String name, String type) {
+        map.addMarker(new MarkerOptions()
+                .position(coordinates)
+                .title(name)
                 .icon(findIconForType(type)));
     }
 }
