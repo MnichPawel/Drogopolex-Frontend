@@ -28,11 +28,16 @@
         <entry key="app/src/main/res/layout/activity_routes_list.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_subscribed_events.xml" value="0.10520275439938791" />
         <entry key="app/src/main/res/layout/activity_subscriptions.xml" value="0.10520275439938791" />
+        <entry key="app/src/main/res/layout/popup_add_rule_by_name.xml" value="0.16222677595628415" />
+        <entry key="app/src/main/res/layout/popup_add_rule_event_type.xml" value="0.16222677595628415" />
         <entry key="app/src/main/res/layout/popup_choose_point.xml" value="0.335" />
         <entry key="app/src/main/res/layout/row_routes_list.xml" value="0.1403688524590164" />
+        <entry key="app/src/main/res/layout/row_rules_list.xml" value="0.16222677595628415" />
+        <entry key="app/src/main/res/layout/row_subscriptions_list.xml" value="0.1359289617486339" />
       </map>
     </option>
   </component>
+
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

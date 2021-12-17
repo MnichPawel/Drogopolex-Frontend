@@ -38,17 +38,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
-                android:onClick="@{()-> viewModel.onPopupClicked()}"
-                android:text="popup"
+                android:onClick="@{()-> viewModel.onAddRuleClicked()}"
+                android:text="@string/add_rule"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Space
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rulesView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3" />
+            android:layout_weight="6"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="16dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,39 +80,73 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/editTextSource"
+                <LinearLayout
+                    android:id="@+id/lEditTextSource"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="50dp"
                     android:layout_marginEnd="50dp"
-                    android:ems="10"
-                    android:hint="@string/source_place"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:text="@={viewModel.sourcePlace}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/editTextNameOfRoute"
-                    app:layout_constraintBottom_toTopOf="@+id/editTextDestination" />
+                    app:layout_constraintBottom_toTopOf="@+id/lEditTextDestination">
 
-                <EditText
-                    android:id="@+id/editTextDestination"
+                    <EditText
+                        android:id="@+id/editTextSource"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/source_place"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:text="@={viewModel.sourcePlace}" />
+
+                    <ImageButton
+                        android:id="@+id/imageButtonSource"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="7"
+                        android:src="@android:drawable/ic_dialog_map"
+                        android:tint="#673AB7"
+                        android:onClick="@{()-> viewModel.onSourceByMapClicked()}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lEditTextDestination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="50dp"
                     android:layout_marginEnd="50dp"
-                    android:ems="10"
-                    android:hint="@string/destination_place"
-                    android:importantForAutofill="no"
-                    android:inputType="text"
-                    android:text="@={viewModel.destinationPlace}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextSource" />
+                    app:layout_constraintTop_toBottomOf="@+id/lEditTextSource">
+
+                    <EditText
+                        android:id="@+id/editTextDestination"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/destination_place"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:text="@={viewModel.destinationPlace}" />
+
+                    <ImageButton
+                        android:id="@+id/imageButtonDestination"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="7"
+                        android:src="@android:drawable/ic_dialog_map"
+                        android:tint="#673AB7"
+                        android:onClick="@{()-> viewModel.onDestinationByMapClicked()}" />
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -117,17 +155,11 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginVertical="20dp"
             android:layout_weight="3"
             android:text="@string/dodaj"
             android:onClick="@{()-> viewModel.onAddRouteClicked()}" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3" />
 
     </LinearLayout>
 </layout>

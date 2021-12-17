@@ -1,6 +1,7 @@
 package com.example.drogopolex.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
+import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.events.listeners.RoutesListListener;
 import com.example.drogopolex.model.DrogopolexRoute;
 
@@ -40,6 +42,15 @@ public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.Vi
                 int adapterPosition = getAdapterPosition();
                 DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
                 deleteRouteRequest(drogopolexRoute.getRouteId(), adapterPosition);
+            });
+
+            Button showRouteButton = (Button) view.findViewById(R.id.showRouteButton);
+            showRouteButton.setOnClickListener(v -> {
+                int adapterPosition = getAdapterPosition();
+                DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
+                Intent showRouteOnMapIntent = new Intent(view.getContext(), MapActivity.class);
+                showRouteOnMapIntent.putExtra("routeId", drogopolexRoute.getRouteId());
+                view.getContext().startActivity(showRouteOnMapIntent);
             });
         }
 

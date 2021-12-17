@@ -28,7 +28,10 @@
         <activity android:name="com.example.drogopolex.auth.activities.RegisterActivity" />
         <activity android:name="com.example.drogopolex.events.activities.MapActivity" />
         <activity android:name="com.example.drogopolex.events.activities.RoutesListActivity" />
-        <activity android:name="com.example.drogopolex.events.activities.AddRouteActivity" />
+        <activity
+            android:name="com.example.drogopolex.events.activities.AddRouteActivity"
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity android:name="com.example.drogopolex.subscription.activities.SubscriptionsActivity" />
         <activity
             android:name="com.example.drogopolex.auth.activities.LoginActivity"

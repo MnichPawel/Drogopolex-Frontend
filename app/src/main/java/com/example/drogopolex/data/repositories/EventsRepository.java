@@ -6,6 +6,7 @@ import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.AddEventRequest;
 import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
+import com.example.drogopolex.data.network.request.GetRouteRequest;
 import com.example.drogopolex.data.network.request.RemoveRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
@@ -100,6 +101,28 @@ public class EventsRepository {
                     }
                 });
         return generateRouteResponse;
+    }
+
+    public LiveData<RouteValue> getRoute(String userId, String token, String routeId) {
+        final MutableLiveData<RouteValue> getRouteResponse = new MutableLiveData<>();
+
+        myApi.eventsGetRoute(token, userId, new GetRouteRequest(routeId))
+                .enqueue(new Callback<RouteValue>() {
+                    @Override
+                    public void onResponse(Call<RouteValue> call, Response<RouteValue> response) {
+                        if (response.isSuccessful()) {
+                            getRouteResponse.setValue(response.body());
+                        } else {
+                            getRouteResponse.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RouteValue> call, Throwable t) {
+                        getRouteResponse.setValue(null);
+                    }
+                });
+        return getRouteResponse;
     }
 
     public LiveData<RoutesResponse> getRoutes(String userId, String token) {

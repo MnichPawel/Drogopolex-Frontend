@@ -189,7 +189,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             String token = sharedPreferences.getString("token", "");
 
             LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
-            LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint), user_id, token);
+            LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint, null, null), user_id, token);
 
             mapActivityListener.drawRoute(routeResponseLiveData);
         }
@@ -269,5 +269,15 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             LiveData<BasicResponse> addEventResponse = eventsRepository.addEventByGps(locationDetails, type, userId, token);
             mapActivityListener.onAddNewEventSuccess(addEventResponse);
         }
+    }
+
+    public void getRouteById(String routeId) {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String user_id = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+
+        LiveData<RouteValue> routeResponseLiveData = eventsRepository.getRoute(user_id, token, routeId);
+
+        mapActivityListener.drawRoute(routeResponseLiveData);
     }
 }
