@@ -70,7 +70,8 @@ public class MapActivity extends FragmentActivity
         MapActivityListener,
         SharedPreferencesHolder,
         GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationClickListener,
+        GoogleMap.OnInfoWindowClickListener{
 
     GoogleMap map;
     ActivityMapBinding activityMapBinding;
@@ -160,6 +161,8 @@ public class MapActivity extends FragmentActivity
         }
 
         prepRequestLocationUpdates();
+
+        googleMap.setOnInfoWindowClickListener(this);//popup windows
     }
 
     private void changePositionOfMyLocationButton() { //TODO better location of button
@@ -538,5 +541,10 @@ public class MapActivity extends FragmentActivity
                 .position(coordinates)
                 .title(name)
                 .icon(findIconForType(type)));
+    }
+
+    @Override
+    public void onInfoWindowClick(@NonNull Marker marker) {
+
     }
 }
