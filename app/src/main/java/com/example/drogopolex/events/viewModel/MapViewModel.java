@@ -14,7 +14,7 @@ import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.repositories.EventsRepository;
-import com.example.drogopolex.data.repositories.PointsOfInterestRepository;
+import com.example.drogopolex.data.repositories.RecommendationRepository;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.data.repositories.UserRepository;
 import com.example.drogopolex.events.listeners.MapActivityListener;
@@ -49,13 +49,14 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private final EventsRepository eventsRepository;
     private final SubscriptionsRepository subscriptionsRepository;
     private final UserRepository userRepository;
-    private final PointsOfInterestRepository pointsOfInterestRepository;
+    private final RecommendationRepository recommendationRepository;
 
     public boolean addEventButtonClicked = false;
     public ObservableField<Boolean>  addQuickRouteClicked = new ObservableField<>(false);
     public ObservableField<Boolean>  confirmQuickRouteClicked = new ObservableField<>(false);
     private boolean isOnlySubs = false;
     private boolean isChoosePointMode = false;
+    private static boolean isFirstLogin = true;
     public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
 
     private final Animation flipButtonOut;
@@ -66,7 +67,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         eventsRepository = new EventsRepository();
         subscriptionsRepository = new SubscriptionsRepository();
         userRepository = new UserRepository();
-        pointsOfInterestRepository = new PointsOfInterestRepository();
+        recommendationRepository = new RecommendationRepository();
 
         flipButtonOut = AnimationUtils.loadAnimation(application.getApplicationContext(), R.anim.flip_button_out);
     }
@@ -83,7 +84,14 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         String user_id = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
-        poiLiveData = pointsOfInterestRepository.getPointsFromUserArea(user_id, token, location.getLatitude(), location.getLongitude());
+
+        if(isFirstLogin) {
+            isFirstLogin = false;
+            //request route reco
+            Log.d("FIRST_LOGIN", "first login");
+        }
+
+        poiLiveData = recommendationRepository.getPointsFromUserArea(user_id, token, location.getLatitude(), location.getLongitude());
         mapActivityListener.onGetPOISuccess(poiLiveData);
         if (!isOnlySubs) {
             fetchNearbyEvents(location);

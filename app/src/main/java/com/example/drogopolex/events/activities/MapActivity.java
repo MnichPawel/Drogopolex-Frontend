@@ -367,7 +367,7 @@ public class MapActivity extends FragmentActivity
         if ("Wypadek".equals(type)) {
             return svgToBitmap(R.drawable.ic_wypadek);
         }
-        if ("Korek".equals(type)) {
+        if ("Korek".equals(type)) { //TODO TO POWINNY BYĆ ELSE IFY !!!!!!!!!11!oneone1!
             return svgToBitmap(R.drawable.ic_korek);
         }
         if ("Patrol Policji".equals(type)) {

@@ -24,6 +24,7 @@ import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.network.response.RoutesResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
+import androidx.viewpager2.widget.ViewPager2;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
@@ -149,4 +150,10 @@ public interface MyApi {
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body PointsOfInterestRequest body);
+
+    @POST("getRecommendedRoute")
+    Call<RouteValue> recommendationGetRecommendedRoute(
+            @Header("Authorization-Token") String token,
+            @Header("User-Id") String userId
+    );
 }
