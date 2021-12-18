@@ -534,8 +534,8 @@ public class MapActivity extends FragmentActivity
         Matcher matcher = pattern.matcher(latLngString.replace("(", "").replace(")", ""));
         if (matcher.find()) {
             return new LatLng(
-                    Double.parseDouble(matcher.group(1)),
-                    Double.parseDouble(matcher.group(2)));
+                    Double.parseDouble(matcher.group(2)),
+                    Double.parseDouble(matcher.group(1)));
         }
         return new LatLng(0.0, 0.0);
     }
