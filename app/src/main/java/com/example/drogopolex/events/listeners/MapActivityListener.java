@@ -24,4 +24,6 @@ public interface MapActivityListener {
     void drawRoute(LiveData<RouteValue> routeResponseLiveData);
 
     void onGetPOISuccess(LiveData<PointsOfInterestResponse> pointsOfInterestResponseLiveData);
+
+    void onGetRecommendedRoute(LiveData<RouteValue> routeRec);
 }

@@ -10,13 +10,11 @@
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_subscriptions.xml" value="1.0419161676646707" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/row_events_list.xml" value="0.5592105263157895" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/row_subscriptions_list.xml" value="1.3892857142857142" />
-        <entry key="app/src/main/res/drawable/ic_add.xml" value="0.215234375" />
-        <entry key="app/src/main/res/drawable/ic_bank.xml" value="0.215234375" />
-        <entry key="app/src/main/res/drawable/ic_busy.xml" value="0.215234375" />
-        <entry key="app/src/main/res/drawable/ic_ciapolongi.xml" value="0.215234375" />
-        <entry key="app/src/main/res/drawable/ic_dentysta.xml" value="0.215234375" />
-        <entry key="app/src/main/res/drawable/ic_fontanna.xml" value="0.215234375" />
-        <entry key="app/src/main/res/drawable/ic_hotel.xml" value="0.120703125" />
+        <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/activity_routes_list.xml" value="1.4111842105263157" />
+        <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/activity_subscribe.xml" value="1.4111842105263157" />
+        <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/popup_add_rule_by_name.xml" value="1.3963815789473684" />
+        <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/popup_route_recommendation.xml" value="1.3963815789473684" />
+        <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/row_subscriptions_list.xml" value="1.1332236842105263" />
         <entry key="app/src/main/res/drawable/ic_pedal.xml" value="0.22432432432432434" />
         <entry key="app/src/main/res/drawable/ic_wypadekround.xml" value="0.22432432432432434" />
         <entry key="app/src/main/res/layout/activity_add_route.xml" value="0.1403688524590164" />
@@ -32,12 +30,8 @@
         <entry key="app/src/main/res/layout/activity_routes_list.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_subscribed_events.xml" value="0.10520275439938791" />
         <entry key="app/src/main/res/layout/activity_subscriptions.xml" value="0.10520275439938791" />
-        <entry key="app/src/main/res/layout/popup_add_rule_by_name.xml" value="0.16222677595628415" />
-        <entry key="app/src/main/res/layout/popup_add_rule_event_type.xml" value="0.16222677595628415" />
         <entry key="app/src/main/res/layout/popup_choose_point.xml" value="0.335" />
         <entry key="app/src/main/res/layout/row_routes_list.xml" value="0.1403688524590164" />
-        <entry key="app/src/main/res/layout/row_rules_list.xml" value="0.16222677595628415" />
-        <entry key="app/src/main/res/layout/row_subscriptions_list.xml" value="0.1359289617486339" />
       </map>
     </option>
   </component>

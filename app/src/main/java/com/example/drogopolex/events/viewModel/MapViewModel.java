@@ -42,6 +42,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
     private LocationLiveData locationLiveData;
     private LiveData<PointsOfInterestResponse> poiLiveData = new MutableLiveData<>();
+    private LiveData<RouteValue> routeRec = new MutableLiveData<>();
 
     public MapActivityListener mapActivityListener = null;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
@@ -80,15 +81,19 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         return locationLiveData;
     }
 
+    public void setFirstLoginToFalse() {
+        isFirstLogin = false;
+    }
+
     public boolean onLocationChanged(LocationDetails location) {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         String user_id = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
 
         if(isFirstLogin) {
-            isFirstLogin = false;
-            //request route reco
-            Log.d("FIRST_LOGIN", "first login");
+            Log.d("isFirstLogin_RECOM", "TRUE");
+            routeRec = recommendationRepository.getRecommendedRoute(user_id, token);
+            mapActivityListener.onGetRecommendedRoute(routeRec);
         }
 
         poiLiveData = recommendationRepository.getPointsFromUserArea(user_id, token, location.getLatitude(), location.getLongitude());

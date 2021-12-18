@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.PointsOfInterestRequest;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
+import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 
 import retrofit2.Call;
@@ -41,5 +42,29 @@ public class RecommendationRepository {
                     }
                 });
         return points;
+    }
+
+    public LiveData<RouteValue> getRecommendedRoute(String userid, String token) {
+        final MutableLiveData<RouteValue> route = new MutableLiveData<>();
+
+        myApi.recommendationGetRecommendedRoute(token, userid)
+                .enqueue(new Callback<RouteValue>() {
+                    @Override
+                    public void onResponse(Call<RouteValue> call, Response<RouteValue> response) {
+                        if(response.isSuccessful()) {
+                            Log.d("getRecommendedRoute_RECOM", "TRUE");
+                            route.setValue(response.body());
+                        } else {
+                            Log.d("getRecommendedRoute_RECOM", "FALSE");
+                            route.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RouteValue> call, Throwable t) {
+                        route.setValue(null);
+                    }
+                });
+        return route;
     }
 }

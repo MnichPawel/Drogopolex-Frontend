@@ -36,4 +36,5 @@
     <string name="accept">Zatwierdź</string>
     <string name="choose">Wybierz</string>
     <string name="add_rule">Dodaj regułę</string>
+    <string name="rekomendacja_trasy">Rekomendacja trasy</string>
 </resources>

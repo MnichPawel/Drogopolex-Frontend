@@ -11,8 +11,15 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
@@ -30,6 +37,7 @@ import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
+import com.example.drogopolex.model.rules.DrogopolexNameRule;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -350,6 +358,45 @@ public class MapActivity extends FragmentActivity
                 }
             }
         });
+    }
+
+    @Override
+    public void onGetRecommendedRoute(LiveData<RouteValue> routeRec) {
+        routeRec.observe(this, RouteValue -> {
+            if(routeRec.getValue() != null) {
+                showAddRuleByNamePopup(routeRec.getValue());
+                Log.d("onGetRecommendedRoute_observe_RECOM", "TRUE");
+            }
+        });
+    }
+
+    public void showAddRuleByNamePopup(RouteValue routeValue) {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_route_recommendation, null);
+        Log.d("showAddRuleByNamePopup_RECOM", "TRUE");
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        activityMapBinding.getViewModel().setFirstLoginToFalse();
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        popupWindow.setElevation(20);
+
+        TextView routeFromTextView = (TextView) popupView.findViewById(R.id.placeNameFrom);
+        routeFromTextView.setText("Z: " + routeValue.getFrom().getName());
+        TextView routeToTextView = (TextView) popupView.findViewById(R.id.placeNameTo);
+        routeToTextView.setText("DO: " + routeValue.getTo().getName());
+
+        Button acceptBtn = (Button) popupView.findViewById(R.id.accept_rule_by_name_popup_button);
+        Button cancelBtn = (Button) popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
+
+        popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
+
+        acceptBtn.setOnClickListener(v -> {
+            activityMapBinding.getViewModel().getRouteById(String.valueOf(routeValue.getId()));
+            popupWindow.dismiss();
+        });
+        cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
     }
 
     private BitmapDescriptor svgToBitmap(@DrawableRes int id) {
