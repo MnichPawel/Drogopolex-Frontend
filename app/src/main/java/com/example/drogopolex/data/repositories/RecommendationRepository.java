@@ -52,10 +52,8 @@ public class RecommendationRepository {
                     @Override
                     public void onResponse(Call<RouteValue> call, Response<RouteValue> response) {
                         if(response.isSuccessful()) {
-                            Log.d("getRecommendedRoute_RECOM", "TRUE");
                             route.setValue(response.body());
                         } else {
-                            Log.d("getRecommendedRoute_RECOM", "FALSE");
                             route.setValue(null);
                         }
                     }

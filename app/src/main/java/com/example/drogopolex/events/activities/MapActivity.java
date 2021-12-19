@@ -36,6 +36,7 @@ import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
+import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.model.VoteType;
 import com.example.drogopolex.model.rules.DrogopolexNameRule;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
@@ -349,7 +350,6 @@ public class MapActivity extends FragmentActivity
                     if(pois != null) {
                         pois.forEach(poi -> {
                             LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
-                            Log.d("onGetPOISuccess", coordinates.toString());
                             addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
                         });
                     }
@@ -365,7 +365,6 @@ public class MapActivity extends FragmentActivity
         routeRec.observe(this, RouteValue -> {
             if(routeRec.getValue() != null) {
                 showAddRuleByNamePopup(routeRec.getValue());
-                Log.d("onGetRecommendedRoute_observe_RECOM", "TRUE");
             }
         });
     }
@@ -374,7 +373,6 @@ public class MapActivity extends FragmentActivity
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_route_recommendation, null);
-        Log.d("showAddRuleByNamePopup_RECOM", "TRUE");
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         activityMapBinding.getViewModel().setFirstLoginToFalse();
@@ -382,8 +380,6 @@ public class MapActivity extends FragmentActivity
 
         popupWindow.setElevation(20);
 
-        TextView routeFromTextView = (TextView) popupView.findViewById(R.id.placeNameFrom);
-        routeFromTextView.setText("Z: " + routeValue.getFrom().getName());
         TextView routeToTextView = (TextView) popupView.findViewById(R.id.placeNameTo);
         routeToTextView.setText("DO: " + routeValue.getTo().getName());
 
@@ -393,6 +389,7 @@ public class MapActivity extends FragmentActivity
         popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
 
         acceptBtn.setOnClickListener(v -> {
+            activityMapBinding.getViewModel().getRouteFromLocToPoint(routeValue.getTo().getLat(), routeValue.getTo().getLng());
             activityMapBinding.getViewModel().getRouteById(String.valueOf(routeValue.getId()));
             popupWindow.dismiss();
         });

@@ -35,6 +35,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import okhttp3.Route;
+
 public class MapViewModel extends AndroidViewModel implements Observable {
     private PropertyChangeRegistry callbacks = new PropertyChangeRegistry();
 
@@ -91,7 +93,6 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         String token = sharedPreferences.getString("token", "");
 
         if(isFirstLogin) {
-            Log.d("isFirstLogin_RECOM", "TRUE");
             routeRec = recommendationRepository.getRecommendedRoute(user_id, token);
             mapActivityListener.onGetRecommendedRoute(routeRec);
         }
@@ -292,5 +293,22 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         LiveData<RouteValue> routeResponseLiveData = eventsRepository.getRoute(user_id, token, routeId);
 
         mapActivityListener.drawRoute(routeResponseLiveData);
+    }
+
+    public void getRouteFromLocToPoint(Double latitude, Double longitude) {
+        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+        String user_id = sharedPreferences.getString("user_id", "");
+        String token = sharedPreferences.getString("token", "");
+
+        LocationDetails locationDetails = locationLiveData.getValue();
+        if(locationDetails != null) {
+            LatLng from_point = new LatLng(Double.parseDouble(locationDetails.getLatitude()), Double.parseDouble(locationDetails.getLongitude()));
+            LatLng to_point = new LatLng(latitude, longitude);
+            GenerateRouteRequest generateRouteRequest = new GenerateRouteRequest(from_point, to_point, null, null);
+
+            LiveData<RouteValue> routeValueLiveData = eventsRepository.generateRoute(generateRouteRequest, user_id, token);
+
+            mapActivityListener.drawRoute(routeValueLiveData);
+        }
     }
 }

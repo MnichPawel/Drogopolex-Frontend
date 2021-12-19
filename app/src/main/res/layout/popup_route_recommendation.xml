@@ -17,26 +17,13 @@
         android:text="@string/rekomendacja_trasy" />
 
     <TextView
-        android:id="@+id/placeNameFrom"
+        android:id="@+id/placeNameTo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/placeNameTitle"
         android:layout_alignParentTop="true"
         android:layout_marginStart="50dp"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="50dp"
-        android:ems="10"
-        android:importantForAutofill="no"
-        android:text="Z" />
-
-    <TextView
-        android:id="@+id/placeNameTo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/placeNameFrom"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="70dp"
         android:layout_marginEnd="50dp"
         android:ems="10"
         android:importantForAutofill="no"
