@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.model.DrogopolexSubscription;
-import com.example.drogopolex.subscription.listeners.SubscriptionsListener;
 
 import java.util.List;
 
@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
     private static List<DrogopolexSubscription> localDataSubs;
     private final Context context;
-    public SubscriptionsListener subscriptionsListener;
     private final SubscriptionsRepository subscriptionsRepository;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -39,11 +38,6 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
             subscriptionText = (TextView) view.findViewById(R.id.subscription_row_text);
             unsubscribe = (Button) view.findViewById(R.id.unsubBtn);
-            unsubscribe.setOnClickListener(v -> {
-                int adapterPosition = getAdapterPosition();
-                DrogopolexSubscription drogopolexSubscription = localDataSubs.get(adapterPosition);
-                unsubscribeRequest(drogopolexSubscription.getId_sub().toString(), adapterPosition);
-            });
         }
 
         public TextView getSubscriptionTextView() {
@@ -86,9 +80,8 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
                 DrogopolexSubscription dSubscription = localDataSubs.get(position);
                 subscribeRequest(dSubscription.getLocation(), position);
 
-                localDataSubs.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, localDataSubs.size());
+                localDataSubs.get(position).setRec(false);
+                notifyItemChanged(position);
             });
         } else {
             viewHolder.getUnsubscribeButton().setText("Usuń");
@@ -100,7 +93,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
             viewHolder.getUnsubscribeButton().setOnClickListener(v -> {
                 DrogopolexSubscription dSubscription = localDataSubs.get(position);
-                unsubscribeRequest(dSubscription.getLocation(), position);
+                unsubscribeRequest(dSubscription.getId_sub().toString(), position);
 
                 localDataSubs.remove(position);
                 notifyItemRemoved(position);
@@ -120,9 +113,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        LiveData<BasicResponse> responseLiveData = subscriptionsRepository.unsubscribeSubscriptions(token, userId, subId);
-        subscriptionsListener.onSubscriptionsSuccess(responseLiveData, subIndex);
-        this.notifyDataSetChanged();
+        subscriptionsRepository.unsubscribeSubscriptions(token, userId, subId);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -131,8 +122,6 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
         String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        LiveData<BasicResponse> responseLiveData = subscriptionsRepository.subscriptionSubscribe(localization, "", userId, token);
-        subscriptionsListener.onSubscriptionsSuccess(responseLiveData, subIndex);
-        this.notifyDataSetChanged();
+        subscriptionsRepository.subscriptionSubscribe(localization, "", userId, token);
     }
 }

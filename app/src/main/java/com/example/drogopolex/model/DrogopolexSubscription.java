@@ -20,4 +20,8 @@ public class DrogopolexSubscription {
     public Boolean getRec() {
         return rec;
     }
+
+    public void setRec(Boolean rec) {
+        this.rec = rec;
+    }
 }
