@@ -94,13 +94,13 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
             if (subscriptionsResponse != null) {
                 subscriptions.clear();
                 subscriptionsResponse.getSubscriptions()
-                        .forEach(subscription -> {
-                            subscriptions.add(new DrogopolexSubscription(
-                                    Integer.parseInt(subscription.getId()),
-                                    subscription.getLocalization(),
-                                    Boolean.parseBoolean(subscription.getRec())
-                            ));
-                        });
+                        .forEach(subscription ->
+                                subscriptions.add(new DrogopolexSubscription(
+                                        Integer.parseInt(subscription.getId()),
+                                        subscription.getLocalization(),
+                                        Boolean.parseBoolean(subscription.getRec())
+                                ))
+                        );
                 if (listAdapter != null) {
                     listAdapter.notifyDataSetChanged();
                 } else {

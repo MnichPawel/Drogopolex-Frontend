@@ -79,7 +79,8 @@ public class RoutesListActivity extends AppCompatActivity implements SharedPrefe
         responseLiveData.observe(this, basicResponse -> {
             if (basicResponse != null) {
                 routes.remove(routeIndex);
-                listAdapter.notifyDataSetChanged();
+                listAdapter.notifyItemRemoved(routeIndex);
+                listAdapter.notifyItemRangeChanged(routeIndex, routes.size());
             } else {
                 Toast.makeText(RoutesListActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }

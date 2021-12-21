@@ -15,7 +15,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -37,9 +36,7 @@ import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
-import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.model.VoteType;
-import com.example.drogopolex.model.rules.DrogopolexNameRule;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -60,7 +57,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +64,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
@@ -81,7 +78,7 @@ public class MapActivity extends FragmentActivity
         SharedPreferencesHolder,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
-        GoogleMap.OnInfoWindowClickListener{
+        GoogleMap.OnInfoWindowClickListener {
 
     GoogleMap map;
     ActivityMapBinding activityMapBinding;
@@ -148,7 +145,12 @@ public class MapActivity extends FragmentActivity
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED
+        ) {
             return;
         }
         map.setMyLocationEnabled(true);
@@ -203,7 +205,7 @@ public class MapActivity extends FragmentActivity
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
             boolean isNearbyEvents = activityMapBinding.getViewModel().onLocationChanged(locationDetails);
 
-            if (!firstLocalizationUpdateLoaded ){//|| isNearbyEvents || !displayingSelectedRoute) {
+            if (!firstLocalizationUpdateLoaded) {//|| isNearbyEvents || !displayingSelectedRoute) {
                 firstLocalizationUpdateLoaded = true;
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
@@ -222,18 +224,12 @@ public class MapActivity extends FragmentActivity
     public void onAddNewEventSuccess(LiveData<BasicResponse> response) {
         response.observe(this, basicResponse -> {
             if (basicResponse != null) {
-                if ("true".equals(basicResponse.getSuccess())) {
-                    Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
-                } else {
-                    String errorMessage = basicResponse.getError();
-                    Toast.makeText(MapActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
 
     @Override
@@ -284,14 +280,8 @@ public class MapActivity extends FragmentActivity
     public void onLogoutSuccess(LiveData<BasicResponse> responseLiveData) {
         responseLiveData.observe(this, result -> {
             if (result != null) {
-                if ("true".equals(result.getSuccess())) {
-                    SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                    handleAction(new MapAction(MapAction.LOGOUT));
-                } else {
-                    SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                    Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
-                    handleAction(new MapAction(MapAction.LOGOUT));
-                }
+                SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+                handleAction(new MapAction(MapAction.LOGOUT));
             } else {
                 Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
                 SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
@@ -348,10 +338,10 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onGetPOISuccess(LiveData<PointsOfInterestResponse> pointsOfInterestResponseLiveData) {
         pointsOfInterestResponseLiveData.observe(this, pointsOfInterestResponse -> {
-            if(pointsOfInterestResponseLiveData.getValue() != null) {
+            if (pointsOfInterestResponseLiveData.getValue() != null) {
                 if (pois == null) {
                     pois = pointsOfInterestResponseLiveData.getValue().getPois();
-                    if(pois != null) {
+                    if (pois != null) {
                         pois.forEach(poi -> {
                             LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
                             addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
@@ -366,8 +356,8 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void onGetRecommendedRoute(LiveData<RouteValue> routeRec) {
-        routeRec.observe(this, RouteValue -> {
-            if(routeRec.getValue() != null) {
+        routeRec.observe(this, routeValue -> {
+            if (routeRec.getValue() != null) {
                 showAddRuleByNamePopup(routeRec.getValue());
             }
         });
@@ -384,11 +374,11 @@ public class MapActivity extends FragmentActivity
 
         popupWindow.setElevation(20);
 
-        TextView routeToTextView = (TextView) popupView.findViewById(R.id.placeNameTo);
+        TextView routeToTextView = popupView.findViewById(R.id.placeNameTo);
         routeToTextView.setText("DO: " + routeValue.getTo().getName());
 
-        Button acceptBtn = (Button) popupView.findViewById(R.id.accept_rule_by_name_popup_button);
-        Button cancelBtn = (Button) popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
+        Button acceptBtn = popupView.findViewById(R.id.accept_rule_by_name_popup_button);
+        Button cancelBtn = popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
 
         popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
 
@@ -414,110 +404,75 @@ public class MapActivity extends FragmentActivity
     private BitmapDescriptor findIconForType(String type) {
         if ("Wypadek".equals(type)) {
             return svgToBitmap(R.drawable.ic_wypadek);
-        }
-        if ("Korek".equals(type)) { //TODO TO POWINNY BYĆ ELSE IFY !!!!!!!!!11!oneone1!
+        } else if ("Korek".equals(type)) { //TODO TO POWINNY BYĆ ELSE IFY !!!!!!!!!11!oneone1!
             return svgToBitmap(R.drawable.ic_korek);
-        }
-        if ("Patrol Policji".equals(type)) {
+        } else if ("Patrol Policji".equals(type)) {
             return svgToBitmap(R.drawable.ic_radar);
-        }
-        if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
+        } else if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
             return svgToBitmap(R.drawable.ic_roboty);
-        }
-        if ("hotel".equals(type)) {
+        } else if ("hotel".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel);
-        }
-        if ("gallery".equals(type)) {
+        } else if ("gallery".equals(type)) {
             return svgToBitmap(R.drawable.ic_galeriahandlowa);
-        }
-        if ("library".equals(type)) {
+        } else if ("library".equals(type)) {
             return svgToBitmap(R.drawable.ic_biblioteka);
-        }
-        if ("museum".equals(type)) {
+        } else if ("museum".equals(type)) {
             return svgToBitmap(R.drawable.ic_galeriasztuki);
-        }
-        if ("college".equals(type)) {
+        } else if ("college".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("kindergarten".equals(type)) {
+        } else if ("kindergarten".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("school".equals(type)) {
+        } else if ("school".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("university".equals(type)) {
+        } else if ("university".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("bank".equals(type)) {
+        } else if ("bank".equals(type)) {
             return svgToBitmap(R.drawable.ic_bank);
-        }
-        if ("dentist".equals(type)) {
+        } else if ("dentist".equals(type)) {
             return svgToBitmap(R.drawable.ic_dentysta);
-        }
-        if ("hospital".equals(type)) {
+        } else if ("hospital".equals(type)) {
             return svgToBitmap(R.drawable.ic_szpital);
-        }
-        if ("pharmacy".equals(type)) {
+        } else if ("pharmacy".equals(type)) {
             return svgToBitmap(R.drawable.ic_szpital); //TODO: ikonka dla apteki chyba
-        }
-        if ("fitness_centre".equals(type)) {
+        } else if ("fitness_centre".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
-        }
-        if ("swimming_pool".equals(type)) {
+        } else if ("swimming_pool".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
-        }
-        if ("stadium".equals(type)) {
+        } else if ("stadium".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
-        }
-        if ("cinema".equals(type)) {
+        } else if ("cinema".equals(type)) {
             return svgToBitmap(R.drawable.ic_galeriasztuki); //TODO: ikonka dla kina (must have)
-        }
-        if ("park".equals(type)) {
+        } else if ("park".equals(type)) {
             return svgToBitmap(R.drawable.ic_park);
-        }
-        if ("zoo".equals(type)) {
+        } else if ("zoo".equals(type)) {
             return svgToBitmap(R.drawable.ic_park); //TODO: ikonka dla zoo chyba
-        }
-        if ("fire_station".equals(type)) {
+        } else if ("fire_station".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla strazy pozarnej (must have)
-        }
-        if ("police".equals(type)) {
+        } else if ("police".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla policji (must have)
-        }
-        if ("post_office".equals(type)) {
+        } else if ("post_office".equals(type)) {
             return svgToBitmap(R.drawable.ic_poczta);
-        }
-        if ("townhall".equals(type)) {
+        } else if ("townhall".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla ratusza
-        }
-        if ("hairdresser".equals(type)) {
+        } else if ("hairdresser".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonak dla fryzjera
-        }
-        if ("bar".equals(type)) {
+        } else if ("bar".equals(type)) {
             return svgToBitmap(R.drawable.ic_pub);
-        }
-        if ("fast_food".equals(type)) {
+        } else if ("fast_food".equals(type)) {
             return svgToBitmap(R.drawable.ic_jedzenie);
-        }
-        if ("pub".equals(type)) {
+        } else if ("pub".equals(type)) {
             return svgToBitmap(R.drawable.ic_pub);
-        }
-        if ("restaurant".equals(type)) {
+        } else if ("restaurant".equals(type)) {
             return svgToBitmap(R.drawable.ic_jedzenie);
-        }
-        if ("fuel".equals(type)) {
+        } else if ("fuel".equals(type)) {
             return svgToBitmap(R.drawable.ic_paliwo);
-        }
-        if ("parking".equals(type)) {
+        } else if ("parking".equals(type)) {
             return svgToBitmap(R.drawable.ic_parking);
-        }
-        if ("railway_station".equals(type)) {
+        } else if ("railway_station".equals(type)) {
             return svgToBitmap(R.drawable.ic_ciapolongi);
-        }
-        if ("public_transport_station".equals(type)) {
+        } else if ("public_transport_station".equals(type)) {
             return svgToBitmap(R.drawable.ic_busy);
-        }
-        else {
+        } else {
             return svgToBitmap(R.drawable.ic_fontanna); // fountain
         }
     }
@@ -593,6 +548,6 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void onInfoWindowClick(@NonNull Marker marker) {
-
+        //TODO to implement
     }
 }

@@ -1,8 +1,8 @@
 package com.example.drogopolex.model.rules;
 
 public abstract class DrogopolexRule {
-    private boolean isAvoid;
-    private String description;
+    private final boolean isAvoid;
+    private final String description;
 
     public DrogopolexRule(boolean isAvoid, String description) {
         this.isAvoid = isAvoid;

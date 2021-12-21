@@ -19,20 +19,20 @@ import retrofit2.Response;
 
 public class UserRepository {
 
-    private MyApi myApi;
+    private final MyApi myApi;
 
-    public UserRepository(){
-        myApi =  RetrofitUtils.getRetrofitInstance().create(MyApi.class);
+    public UserRepository() {
+        myApi = RetrofitUtils.getRetrofitInstance().create(MyApi.class);
     }
 
-    public LiveData<LoginResponse> userLogin(String email, String password){
+    public LiveData<LoginResponse> userLogin(String email, String password) {
         final MutableLiveData<LoginResponse> loginResponse = new MutableLiveData<>();
 
         myApi.userLogin(new LoginRequest(email, password))
                 .enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             loginResponse.setValue(response.body());
                         } else {
                             loginResponse.setValue((LoginResponse) ErrorUtils.parseErrorResponse(response, ResponseType.LOGIN_RESPONSE));
@@ -47,14 +47,14 @@ public class UserRepository {
         return loginResponse;
     }
 
-    public LiveData<BasicResponse> userRegister(String email, String username, String password){
+    public LiveData<BasicResponse> userRegister(String email, String username, String password) {
         final MutableLiveData<BasicResponse> registerResponse = new MutableLiveData<>();
 
         myApi.userRegister(new RegisterRequest(email, username, password))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             registerResponse.setValue(response.body());
                         } else {
                             registerResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
@@ -76,7 +76,7 @@ public class UserRepository {
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             logoutResponse.setValue(response.body());
                         } else {
                             logoutResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
@@ -91,14 +91,14 @@ public class UserRepository {
         return logoutResponse;
     }
 
-    public LiveData<BasicResponse> userChangeUserData(String user_id, String token, String changed_value, String new_value) {
+    public LiveData<BasicResponse> userChangeUserData(String userId, String token, String changedValue, String newValue) {
         final MutableLiveData<BasicResponse> changeUserDataResponse = new MutableLiveData<>();
 
-        myApi.userChangeUserData(token, user_id, new ChangeUserDataRequest(changed_value, new_value))
+        myApi.userChangeUserData(token, userId, new ChangeUserDataRequest(changedValue, newValue))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             changeUserDataResponse.setValue(response.body());
                         } else {
                             changeUserDataResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
@@ -120,7 +120,7 @@ public class UserRepository {
                 .enqueue(new Callback<ProfileResponse>() {
                     @Override
                     public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             getUserDataResponse.setValue(response.body());
                         } else {
                             getUserDataResponse.setValue((ProfileResponse) ErrorUtils.parseErrorResponse(response, ResponseType.PROFILE_RESPONSE));

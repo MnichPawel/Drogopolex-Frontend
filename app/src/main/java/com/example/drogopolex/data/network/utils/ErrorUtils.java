@@ -6,14 +6,18 @@ import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.network.response.ResponseType;
 import com.example.drogopolex.data.network.response.TemplateResponse;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.IOException;
 
 import retrofit2.Response;
 
 public class ErrorUtils {
+
+    private ErrorUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static TemplateResponse parseErrorResponse(Response<?> baseResponse, ResponseType responseType) {
         TemplateResponse response;
@@ -33,14 +37,12 @@ public class ErrorUtils {
         }
 
         try {
-            if(baseResponse.errorBody() != null) {
+            if (baseResponse.errorBody() != null) {
                 String responseBody = baseResponse.errorBody().string();
-                JsonObject jsonObject = new JsonParser().parse(responseBody).getAsJsonObject();
+                JsonObject jsonObject = new Gson().fromJson(responseBody, JsonObject.class);
                 String error = jsonObject.get("error").getAsString();
                 response.setError(error);
-            }
-            else {
-                response.setSuccess("false");
+            } else {
                 response.setError("Nie udało się przetworzyć odpowiedzi.");
             }
         } catch (IOException e) {

@@ -52,6 +52,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,25 +69,20 @@ public class AddRouteActivity extends AppCompatActivity
 
     ActivityAddRouteBinding activityAddRouteBinding;
     GoogleMap map;
-    private Marker chosenPointMarker = null;
-
     Dialog choosePointDialog = null;
     Dialog addRuleDialog = null;
-
     PopupWindow addRuleByEventTypePopup;
-
     String[] rules = {
             AddRuleAction.AVOID_BY_POINT.getValue(),
             AddRuleAction.AVOID_EVENT_TYPE.getValue(),
             AddRuleAction.NAVIGATE_THROUGH_BY_NAME.getValue(),
             AddRuleAction.NAVIGATE_THROUGH_BY_POINT.getValue()
     };
-
     LatLng chosenSourceLatLng = null;
     LatLng chosenDestinationLatLng = null;
-
     boolean firstLocalizationUpdateLoaded = false;
     int choosePointPopupRole = -1;
+    private Marker chosenPointMarker = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -203,9 +199,9 @@ public class AddRouteActivity extends AppCompatActivity
             choosePointDialog.setCancelable(true);
             choosePointDialog.show();
 
-            Button closeButton = (Button) choosePointDialog.findViewById(R.id.cancel_popup_button);
+            Button closeButton = choosePointDialog.findViewById(R.id.cancel_popup_button);
             closeButton.setOnClickListener(v -> handleAction(new AddRouteAction(AddRouteAction.CANCEL_POPUP)));
-            Button acceptButton = (Button) choosePointDialog.findViewById(R.id.accept_popup_button);
+            Button acceptButton = choosePointDialog.findViewById(R.id.accept_popup_button);
             acceptButton.setOnClickListener(v -> handleAction(new AddRouteAction(AddRouteAction.ACCEPT_POPUP)));
 
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -230,17 +226,17 @@ public class AddRouteActivity extends AppCompatActivity
 
         popupWindow.setElevation(20);
 
-        EditText placeNameEditText = (EditText) popupView.findViewById(R.id.placeNameEditText);
+        EditText placeNameEditText = popupView.findViewById(R.id.placeNameEditText);
 
-        Button acceptBtn = (Button) popupView.findViewById(R.id.accept_rule_by_name_popup_button);
-        Button cancelBtn = (Button) popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
+        Button acceptBtn = popupView.findViewById(R.id.accept_rule_by_name_popup_button);
+        Button cancelBtn = popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
 
         popupWindow.showAtLocation(activityAddRouteBinding.getRoot(), Gravity.CENTER, 0, 0);
 
         acceptBtn.setOnClickListener(v -> {
             String placeName = placeNameEditText.getText().toString();
-                drogopolexRules.add(new DrogopolexNameRule(false, "prowadź przez " + placeName, placeName));
-                listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
+            drogopolexRules.add(new DrogopolexNameRule(false, "prowadź przez " + placeName, placeName));
+            listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
             popupWindow.dismiss();
         });
         cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
@@ -264,19 +260,19 @@ public class AddRouteActivity extends AppCompatActivity
     public void onAddRuleByEventTypeRadioButtonClicked(View view) {
         boolean checked = ((RadioButton) view).isChecked();
 
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.radio_korek:
                 if (checked)
                     addAvoidEventTypeRule("omijaj korki", "Korek");
-                    break;
+                break;
             case R.id.radio_radar:
                 if (checked)
                     addAvoidEventTypeRule("omijaj radary", "Radar");
-                    break;
+                break;
             case R.id.radio_roboty:
                 if (checked)
                     addAvoidEventTypeRule("omijaj roboty drogowe", "Roboty drogowe");
-                    break;
+                break;
             case R.id.radio_wypadek:
                 if (checked)
                     addAvoidEventTypeRule("omijaj wypadki", "Wypadek");
@@ -291,8 +287,8 @@ public class AddRouteActivity extends AppCompatActivity
     }
 
     private void prepRequestLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
                     new String[]{
@@ -352,7 +348,7 @@ public class AddRouteActivity extends AppCompatActivity
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         map.setMyLocationEnabled(true);

@@ -1,22 +1,19 @@
 package com.example.drogopolex.data.repositories;
 
-import android.util.Log;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.PointsOfInterestRequest;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RecommendationRepository {
-    private MyApi myApi;
+    private final MyApi myApi;
 
     public RecommendationRepository() {
         myApi = RetrofitUtils.getRetrofitInstance().create(MyApi.class);
@@ -29,7 +26,7 @@ public class RecommendationRepository {
                 .enqueue(new Callback<PointsOfInterestResponse>() {
                     @Override
                     public void onResponse(Call<PointsOfInterestResponse> call, Response<PointsOfInterestResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             points.setValue(response.body());
                         } else {
                             points.setValue(null);
@@ -51,7 +48,7 @@ public class RecommendationRepository {
                 .enqueue(new Callback<RouteValue>() {
                     @Override
                     public void onResponse(Call<RouteValue> call, Response<RouteValue> response) {
-                        if(response.isSuccessful()) {
+                        if (response.isSuccessful()) {
                             route.setValue(response.body());
                         } else {
                             route.setValue(null);

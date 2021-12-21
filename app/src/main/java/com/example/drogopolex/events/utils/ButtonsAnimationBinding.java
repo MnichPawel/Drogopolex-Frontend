@@ -41,12 +41,11 @@ public class ButtonsAnimationBinding {
 
     @BindingAdapter("customVisibility")
     public static void setVisibilityMenu(View view, boolean visibility) {
-        if(visibility) {
+        if (visibility) {
             Animation rightwardsOpenAnimation = AnimationUtils.loadAnimation(view.getContext(), R.anim.downwards_open_anim);
             view.startAnimation(rightwardsOpenAnimation);
             view.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             Animation rightwardsOpenAnimation = AnimationUtils.loadAnimation(view.getContext(), R.anim.downwards_close_anim);
             view.startAnimation(rightwardsOpenAnimation);
             view.setVisibility(View.INVISIBLE);

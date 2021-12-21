@@ -10,27 +10,25 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class LoginViewModel extends ViewModel {
-    private MutableLiveData<LoginAction> mAction = new MutableLiveData<>();
+    private final MutableLiveData<LoginAction> mAction = new MutableLiveData<>();
+    private final UserRepository userRepository;
     public MutableLiveData<String> email = new MutableLiveData<>();
     public MutableLiveData<String> password = new MutableLiveData<>();
-
-    private UserRepository userRepository;
-
     public LoginListener loginListener = null;
 
     public LoginViewModel() {
         userRepository = new UserRepository();
     }
 
-    public LiveData<LoginAction> getAction(){
+    public LiveData<LoginAction> getAction() {
         return mAction;
     }
 
-    public void onLoginClicked(){
+    public void onLoginClicked() {
         String emailValue = email.getValue();
         String passwordValue = password.getValue();
-        if(emailValue == null || emailValue.isEmpty() ||
-                passwordValue == null || passwordValue.isEmpty()){
+        if (emailValue == null || emailValue.isEmpty() ||
+                passwordValue == null || passwordValue.isEmpty()) {
             loginListener.onFailure("Nieprawidłowy email lub hasło.");
         } else {
             LiveData<LoginResponse> loginResponse = userRepository.userLogin(emailValue, passwordValue);
@@ -38,7 +36,7 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    public void onReturnClicked(){
+    public void onReturnClicked() {
         mAction.setValue(new LoginAction(LoginAction.SHOW_LOGIN_MENU));
     }
 }

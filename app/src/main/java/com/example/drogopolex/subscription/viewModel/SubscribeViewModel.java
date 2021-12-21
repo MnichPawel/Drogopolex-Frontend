@@ -13,12 +13,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class SubscribeViewModel extends ViewModel {
-    private MutableLiveData<SubscribeAction> mAction = new MutableLiveData<>();
-
+    private final MutableLiveData<SubscribeAction> mAction = new MutableLiveData<>();
+    private final SubscriptionsRepository subscriptionsRepository;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
     public SubscribeListener subscribeListener = null;
-    private SubscriptionsRepository subscriptionsRepository;
-
     public MutableLiveData<String> localization = new MutableLiveData<>();
 
 
@@ -26,27 +24,25 @@ public class SubscribeViewModel extends ViewModel {
         subscriptionsRepository = new SubscriptionsRepository();
     }
 
-    public LiveData<SubscribeAction> getAction(){
+    public LiveData<SubscribeAction> getAction() {
         return mAction;
     }
 
-    public void onSubscribeClicked(){
-        String coordinates = "(200, 300)"; //todo hardcoded value //probably useless data, will be deleted in new backend version
-
+    public void onSubscribeClicked() {
         SharedPreferences sp = sharedPreferencesHolder.getSharedPreferences();
-        String user_id = sp.getString("user_id", "");
+        String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
         String localizationValue = localization.getValue();
-        if(localizationValue == null || localizationValue.isEmpty()){
+        if (localizationValue == null || localizationValue.isEmpty()) {
             subscribeListener.onFailure("Nieprawidłowa lokalizacja.");
         } else {
-            LiveData<BasicResponse> subscribeResponse = subscriptionsRepository.subscriptionSubscribe(localizationValue, coordinates, user_id, token);
+            LiveData<BasicResponse> subscribeResponse = subscriptionsRepository.subscriptionSubscribe(localizationValue, userId, token);
             subscribeListener.onSuccess(subscribeResponse);
         }
     }
 
-    public void onReturnClicked(){
+    public void onReturnClicked() {
         mAction.setValue(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIPTIONS));
     }
 }

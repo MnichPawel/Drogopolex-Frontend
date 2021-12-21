@@ -14,14 +14,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class SubscriptionsViewModel extends AndroidViewModel { //AndroidViewModel
-    private MutableLiveData<SubscriptionsAction> mAction = new MutableLiveData<>();
-    private LiveData<SubscriptionsResponse> subscriptionsLiveData = new MutableLiveData<>();
-
+    private final MutableLiveData<SubscriptionsAction> mAction = new MutableLiveData<>();
+    private final SubscriptionsRepository subscriptionsRepository;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
     public SubscriptionListListener subscriptionListListener = null;
-
-
-    private SubscriptionsRepository subscriptionsRepository;
+    private LiveData<SubscriptionsResponse> subscriptionsLiveData = new MutableLiveData<>();
 
 
     public SubscriptionsViewModel(Application application) {

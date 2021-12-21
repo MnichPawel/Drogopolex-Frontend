@@ -15,29 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RulesListAdapter extends RecyclerView.Adapter<RulesListAdapter.ViewHolder> {
-    private List<DrogopolexRule> localDataRules;
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView ruleDescriptionText;
-
-
-        public ViewHolder(View view) {
-            super(view);
-
-            ruleDescriptionText = (TextView) view.findViewById(R.id.rule_description_row_text);
-            Button deleteRuleBtn = (Button) view.findViewById(R.id.delete_rule_button);
-            deleteRuleBtn.setOnClickListener(v -> {
-                int adapterPosition = getAdapterPosition();
-                localDataRules.remove(adapterPosition);
-                notifyItemRemoved(adapterPosition);
-                notifyItemRangeChanged(adapterPosition, localDataRules.size());
-            });
-        }
-
-        public TextView getRuleDescriptionText() {
-            return ruleDescriptionText;
-        }
-    }
+    private final List<DrogopolexRule> localDataRules;
 
     public RulesListAdapter(List<DrogopolexRule> data) {
         localDataRules = data;
@@ -61,5 +39,27 @@ public class RulesListAdapter extends RecyclerView.Adapter<RulesListAdapter.View
     @Override
     public int getItemCount() {
         return localDataRules.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView ruleDescriptionText;
+
+
+        public ViewHolder(View view) {
+            super(view);
+
+            ruleDescriptionText = view.findViewById(R.id.rule_description_row_text);
+            Button deleteRuleBtn = view.findViewById(R.id.delete_rule_button);
+            deleteRuleBtn.setOnClickListener(v -> {
+                int adapterPosition = getAdapterPosition();
+                localDataRules.remove(adapterPosition);
+                notifyItemRemoved(adapterPosition);
+                notifyItemRangeChanged(adapterPosition, localDataRules.size());
+            });
+        }
+
+        public TextView getRuleDescriptionText() {
+            return ruleDescriptionText;
+        }
     }
 }

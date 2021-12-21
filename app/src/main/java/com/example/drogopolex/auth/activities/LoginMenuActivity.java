@@ -14,7 +14,6 @@ import com.example.drogopolex.events.activities.MapActivity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 
 public class LoginMenuActivity extends AppCompatActivity {
 
@@ -25,24 +24,21 @@ public class LoginMenuActivity extends AppCompatActivity {
         activityLoginMenuBinding.setViewModel(new LoginMenuViewModel());
         activityLoginMenuBinding.executePendingBindings();
 
-        activityLoginMenuBinding.getViewModel().getAction().observe(this, new Observer<LoginMenuAction>() {
-            @Override
-            public void onChanged(LoginMenuAction loginMenuAction) {
-                if(loginMenuAction != null){
-                    handleAction(loginMenuAction);
-                }
+        activityLoginMenuBinding.getViewModel().getAction().observe(this, loginMenuAction -> {
+            if (loginMenuAction != null) {
+                handleAction(loginMenuAction);
             }
         });
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        if(sp.getBoolean("loggedIn", false)) {
+        if (sp.getBoolean("loggedIn", false)) {
             Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
             startActivity(goToMapActivityIntent);
         }
     }
 
     private void handleAction(LoginMenuAction loginMenuAction) {
-        switch (loginMenuAction.getValue()){
+        switch (loginMenuAction.getValue()) {
             case LoginMenuAction.SHOW_LOGIN:
                 Intent goToLoginActivityIntent = new Intent(this, LoginActivity.class);
                 startActivity(goToLoginActivityIntent);

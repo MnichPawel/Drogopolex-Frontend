@@ -51,12 +51,8 @@ public class SubscribeActivity extends AppCompatActivity implements SharedPrefer
     public void onSuccess(LiveData<BasicResponse> response) {
         response.observe(this, result -> {
             if (result != null) {
-                if ("true".equals(result.getSuccess())) {
-                    Toast.makeText(SubscribeActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
-                    handleAction(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIPTIONS));
-                } else {
-                    Toast.makeText(SubscribeActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(SubscribeActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                handleAction(new SubscribeAction(SubscribeAction.SHOW_SUBSCRIPTIONS));
             } else {
                 Toast.makeText(SubscribeActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }

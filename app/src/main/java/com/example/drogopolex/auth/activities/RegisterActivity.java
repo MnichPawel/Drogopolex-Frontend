@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 public class RegisterActivity extends AppCompatActivity implements BasicListener {
     @Override
@@ -29,24 +28,21 @@ public class RegisterActivity extends AppCompatActivity implements BasicListener
         activityRegisterBinding.executePendingBindings();
         activityRegisterBinding.getViewModel().basicListener = this;
 
-        activityRegisterBinding.getViewModel().getAction().observe(this, new Observer<RegisterAction>() {
-            @Override
-            public void onChanged(RegisterAction registerAction) {
-                if(registerAction != null){
-                    handleAction(registerAction);
-                }
+        activityRegisterBinding.getViewModel().getAction().observe(this, registerAction -> {
+            if (registerAction != null) {
+                handleAction(registerAction);
             }
         });
 
         SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        if(sp.getBoolean("loggedIn", false)) {
+        if (sp.getBoolean("loggedIn", false)) {
             Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
             startActivity(goToMapActivityIntent);
         }
     }
 
     private void handleAction(RegisterAction registerAction) {
-        switch (registerAction.getValue()){
+        switch (registerAction.getValue()) {
             case RegisterAction.SHOW_LOGIN:
                 Intent goToLoginActivityIntent = new Intent(this, LoginActivity.class);
                 startActivity(goToLoginActivityIntent);
@@ -60,20 +56,12 @@ public class RegisterActivity extends AppCompatActivity implements BasicListener
 
     @Override
     public void onSuccess(LiveData<BasicResponse> response) {
-        response.observe(this, new Observer<BasicResponse>() {
-            @Override
-            public void onChanged(BasicResponse result) {
-                if(result != null) {
-                    if ("true".equals(result.getSuccess())) {
-                        Toast.makeText(RegisterActivity.this,"Konto utworzone",Toast.LENGTH_LONG).show();
-                        handleAction(new RegisterAction(RegisterAction.SHOW_LOGIN));
-                    } else {
-                        String errorMessage = result.getError();
-                        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(RegisterActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
-                }
+        response.observe(this, result -> {
+            if (result != null) {
+                Toast.makeText(RegisterActivity.this, "Konto utworzone", Toast.LENGTH_LONG).show();
+                handleAction(new RegisterAction(RegisterAction.SHOW_LOGIN));
+            } else {
+                Toast.makeText(RegisterActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }

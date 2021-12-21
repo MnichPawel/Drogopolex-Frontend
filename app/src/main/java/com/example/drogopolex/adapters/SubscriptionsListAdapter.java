@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.drogopolex.R;
-import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.model.DrogopolexSubscription;
 
@@ -21,33 +19,12 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SubscriptionsListAdapter extends RecyclerView.Adapter<SubscriptionsListAdapter.ViewHolder> {
     private static List<DrogopolexSubscription> localDataSubs;
     private final Context context;
     private final SubscriptionsRepository subscriptionsRepository;
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView subscriptionText;
-        private final Button unsubscribe;
-
-        public ViewHolder(View view) {
-            super(view);
-
-            subscriptionText = (TextView) view.findViewById(R.id.subscription_row_text);
-            unsubscribe = (Button) view.findViewById(R.id.unsubBtn);
-        }
-
-        public TextView getSubscriptionTextView() {
-            return subscriptionText;
-        }
-
-        public Button getUnsubscribeButton() {
-            return unsubscribe;
-        }
-    }
 
     public SubscriptionsListAdapter(List<DrogopolexSubscription> data, Context context) {
         localDataSubs = data;
@@ -68,17 +45,17 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         DrogopolexSubscription drogopolexSubscription = localDataSubs.get(position);
         viewHolder.getSubscriptionTextView().setText(drogopolexSubscription.getLocation());
-        if(localDataSubs.get(position).getRec()) {
+        if (Boolean.TRUE.equals(localDataSubs.get(position).getRec())) {
             viewHolder.getUnsubscribeButton().setText("Dodaj");
 
             Drawable buttonDrawable = viewHolder.getUnsubscribeButton().getBackground();
-            buttonDrawable = DrawableCompat. wrap(buttonDrawable);
+            buttonDrawable = DrawableCompat.wrap(buttonDrawable);
             DrawableCompat.setTint(buttonDrawable, Color.parseColor("#006400"));
             viewHolder.getUnsubscribeButton().setBackground(buttonDrawable);
 
             viewHolder.getUnsubscribeButton().setOnClickListener(v -> {
                 DrogopolexSubscription dSubscription = localDataSubs.get(position);
-                subscribeRequest(dSubscription.getLocation(), position);
+                subscribeRequest(dSubscription.getLocation());
 
                 localDataSubs.get(position).setRec(false);
                 notifyItemChanged(position);
@@ -87,13 +64,13 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
             viewHolder.getUnsubscribeButton().setText("Usuń");
 
             Drawable buttonDrawable = viewHolder.getUnsubscribeButton().getBackground();
-            buttonDrawable = DrawableCompat. wrap(buttonDrawable);
+            buttonDrawable = DrawableCompat.wrap(buttonDrawable);
             DrawableCompat.setTint(buttonDrawable, Color.parseColor("#B00020"));
             viewHolder.getUnsubscribeButton().setBackground(buttonDrawable);
 
             viewHolder.getUnsubscribeButton().setOnClickListener(v -> {
                 DrogopolexSubscription dSubscription = localDataSubs.get(position);
-                unsubscribeRequest(dSubscription.getId_sub().toString(), position);
+                unsubscribeRequest(dSubscription.getId_sub().toString());
 
                 localDataSubs.remove(position);
                 notifyItemRemoved(position);
@@ -108,7 +85,7 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void unsubscribeRequest(String subId, int subIndex){
+    public void unsubscribeRequest(String subId) {
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
@@ -117,11 +94,31 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void subscribeRequest(String localization, int subIndex){
+    public void subscribeRequest(String localization) {
         SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
         String userId = sp.getString("user_id", "");
         String token = sp.getString("token", "");
 
-        subscriptionsRepository.subscriptionSubscribe(localization, "", userId, token);
+        subscriptionsRepository.subscriptionSubscribe(localization, userId, token);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView subscriptionText;
+        private final Button unsubscribe;
+
+        public ViewHolder(View view) {
+            super(view);
+
+            subscriptionText = view.findViewById(R.id.subscription_row_text);
+            unsubscribe = view.findViewById(R.id.unsubBtn);
+        }
+
+        public TextView getSubscriptionTextView() {
+            return subscriptionText;
+        }
+
+        public Button getUnsubscribeButton() {
+            return unsubscribe;
+        }
     }
 }

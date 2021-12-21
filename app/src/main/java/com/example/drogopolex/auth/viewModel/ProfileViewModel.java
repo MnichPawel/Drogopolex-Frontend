@@ -15,14 +15,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class ProfileViewModel extends ViewModel {
-    private MutableLiveData<ProfileAction> mAction = new MutableLiveData<>();
+    private final MutableLiveData<ProfileAction> mAction = new MutableLiveData<>();
+    private final UserRepository userRepository;
     public MutableLiveData<String> username = new MutableLiveData<>();
     public MutableLiveData<String> email = new MutableLiveData<>();
     public MutableLiveData<String> password = new MutableLiveData<>();
     public MutableLiveData<String> repeatPassword = new MutableLiveData<>();
-
-    private UserRepository userRepository;
-
     public BasicListener basicListener = null;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
 
@@ -30,7 +28,7 @@ public class ProfileViewModel extends ViewModel {
         userRepository = new UserRepository();
     }
 
-    public LiveData<ProfileAction> getAction(){
+    public LiveData<ProfileAction> getAction() {
         return mAction;
     }
 
@@ -48,13 +46,13 @@ public class ProfileViewModel extends ViewModel {
 
     public void onChangeUsernameClicked() {
         String usernameValue = username.getValue();
-        if(usernameValue == null || usernameValue.isEmpty()){
+        if (usernameValue == null || usernameValue.isEmpty()) {
             basicListener.onFailure("Niepoprawna nazwa użytkownika.");
         } else {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String user_id = sharedPreferences.getString("user_id", "");
+            String userId = sharedPreferences.getString("user_id", "");
             String token = sharedPreferences.getString("token", "");
-            LiveData<BasicResponse> response = userRepository.userChangeUserData(user_id, token, UserDataType.USERNAME.getType(), usernameValue);
+            LiveData<BasicResponse> response = userRepository.userChangeUserData(userId, token, UserDataType.USERNAME.getType(), usernameValue);
             basicListener.onSuccess(response);
         }
     }
@@ -63,30 +61,29 @@ public class ProfileViewModel extends ViewModel {
         String passwordValue = password.getValue();
         String repeatPasswordValue = repeatPassword.getValue();
 
-        if(passwordValue == null || passwordValue.isEmpty() ||
-        repeatPasswordValue == null || repeatPasswordValue.isEmpty()){
+        if (passwordValue == null || passwordValue.isEmpty() ||
+                repeatPasswordValue == null || repeatPasswordValue.isEmpty()) {
             basicListener.onFailure("Niepoprawne hasło.");
-        }
-        else if(!passwordValue.equals(repeatPasswordValue)){
+        } else if (!passwordValue.equals(repeatPasswordValue)) {
             basicListener.onFailure("Podane hasła różnią się.");
         } else {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String user_id = sharedPreferences.getString("user_id", "");
+            String userId = sharedPreferences.getString("user_id", "");
             String token = sharedPreferences.getString("token", "");
-            LiveData<BasicResponse> response = userRepository.userChangeUserData(user_id, token, UserDataType.PASSWORD.getType(), passwordValue);
+            LiveData<BasicResponse> response = userRepository.userChangeUserData(userId, token, UserDataType.PASSWORD.getType(), passwordValue);
             basicListener.onSuccess(response);
         }
     }
 
     public void onChangeEmailClicked() {
         String emailValue = email.getValue();
-        if(emailValue == null || emailValue.isEmpty()){
+        if (emailValue == null || emailValue.isEmpty()) {
             basicListener.onFailure("Niepoprawny adres email.");
         } else {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String user_id = sharedPreferences.getString("user_id", "");
+            String userId = sharedPreferences.getString("user_id", "");
             String token = sharedPreferences.getString("token", "");
-            LiveData<BasicResponse> response = userRepository.userChangeUserData(user_id, token, UserDataType.EMAIL.getType(), emailValue);
+            LiveData<BasicResponse> response = userRepository.userChangeUserData(userId, token, UserDataType.EMAIL.getType(), emailValue);
             basicListener.onSuccess(response);
         }
     }

@@ -5,9 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class ProfileResponse implements TemplateResponse {
 
-    @SerializedName("success")
-    @Expose
-    private String success;
     @SerializedName("error")
     @Expose
     private String error;
@@ -20,15 +17,6 @@ public class ProfileResponse implements TemplateResponse {
     @SerializedName("email")
     @Expose
     private String email;
-
-
-    public String getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(String success) {
-        this.success = success;
-    }
 
     public String getError() {
         return error;

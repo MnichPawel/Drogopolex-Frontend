@@ -3,7 +3,7 @@ package com.example.drogopolex.model.rules;
 import com.google.android.gms.maps.model.LatLng;
 
 public class DrogopolexPointRule extends DrogopolexRule {
-    private LatLng latLng;
+    private final LatLng latLng;
 
     public DrogopolexPointRule(boolean isAvoid, String description, LatLng latLng) {
         super(isAvoid, description);

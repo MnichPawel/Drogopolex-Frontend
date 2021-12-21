@@ -1,7 +1,7 @@
 package com.example.drogopolex.model.rules;
 
-public class DrogopolexEventTypeRule extends DrogopolexRule{
-    private String eventType;
+public class DrogopolexEventTypeRule extends DrogopolexRule {
+    private final String eventType;
 
     public DrogopolexEventTypeRule(String description, String eventType) {
         super(true, description);
