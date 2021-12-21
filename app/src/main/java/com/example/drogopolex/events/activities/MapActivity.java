@@ -27,6 +27,7 @@ import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.auth.activities.ProfileActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.data.network.response.LocationResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestValue;
 import com.example.drogopolex.data.network.response.RouteValue;
@@ -153,7 +154,7 @@ public class MapActivity extends FragmentActivity
         map.setMyLocationEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
         map.setOnMyLocationClickListener(this);
-        map.setTrafficEnabled(true);
+//        map.setTrafficEnabled(true);
 
 
         UiSettings mapSettings = map.getUiSettings();
@@ -518,9 +519,9 @@ public class MapActivity extends FragmentActivity
         }
     }
 
-    private void moveCameraToBbox(String bboxStartString, String bboxEndString) {
-        LatLng bboxStart = parseCoordinatesString(bboxStartString);
-        LatLng bboxEnd = parseCoordinatesString(bboxEndString);
+    private void moveCameraToBbox(LocationResponse bboxStartResponse, LocationResponse bboxEndResponse) {
+        LatLng bboxStart = new LatLng(bboxStartResponse.getLat(), bboxStartResponse.getLng());
+        LatLng bboxEnd = new LatLng(bboxEndResponse.getLat(), bboxEndResponse.getLng());
 
         LatLngBounds bbox = new LatLngBounds(bboxStart, bboxEnd);
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
@@ -531,8 +532,8 @@ public class MapActivity extends FragmentActivity
         Matcher matcher = pattern.matcher(latLngString.replace("(", "").replace(")", ""));
         if (matcher.find()) {
             return new LatLng(
-                    Double.parseDouble(matcher.group(2)),
-                    Double.parseDouble(matcher.group(1)));
+                    Double.parseDouble(matcher.group(1)),
+                    Double.parseDouble(matcher.group(2)));
         }
         return new LatLng(0.0, 0.0);
     }

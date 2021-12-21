@@ -269,7 +269,12 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
-        eventsLiveData = eventsRepository.getEventsFromUserArea(userId, token, locationDetails.getLatitude(), locationDetails.getLongitude());
+        eventsLiveData = eventsRepository.getEventsFromUserArea(
+                userId,
+                token,
+                locationDetails.getLatitude(),
+                locationDetails.getLongitude()
+        );
         mapActivityListener.onGetEventsSuccess(eventsLiveData);
     }
 
