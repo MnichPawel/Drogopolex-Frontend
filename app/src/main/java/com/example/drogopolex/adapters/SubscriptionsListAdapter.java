@@ -86,16 +86,25 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
                 DrogopolexSubscription dSubscription = localDataSubs.get(position);
                 subscribeRequest(dSubscription.getLocation(), position);
 
-                viewHolder.getUnsubscribeButton().setText("Usuń");
+                localDataSubs.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, localDataSubs.size());
+            });
+        } else {
+            viewHolder.getUnsubscribeButton().setText("Usuń");
 
-                Drawable buttonDrawable_new = viewHolder.getUnsubscribeButton().getBackground();
-                buttonDrawable_new = DrawableCompat. wrap(buttonDrawable_new);
-                DrawableCompat.setTint(buttonDrawable_new, Color.parseColor("#B00020"));
-                viewHolder.getUnsubscribeButton().setBackground(buttonDrawable_new);
-                viewHolder.getUnsubscribeButton().setOnClickListener(v_new -> {
-                    DrogopolexSubscription drogopolexSubscription_new = localDataSubs.get(position);
-                    unsubscribeRequest(drogopolexSubscription_new.getId_sub().toString(), position);
-                });
+            Drawable buttonDrawable = viewHolder.getUnsubscribeButton().getBackground();
+            buttonDrawable = DrawableCompat. wrap(buttonDrawable);
+            DrawableCompat.setTint(buttonDrawable, Color.parseColor("#B00020"));
+            viewHolder.getUnsubscribeButton().setBackground(buttonDrawable);
+
+            viewHolder.getUnsubscribeButton().setOnClickListener(v -> {
+                DrogopolexSubscription dSubscription = localDataSubs.get(position);
+                unsubscribeRequest(dSubscription.getLocation(), position);
+
+                localDataSubs.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, localDataSubs.size());
             });
         }
     }
