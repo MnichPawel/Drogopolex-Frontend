@@ -203,7 +203,7 @@ public class MapActivity extends FragmentActivity
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
             boolean isNearbyEvents = activityMapBinding.getViewModel().onLocationChanged(locationDetails);
 
-            if (!firstLocalizationUpdateLoaded || isNearbyEvents || !displayingSelectedRoute) {
+            if (!firstLocalizationUpdateLoaded ){//|| isNearbyEvents || !displayingSelectedRoute) {
                 firstLocalizationUpdateLoaded = true;
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),

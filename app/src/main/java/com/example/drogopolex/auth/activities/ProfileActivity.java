@@ -33,7 +33,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 public class ProfileActivity extends AppCompatActivity implements SharedPreferencesHolder, BasicListener {
-
     //ads
     private String adIdMopub= "b195f8dd8ded45fe847ad89ed1d016da";
     MoPubView adBanner;

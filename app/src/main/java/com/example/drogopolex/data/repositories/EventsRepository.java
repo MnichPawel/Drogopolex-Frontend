@@ -58,8 +58,6 @@ public class EventsRepository {
 
         myApi.eventsAddEvent(token, userId,
                 new AddEventRequest(
-                true,
-                "",
                 locationDetails.getLatitude(),
                 locationDetails.getLongitude(),
                 eventType
