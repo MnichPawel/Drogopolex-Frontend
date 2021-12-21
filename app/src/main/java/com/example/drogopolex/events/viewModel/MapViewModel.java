@@ -97,7 +97,12 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             mapActivityListener.onGetRecommendedRoute(routeRec);
         }
 
-        poiLiveData = recommendationRepository.getPointsFromUserArea(user_id, token, location.getLatitude(), location.getLongitude());
+        poiLiveData = recommendationRepository.getPointsFromUserArea(
+                user_id,
+                token,
+                location.getLatitude(),
+                location.getLongitude()
+        );
         mapActivityListener.onGetPOISuccess(poiLiveData);
         if (!isOnlySubs) {
             fetchNearbyEvents(location);

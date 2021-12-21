@@ -182,8 +182,12 @@ public class MapActivity extends FragmentActivity
     }
 
     private void prepRequestLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+        ) {
 
             ActivityCompat.requestPermissions(this,
                     new String[]{
@@ -204,7 +208,6 @@ public class MapActivity extends FragmentActivity
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
                         Double.parseDouble(locationDetails.getLongitude()));
-                Toast.makeText(getApplicationContext(), location.latitude + " - " + location.longitude, Toast.LENGTH_SHORT).show();
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
             }
         });
