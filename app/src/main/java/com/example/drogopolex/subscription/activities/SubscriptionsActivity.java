@@ -9,14 +9,12 @@ import android.widget.Toast;
 import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
-import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.databinding.ActivitySubscriptionsBinding;
 import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexSubscription;
 import com.example.drogopolex.subscription.listeners.SubscriptionListListener;
-import com.example.drogopolex.subscription.listeners.SubscriptionsListener;
 import com.example.drogopolex.subscription.utils.SubscriptionsAction;
 import com.example.drogopolex.subscription.viewModel.SubscriptionsViewModel;
 
@@ -29,7 +27,7 @@ import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder, SubscriptionListListener, SubscriptionsListener { //OnSuccessListener<LiveData<SubscriptionsResponse>>,
+public class SubscriptionsActivity extends AppCompatActivity implements SharedPreferencesHolder, SubscriptionListListener { //OnSuccessListener<LiveData<SubscriptionsResponse>>,
     RecyclerView subscriptionsRecyclerView;
     ActivitySubscriptionsBinding activitySubscriptionsBinding;
     SubscriptionsListAdapter listAdapter;
@@ -91,18 +89,6 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
     }
 
     @Override
-    public void onSubscriptionsSuccess(LiveData<BasicResponse> subscriptionsResponseLiveData, int indexToDelete) {
-        subscriptionsResponseLiveData.observe(this, subscriptionsResponse -> {
-            if (subscriptionsResponse != null) {
-                subscriptions.remove(indexToDelete);
-                listAdapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(SubscriptionsActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    @Override
     public void onSuccess(LiveData<SubscriptionsResponse> subscriptionsResponseLiveData) {
         subscriptionsResponseLiveData.observe(this, subscriptionsResponse -> {
             if (subscriptionsResponse != null) {
@@ -119,7 +105,6 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
                     listAdapter.notifyDataSetChanged();
                 } else {
                     listAdapter = new SubscriptionsListAdapter(subscriptions, SubscriptionsActivity.this);
-                    listAdapter.subscriptionsListener = SubscriptionsActivity.this;
                     subscriptionsRecyclerView.setLayoutManager(new LinearLayoutManager(SubscriptionsActivity.this));
                     subscriptionsRecyclerView.setAdapter(listAdapter);
                 }
