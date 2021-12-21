@@ -41,6 +41,19 @@
             android:visibility="visible"
             android:layout_margin="0dp"/>
 
+        <ImageView
+            android:id="@+id/allEventsShown"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{(view)-> viewModel.onShowAllEventsClicked(view)}"
+            android:visibility="visible"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_switch_left"
+             />
 
         <LinearLayout
             android:layout_width="match_parent"

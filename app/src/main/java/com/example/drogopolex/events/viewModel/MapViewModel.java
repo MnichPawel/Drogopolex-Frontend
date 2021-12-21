@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
@@ -165,11 +166,11 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         view.startAnimation(flipButtonOut);
         if (isOnlySubs) { // switch to nearby events
             isOnlySubs = false;
-            ((FloatingActionButton) view).setImageResource(R.drawable.ic_switch_left);
+            ((ImageView) view).setImageResource(R.drawable.ic_switch_left);
             fetchNearbyEvents();
         } else {  // switch to subscribed events
             isOnlySubs = true;
-            ((FloatingActionButton) view).setImageResource(R.drawable.ic_switch_right);
+            ((ImageView) view).setImageResource(R.drawable.ic_switch_right);
             fetchSubscribedEvents();
         }
     }
