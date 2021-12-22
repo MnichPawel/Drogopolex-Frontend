@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -39,6 +38,7 @@ import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -78,7 +78,6 @@ public class MapActivity extends FragmentActivity
         MapActivityListener,
         SharedPreferencesHolder,
         GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener,
         GoogleMap.OnInfoWindowClickListener {
 
     GoogleMap map;
@@ -86,8 +85,9 @@ public class MapActivity extends FragmentActivity
 
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
 
-    boolean firstLocalizationUpdateLoaded = false;
+    boolean moveCameraToUser = true;
     boolean displayingSelectedRoute = false;
+    boolean userCameraMove = false;
 
     private MarkerOptions routeDestinationMarkerOptions = null;
     private Marker routeDestinationMarker = null;
@@ -156,9 +156,21 @@ public class MapActivity extends FragmentActivity
         }
         map.setMyLocationEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
-        map.setOnMyLocationClickListener(this);
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
 //        map.setTrafficEnabled(true);
+        map.setOnCameraMoveStartedListener(i -> {
+            if(userCameraMove) {
+                Log.d("CAMERA", "user moved");
+                moveCameraToUser = false;
+            }
+            else {
+                Log.d("CAMERA", "app moved");
+                userCameraMove = true;
+                moveCameraToUser = true;
+            }
+
+        });
+
 
 
         UiSettings mapSettings = map.getUiSettings();
@@ -205,14 +217,14 @@ public class MapActivity extends FragmentActivity
 
     private void requestLocationUpdates() {
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
-            boolean isNearbyEvents = activityMapBinding.getViewModel().onLocationChanged(locationDetails);
+            activityMapBinding.getViewModel().onLocationChanged(locationDetails);
+            Log.d("CAMERA", "new location received");
 
-            if (!firstLocalizationUpdateLoaded) {//|| isNearbyEvents || !displayingSelectedRoute) {
-                firstLocalizationUpdateLoaded = true;
+            if (moveCameraToUser) {
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
                         Double.parseDouble(locationDetails.getLongitude()));
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
+                moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
             }
         });
     }
@@ -487,7 +499,13 @@ public class MapActivity extends FragmentActivity
         LatLng bboxEnd = new LatLng(bboxEndResponse.getLat(), bboxEndResponse.getLng());
 
         LatLngBounds bbox = new LatLngBounds(bboxStart, bboxEnd);
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
+        moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
+    }
+
+    private void moveCamera(CameraUpdate cameraUpdate) {
+        userCameraMove = false;
+        Log.d("CAMERA", "app will move");
+        map.moveCamera(cameraUpdate);
     }
 
     private LatLng parseCoordinatesString(String latLngString) {
@@ -503,16 +521,9 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public boolean onMyLocationButtonClick() {
-        // TODO follow camera
-        //TODO on move camera not follow
+        userCameraMove = false;
         Toast.makeText(getApplicationContext(), "Button clicked.", Toast.LENGTH_SHORT).show();
         return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) { //TODO delete
-        LatLng currentUserLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        map.moveCamera(CameraUpdateFactory.newLatLng(currentUserLatLng));
     }
 
     private void drawRouteOnMap(JSONObject geoJson) {
