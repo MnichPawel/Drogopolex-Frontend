@@ -24,7 +24,6 @@ import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
@@ -191,7 +190,6 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onConfirmQuickRouteClicked() {
-        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
         addQuickRouteClicked.set(!addQuickRouteClicked.get());
         LatLng chosenPoint = mapActivityListener.getChosenPoint();
         LocationDetails userLocation = locationLiveData.getValue();
@@ -204,6 +202,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
             LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint, null, null), userId, token);
 
+            confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
             mapActivityListener.drawRoute(routeResponseLiveData);
         }
     }
@@ -294,7 +293,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         String token = sharedPreferences.getString("token", "");
 
         LiveData<RouteValue> routeResponseLiveData = eventsRepository.getRoute(userId, token, routeId);
-
+        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
         mapActivityListener.drawRoute(routeResponseLiveData);
     }
 
@@ -310,7 +309,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             GenerateRouteRequest generateRouteRequest = new GenerateRouteRequest(fromPoint, toPoint, null, null);
 
             LiveData<RouteValue> routeValueLiveData = eventsRepository.generateRoute(generateRouteRequest, userId, token);
-
+            confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
             mapActivityListener.drawRoute(routeValueLiveData);
         }
     }

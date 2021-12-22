@@ -316,7 +316,6 @@ public class AddRouteActivity extends AppCompatActivity
                                 Double.parseDouble(locationDetails.getLatitude()),
                                 Double.parseDouble(locationDetails.getLongitude()));
                         currentLocation = location;
-                        Toast.makeText(getApplicationContext(), location.latitude + " - " + location.longitude, Toast.LENGTH_SHORT).show();
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
                         putMarkerOnMap(location);
                     }

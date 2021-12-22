@@ -72,9 +72,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
                 ContextCompat.checkSelfPermission(LoginActivity.this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationPermission();
-        } else {
-            Toast.makeText(LoginActivity.this, "You have already granted this permission!",
-                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -170,7 +167,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
 
     public void onInterstitialDismissed(MoPubInterstitial interstitial) {
         Log.d("REK", "zdmismisnowa");
-        Toast.makeText(LoginActivity.this, "Dismisnieto reklame.", Toast.LENGTH_SHORT).show();
         // The interstitial has being dismissed. Resume / load state accordingly.
         goToMapActivity();
     }

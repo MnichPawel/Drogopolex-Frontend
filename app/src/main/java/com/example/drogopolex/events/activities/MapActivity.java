@@ -389,7 +389,7 @@ public class MapActivity extends FragmentActivity
 
         acceptBtn.setOnClickListener(v -> {
             activityMapBinding.getViewModel().getRouteFromLocToPoint(routeValue.getTo().getLat(), routeValue.getTo().getLng());
-            activityMapBinding.getViewModel().getRouteById(String.valueOf(routeValue.getId()));
+//            activityMapBinding.getViewModel().getRouteById(String.valueOf(routeValue.getId()));
             popupWindow.dismiss();
         });
         cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
@@ -409,7 +409,7 @@ public class MapActivity extends FragmentActivity
     private BitmapDescriptor findIconForType(String type) {
         if ("Wypadek".equals(type)) {
             return svgToBitmap(R.drawable.ic_wypadek);
-        } else if ("Korek".equals(type)) { //TODO TO POWINNY BYĆ ELSE IFY !!!!!!!!!11!oneone1!
+        } else if ("Korek".equals(type)) {
             return svgToBitmap(R.drawable.ic_korek);
         } else if ("Patrol Policji".equals(type)) {
             return svgToBitmap(R.drawable.ic_radar);
@@ -503,14 +503,15 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public boolean onMyLocationButtonClick() {
+        // TODO follow camera
+        //TODO on move camera not follow
         Toast.makeText(getApplicationContext(), "Button clicked.", Toast.LENGTH_SHORT).show();
         return false;
     }
 
     @Override
-    public void onMyLocationClick(@NonNull Location location) {
+    public void onMyLocationClick(@NonNull Location location) { //TODO delete
         LatLng currentUserLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        Toast.makeText(getApplicationContext(), "onmlc " + currentUserLatLng.latitude + " - " + currentUserLatLng.longitude, Toast.LENGTH_SHORT).show();
         map.moveCamera(CameraUpdateFactory.newLatLng(currentUserLatLng));
     }
 
