@@ -126,17 +126,21 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
     public void onSuccess(LiveData<LoginResponse> response) {
         response.observe(this, result -> {
             if (result != null) {
-                String userId = result.getUserId();
-                String token = result.getToken();
+                if(result.getError() == null) {
+                    String userId = result.getUserId();
+                    String token = result.getToken();
 
-                SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-                SharedPreferences.Editor spEditor = sp.edit();
-                spEditor.putString("token", token);
-                spEditor.putString("user_id", userId);
-                spEditor.putBoolean("loggedIn", true);
-                spEditor.apply();
+                    SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor spEditor = sp.edit();
+                    spEditor.putString("token", token);
+                    spEditor.putString("user_id", userId);
+                    spEditor.putBoolean("loggedIn", true);
+                    spEditor.apply();
 
-                handleAction(new LoginAction(LoginAction.SHOW_MAP));
+                    handleAction(new LoginAction(LoginAction.SHOW_MAP));
+                } else {
+                    Toast.makeText(LoginActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(LoginActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }

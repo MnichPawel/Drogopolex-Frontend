@@ -58,8 +58,12 @@ public class RegisterActivity extends AppCompatActivity implements BasicListener
     public void onSuccess(LiveData<BasicResponse> response) {
         response.observe(this, result -> {
             if (result != null) {
-                Toast.makeText(RegisterActivity.this, "Konto utworzone", Toast.LENGTH_LONG).show();
-                handleAction(new RegisterAction(RegisterAction.SHOW_LOGIN));
+                if(result.getError() == null) {
+                    Toast.makeText(RegisterActivity.this, "Konto utworzone", Toast.LENGTH_LONG).show();
+                    handleAction(new RegisterAction(RegisterAction.SHOW_LOGIN));
+                } else {
+                    Toast.makeText(RegisterActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(RegisterActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }

@@ -80,7 +80,7 @@ public interface MyApi {
             @Header("User-Id") String userId,
             @Body GenerateRouteRequest body);
 
-    @POST("regenerateRoute")
+    @POST("getUserRoute")
     Call<RouteValue> eventsGetRoute(
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,

@@ -226,7 +226,11 @@ public class MapActivity extends FragmentActivity
     public void onAddNewEventSuccess(LiveData<BasicResponse> response) {
         response.observe(this, basicResponse -> {
             if (basicResponse != null) {
-                Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                if(basicResponse.getError() == null) {
+                    Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MapActivity.this, basicResponse.getError(), Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
@@ -281,14 +285,13 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onLogoutSuccess(LiveData<BasicResponse> responseLiveData) {
         responseLiveData.observe(this, result -> {
-            if (result != null) {
-                SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                handleAction(new MapAction(MapAction.LOGOUT));
-            } else {
+            if (result == null) {
                 Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
-                SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                handleAction(new MapAction(MapAction.LOGOUT));
+            } else if (result.getError() != null) {
+                Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
             }
+            SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+            handleAction(new MapAction(MapAction.LOGOUT));
         });
     }
 

@@ -53,10 +53,14 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
 
         activityProfileBinding.getViewModel().getUserData().observe(this, profileResponse -> {
             if (profileResponse != null) {
-                EditText username = findViewById(R.id.profile_change_username_textfield);
-                username.setText(profileResponse.getNazwa());
-                EditText email = findViewById(R.id.profile_change_email_textfield);
-                email.setText(profileResponse.getEmail());
+                if(profileResponse.getError() == null) {
+                    EditText username = findViewById(R.id.profile_change_username_textfield);
+                    username.setText(profileResponse.getNazwa());
+                    EditText email = findViewById(R.id.profile_change_email_textfield);
+                    email.setText(profileResponse.getEmail());
+                } else {
+                    Toast.makeText(ProfileActivity.this, profileResponse.getError(), Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
@@ -80,7 +84,11 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
     public void onSuccess(LiveData<BasicResponse> response) {
         response.observe(this, result -> {
             if (result != null) {
-                Toast.makeText(ProfileActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                if (result.getError() == null) {
+                    Toast.makeText(ProfileActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ProfileActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(ProfileActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }

@@ -78,9 +78,13 @@ public class RoutesListActivity extends AppCompatActivity implements SharedPrefe
     public void onRouteDeleteSuccess(LiveData<BasicResponse> responseLiveData, int routeIndex) {
         responseLiveData.observe(this, basicResponse -> {
             if (basicResponse != null) {
-                routes.remove(routeIndex);
-                listAdapter.notifyItemRemoved(routeIndex);
-                listAdapter.notifyItemRangeChanged(routeIndex, routes.size());
+                if(basicResponse.getError() == null) {
+                    routes.remove(routeIndex);
+                    listAdapter.notifyItemRemoved(routeIndex);
+                    listAdapter.notifyItemRangeChanged(routeIndex, routes.size());
+                } else {
+                    Toast.makeText(RoutesListActivity.this, basicResponse.getError(), Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(RoutesListActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
