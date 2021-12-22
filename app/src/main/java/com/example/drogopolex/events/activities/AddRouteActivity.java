@@ -41,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -153,9 +154,7 @@ public class AddRouteActivity extends AppCompatActivity
 
             ListView addRuleListView = addRuleDialog.findViewById(R.id.addRuleListView);
             addRuleListView.setAdapter(new ArrayAdapter<>(this, R.layout.row_add_rule, Arrays.asList(rules)));
-            addRuleListView.setOnItemClickListener((adapterView, view, i, l) -> {
-                handleAddRuleListItemClick(i);
-            });
+            addRuleListView.setOnItemClickListener((adapterView, view, i, l) -> handleAddRuleListItemClick(i));
         } else {
             addRuleDialog.show();
         }
@@ -352,7 +351,7 @@ public class AddRouteActivity extends AppCompatActivity
             return;
         }
         map.setMyLocationEnabled(true);
-
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
 
         UiSettings mapSettings = map.getUiSettings();
         mapSettings.setZoomControlsEnabled(true);
