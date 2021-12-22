@@ -37,8 +37,9 @@ import com.example.drogopolex.model.rules.DrogopolexPointRule;
 import com.example.drogopolex.model.rules.DrogopolexRule;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -70,6 +71,8 @@ public class AddRouteActivity extends AppCompatActivity
 
     ActivityAddRouteBinding activityAddRouteBinding;
     GoogleMap map;
+    MapView mapView;
+    LatLng currentLocation;
     Dialog choosePointDialog = null;
     Dialog addRuleDialog = null;
     PopupWindow addRuleByEventTypePopup;
@@ -203,12 +206,17 @@ public class AddRouteActivity extends AppCompatActivity
             Button acceptButton = choosePointDialog.findViewById(R.id.accept_popup_button);
             acceptButton.setOnClickListener(v -> handleAction(new AddRouteAction(AddRouteAction.ACCEPT_POPUP)));
 
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map_popup);
+            mapView = (MapView) choosePointDialog.findViewById(R.id.map_popup);
+            MapsInitializer.initialize(AddRouteActivity.this);
 
-            mapFragment.getMapAsync(this);
+            mapView.onCreate(choosePointDialog.onSaveInstanceState());
+            mapView.onResume();
+            mapView.getMapAsync(this);
         } else {
             map.clear();
+            mapView.onResume();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 17));
+            putMarkerOnMap(currentLocation);
             choosePointDialog.show();
         }
     }
@@ -307,7 +315,7 @@ public class AddRouteActivity extends AppCompatActivity
                         LatLng location = new LatLng(
                                 Double.parseDouble(locationDetails.getLatitude()),
                                 Double.parseDouble(locationDetails.getLongitude()));
-
+                        currentLocation = location;
                         Toast.makeText(getApplicationContext(), location.latitude + " - " + location.longitude, Toast.LENGTH_SHORT).show();
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
                         putMarkerOnMap(location);

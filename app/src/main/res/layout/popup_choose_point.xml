@@ -11,9 +11,8 @@
         android:layout_marginHorizontal="16dp">
 
 
-        <fragment
+        <com.google.android.gms.maps.MapView
             android:id="@+id/map_popup"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginVertical="50dp"
