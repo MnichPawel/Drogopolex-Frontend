@@ -363,12 +363,12 @@ public class MapActivity extends FragmentActivity
     public void onGetRecommendedRoute(LiveData<RouteValue> routeRec) {
         routeRec.observe(this, routeValue -> {
             if (routeRec.getValue() != null) {
-                showAddRuleByNamePopup(routeRec.getValue());
+                showRecommendedRoutePopup(routeRec.getValue());
             }
         });
     }
 
-    public void showAddRuleByNamePopup(RouteValue routeValue) {
+    public void showRecommendedRoutePopup(RouteValue routeValue) {
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_route_recommendation, null);
