@@ -8,12 +8,15 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -29,14 +32,16 @@ import com.example.drogopolex.data.network.response.LocationResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestValue;
 import com.example.drogopolex.data.network.response.RouteValue;
+import com.example.drogopolex.data.repositories.VotesRepository;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
 import com.example.drogopolex.events.utils.MapAction;
-import com.example.drogopolex.events.utils.customInfoWindowAdapter;
+import com.example.drogopolex.events.utils.CustomInfoWindowAdapter;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
+import com.example.drogopolex.model.rules.DrogopolexNameRule;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
 import com.google.android.gms.maps.CameraUpdate;
@@ -79,7 +84,8 @@ public class MapActivity extends FragmentActivity
         MapActivityListener,
         SharedPreferencesHolder,
         GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnInfoWindowClickListener {
+        GoogleMap.OnMyLocationClickListener,
+        GoogleMap.OnMarkerClickListener {
 
     GoogleMap map;
     ActivityMapBinding activityMapBinding;
@@ -159,8 +165,8 @@ public class MapActivity extends FragmentActivity
         map.setOnMyLocationButtonClickListener(this);
         map.setOnMyLocationClickListener(this);
         map.setTrafficEnabled(true);
-        map.setInfoWindowAdapter(new customInfoWindowAdapter(this));
-
+        map.setInfoWindowAdapter(new CustomInfoWindowAdapter(this,this));
+        map.setOnMarkerClickListener(this);
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
 //        map.setTrafficEnabled(true);
         map.setOnCameraMoveStartedListener(i -> {
@@ -193,7 +199,7 @@ public class MapActivity extends FragmentActivity
 
         prepRequestLocationUpdates();
 
-        googleMap.setOnInfoWindowClickListener(this);//popup windows
+        //googleMap.setOnInfoWindowClickListener(this);//popup windows
     }
 
     private void changePositionOfMyLocationButton() { //TODO better location of button
@@ -290,7 +296,9 @@ public class MapActivity extends FragmentActivity
                                     userVoteType
                             ));
 
-                            addEventToMap(coordinates, event.getType(),event.getValueOfVotes());
+
+                            String snippetMsg =event.getId()+","+userVoteType.getValue()+","+event.getValueOfVotes();
+                            addEventToMap(coordinates, event.getType(),snippetMsg);
                         });
 
             } else {
@@ -550,15 +558,19 @@ public class MapActivity extends FragmentActivity
         }
 
         for (DrogopolexEvent event : eventListData) {
-            addEventToMap(event.getCoordinates(), event.getType(),Integer.toString(event.getValueOfVotes()));
+            String snippetMsg =event.getId()
+                    +","+event.getUserVoteType()+","+event.getValueOfVotes();
+            addEventToMap(event.getCoordinates(), event.getType(),snippetMsg);
         }
     }
 
-    private void addEventToMap(LatLng coordinates, String type, String voteValue) {
+    private void addEventToMap(LatLng coordinates, String type, String snippetMsg) {
+        //snippetMsg format: "[eventId]^[voteType]^[numVotes]"
+        //Log.d("MARK", snippetMsg);
         map.addMarker(new MarkerOptions()
                 .position(coordinates)
                 .title(type)
-                .snippet(voteValue)
+                .snippet(snippetMsg)
                 .icon(findIconForType(type)));
     }
 
@@ -570,8 +582,73 @@ public class MapActivity extends FragmentActivity
                 .icon(findIconForType(type)));
     }
 
+
+
     @Override
-    public void onInfoWindowClick(@NonNull Marker marker) {
-        //TODO to implement
+    public void onMyLocationClick(@NonNull Location location) {
+
+    }
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        showVotePopup(marker);
+        return true;
+    }
+    public void showVotePopup(Marker marker) {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.custom_marker_popup, null);
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        popupWindow.setElevation(20);
+
+
+        popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
+
+        String[] snippetMessage = marker.getSnippet().split(",");
+        String eventId = snippetMessage[0];
+        String voteType = snippetMessage[1];
+        String numVotes = snippetMessage[2];
+        TextView tW0 = popupView.findViewById(R.id.popupName);
+        TextView tW1 = popupView.findViewById(R.id.popupDownvoteNumber);
+        //SharedPreferences sp = S.getSharedPreferences();
+        VotesRepository vr = new VotesRepository();
+        ImageView downVote = popupView.findViewById(R.id.popupDownvote);
+        downVote.setOnClickListener(v -> {
+            if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
+                vr.votesChangeVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.DOWNVOTED,eventId);
+            }
+            if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
+                vr.votesRemoveVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),eventId);
+            }
+            if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
+                vr.votesAddVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.DOWNVOTED,eventId);
+            }
+            popupWindow.dismiss();
+        });
+
+        ImageView upVote = popupView.findViewById(R.id.popupUpvote);
+        upVote.setOnClickListener(v -> {
+            if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
+                vr.votesRemoveVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),eventId);
+            }
+            if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
+                vr.votesChangeVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.UPVOTED,eventId);
+            }
+            if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
+                vr.votesAddVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.UPVOTED,eventId);
+            }
+           popupWindow.dismiss();
+        });
+
+        tW0.setText(marker.getTitle());
+        tW1.setText(numVotes);
+
+
+
+
     }
 }

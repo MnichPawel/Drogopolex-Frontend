@@ -7,7 +7,7 @@ public enum VoteType {
 
     String value;
 
-    VoteType(String value) {
+   VoteType(String value) {
         this.value = value;
     }
 
