@@ -32,6 +32,7 @@ import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
 import com.example.drogopolex.events.utils.MapAction;
+import com.example.drogopolex.events.utils.customInfoWindowAdapter;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
@@ -156,6 +157,10 @@ public class MapActivity extends FragmentActivity
         }
         map.setMyLocationEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
+        map.setOnMyLocationClickListener(this);
+        map.setTrafficEnabled(true);
+        map.setInfoWindowAdapter(new customInfoWindowAdapter(this));
+
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
 //        map.setTrafficEnabled(true);
         map.setOnCameraMoveStartedListener(i -> {
@@ -285,7 +290,7 @@ public class MapActivity extends FragmentActivity
                                     userVoteType
                             ));
 
-                            addEventToMap(coordinates, event.getType());
+                            addEventToMap(coordinates, event.getType(),event.getValueOfVotes());
                         });
 
             } else {
@@ -545,14 +550,15 @@ public class MapActivity extends FragmentActivity
         }
 
         for (DrogopolexEvent event : eventListData) {
-            addEventToMap(event.getCoordinates(), event.getType());
+            addEventToMap(event.getCoordinates(), event.getType(),Integer.toString(event.getValueOfVotes()));
         }
     }
 
-    private void addEventToMap(LatLng coordinates, String type) {
+    private void addEventToMap(LatLng coordinates, String type, String voteValue) {
         map.addMarker(new MarkerOptions()
                 .position(coordinates)
                 .title(type)
+                .snippet(voteValue)
                 .icon(findIconForType(type)));
     }
 
@@ -560,6 +566,7 @@ public class MapActivity extends FragmentActivity
         map.addMarker(new MarkerOptions()
                 .position(coordinates)
                 .title(name)
+                .snippet("notEvent")
                 .icon(findIconForType(type)));
     }
 
