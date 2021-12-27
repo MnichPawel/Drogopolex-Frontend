@@ -3,17 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/drawable-anydpi/thumb_up.xml" value="0.287109375" />
-        <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/drawable/ic_bank.xml" value="0.20154440154440154" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_login.xml" value="0.190234375" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_map.xml" value="0.16188524590163936" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_map_svg_test.xml" value="0.1" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_profile.xml" value="0.230859375" />
-        <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_register.xml" value="0.1601775956284153" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_subscribed_events.xml" value="0.8324742268041238" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/activity_subscriptions.xml" value="1.0419161676646707" />
-        <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/custom_marker_popup.xml" value="0.25" />
-        <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/empty_marker_popup_cheat.xml" value="1.0773026315789473" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/row_events_list.xml" value="0.5592105263157895" />
         <entry key="..\:/Instalki/other/studia/sem5/IO/MachineSpiritDev/Drogopolex/app/src/main/res/layout/row_subscriptions_list.xml" value="1.3892857142857142" />
         <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/activity_routes_list.xml" value="1.4111842105263157" />
@@ -38,6 +33,7 @@
         <entry key="app/src/main/res/layout/activity_subscribe.xml" value="0.111328125" />
         <entry key="app/src/main/res/layout/activity_subscribed_events.xml" value="0.10520275439938791" />
         <entry key="app/src/main/res/layout/activity_subscriptions.xml" value="0.10520275439938791" />
+        <entry key="app/src/main/res/layout/custom_marker_popup.xml" value="0.17042349726775957" />
         <entry key="app/src/main/res/layout/popup_add_rule.xml" value="0.111328125" />
         <entry key="app/src/main/res/layout/popup_choose_point.xml" value="0.335" />
         <entry key="app/src/main/res/layout/row_routes_list.xml" value="0.1403688524590164" />

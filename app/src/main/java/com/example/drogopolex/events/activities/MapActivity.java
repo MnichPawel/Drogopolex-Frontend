@@ -15,7 +15,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -35,13 +34,12 @@ import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.repositories.VotesRepository;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
-import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.events.utils.CustomInfoWindowAdapter;
+import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
 import com.example.drogopolex.model.VoteType;
-import com.example.drogopolex.model.rules.DrogopolexNameRule;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
 import com.google.android.gms.maps.CameraUpdate;
@@ -591,7 +589,8 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        showVotePopup(marker);
+        if(marker.getSnippet() != null && !marker.getSnippet().equals("notEvent"))
+            showVotePopup(marker);
         return true;
     }
     public void showVotePopup(Marker marker) {
@@ -617,30 +616,62 @@ public class MapActivity extends FragmentActivity
         //SharedPreferences sp = S.getSharedPreferences();
         VotesRepository vr = new VotesRepository();
         ImageView downVote = popupView.findViewById(R.id.popupDownvote);
+
         downVote.setOnClickListener(v -> {
+            String snippet = "";
             if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
-                vr.votesChangeVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.DOWNVOTED,eventId);
+                vr.votesChangeVote(
+                        getSharedPreferences().getString("user_id",""),
+                        getSharedPreferences().getString("token",""),
+                        VoteType.DOWNVOTED,
+                        eventId);
+                snippet = eventId + "," + VoteType.DOWNVOTED + "," + (Integer.parseInt(numVotes) - 2);
             }
-            if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
-                vr.votesRemoveVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),eventId);
+            else if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
+                vr.votesRemoveVote(
+                        getSharedPreferences().getString("user_id",""),
+                        getSharedPreferences().getString("token",""),
+                        eventId);
+                snippet = eventId + "," + VoteType.DOWNVOTED + "," + (Integer.parseInt(numVotes) + 1);
             }
-            if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
-                vr.votesAddVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.DOWNVOTED,eventId);
+            else if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
+                vr.votesAddVote(getSharedPreferences().getString("user_id",""),
+                        getSharedPreferences().getString("token",""),
+                        VoteType.DOWNVOTED,
+                        eventId);
+                snippet = eventId + "," + VoteType.DOWNVOTED + "," + (Integer.parseInt(numVotes) - 1);
             }
+//            marker.setSnippet(snippet);
             popupWindow.dismiss();
         });
 
         ImageView upVote = popupView.findViewById(R.id.popupUpvote);
         upVote.setOnClickListener(v -> {
+            String snippet = "";
             if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
-                vr.votesRemoveVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),eventId);
+                vr.votesRemoveVote(
+                        getSharedPreferences().getString("user_id",""),
+                        getSharedPreferences().getString("token",""),
+                        eventId);
+                snippet = eventId + "," + VoteType.UPVOTED + "," + (Integer.parseInt(numVotes) - 1);
             }
-            if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
-                vr.votesChangeVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.UPVOTED,eventId);
+            else if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
+                vr.votesChangeVote(
+                        getSharedPreferences().getString("user_id",""),
+                        getSharedPreferences().getString("token",""),
+                        VoteType.UPVOTED,
+                        eventId);
+                snippet = eventId + "," + VoteType.UPVOTED + "," + (Integer.parseInt(numVotes) + 2);
             }
-            if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
-                vr.votesAddVote(getSharedPreferences().getString("user_id",""),getSharedPreferences().getString("token",""),VoteType.UPVOTED,eventId);
+            else if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
+                vr.votesAddVote(
+                        getSharedPreferences().getString("user_id",""),
+                        getSharedPreferences().getString("token",""),
+                        VoteType.UPVOTED,
+                        eventId);
+                snippet = eventId + "," + VoteType.UPVOTED + "," + (Integer.parseInt(numVotes) + 1);
             }
+//            marker.setSnippet(snippet);
            popupWindow.dismiss();
         });
 

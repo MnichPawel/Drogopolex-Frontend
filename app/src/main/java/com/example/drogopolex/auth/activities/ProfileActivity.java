@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,14 +16,16 @@ import com.example.drogopolex.databinding.ActivityProfileBinding;
 import com.example.drogopolex.events.activities.MapActivity;
 import com.example.drogopolex.listeners.BasicListener;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
+import com.mopub.mobileads.MoPubErrorCode;
 import com.mopub.mobileads.MoPubView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 
-public class ProfileActivity extends AppCompatActivity implements SharedPreferencesHolder, BasicListener {
+public class ProfileActivity extends AppCompatActivity implements SharedPreferencesHolder, BasicListener, MoPubView.BannerAdListener {
     //ads
     private final String adIdMopub = "b195f8dd8ded45fe847ad89ed1d016da";
     MoPubView adBanner;
@@ -40,9 +43,11 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
 
         adBanner2 = findViewById(R.id.profileAdBanner2);
         adBanner2.setAdUnitId(adIdMopub);
+        adBanner2.setBannerAdListener(this);
         adBanner2.loadAd();
         adBanner = findViewById(R.id.profileAdBanner);
         adBanner.setAdUnitId(adIdMopub); // Enter your Ad Unit ID from www.mopub.com
+        adBanner.setBannerAdListener(this);
         adBanner.loadAd();
 
         activityProfileBinding.getViewModel().getAction().observe(this, profileAction -> {
@@ -114,4 +119,28 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
     }
 
 
+    @Override
+    public void onBannerLoaded(@NonNull MoPubView moPubView) {
+        Log.d("ADS_PROFILE", "Banner loaded.");
+    }
+
+    @Override
+    public void onBannerFailed(MoPubView moPubView, MoPubErrorCode moPubErrorCode) {
+        Log.d("ADS_PROFILE", "Banner load failed " + moPubErrorCode.toString());
+    }
+
+    @Override
+    public void onBannerClicked(MoPubView moPubView) {
+        Log.d("ADS_PROFILE", "Banner clicked.");
+    }
+
+    @Override
+    public void onBannerExpanded(MoPubView moPubView) {
+        Log.d("ADS_PROFILE", "Banner expanded.");
+    }
+
+    @Override
+    public void onBannerCollapsed(MoPubView moPubView) {
+        Log.d("ADS_PROFILE", "Banner collapsed.");
+    }
 }
