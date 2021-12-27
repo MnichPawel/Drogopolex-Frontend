@@ -9,10 +9,10 @@ public class RouteValue {
 
     @SerializedName("bbox_koniec")
     @Expose
-    private String bboxKoniec;
+    private LocationResponse bboxKoniec;
     @SerializedName("bbox_start")
     @Expose
-    private String bboxStart;
+    private LocationResponse bboxStart;
     @SerializedName("czas")
     @Expose
     private Double czas;
@@ -38,19 +38,19 @@ public class RouteValue {
     @Expose
     private List<LocationResponse> via;
 
-    public String getBboxKoniec() {
+    public LocationResponse getBboxKoniec() {
         return bboxKoniec;
     }
 
-    public void setBboxKoniec(String bboxKoniec) {
+    public void setBboxKoniec(LocationResponse bboxKoniec) {
         this.bboxKoniec = bboxKoniec;
     }
 
-    public String getBboxStart() {
+    public LocationResponse getBboxStart() {
         return bboxStart;
     }
 
-    public void setBboxStart(String bboxStart) {
+    public void setBboxStart(LocationResponse bboxStart) {
         this.bboxStart = bboxStart;
     }
 

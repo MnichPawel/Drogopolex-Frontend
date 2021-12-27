@@ -26,8 +26,8 @@ import retrofit2.Response;
 public class EventsRepository {
     private final MyApi myApi;
 
-    public EventsRepository(){
-        myApi =  RetrofitUtils.getRetrofitInstance().create(MyApi.class);
+    public EventsRepository() {
+        myApi = RetrofitUtils.getRetrofitInstance().create(MyApi.class);
     }
 
     public LiveData<EventsResponse> getEventsFromUserArea(String userId, String token, String latitude, String longitude) {
@@ -38,7 +38,7 @@ public class EventsRepository {
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             eventsResponse.setValue(response.body());
                         } else {
                             eventsResponse.setValue(null);
@@ -58,15 +58,13 @@ public class EventsRepository {
 
         myApi.eventsAddEvent(token, userId,
                 new AddEventRequest(
-                true,
-                "",
-                locationDetails.getLatitude(),
-                locationDetails.getLongitude(),
-                eventType
-        )).enqueue(new Callback<BasicResponse>() {
+                        locationDetails.getLatitude(),
+                        locationDetails.getLongitude(),
+                        eventType
+                )).enqueue(new Callback<BasicResponse>() {
             @Override
             public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     addEventResponse.setValue(response.body());
                 } else {
                     addEventResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
@@ -80,7 +78,7 @@ public class EventsRepository {
         });
         return addEventResponse;
     }
-  
+
     public LiveData<RouteValue> generateRoute(GenerateRouteRequest request, String userId, String token) {
         final MutableLiveData<RouteValue> generateRouteResponse = new MutableLiveData<>();
 

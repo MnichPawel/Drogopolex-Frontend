@@ -19,16 +19,16 @@ import retrofit2.Response;
 
 public class SubscriptionsRepository {
 
-    private MyApi myApi;
+    private final MyApi myApi;
 
     public SubscriptionsRepository() {
         myApi = RetrofitUtils.getRetrofitInstance().create(MyApi.class);
     }
 
-    public LiveData<BasicResponse> subscriptionSubscribe(String localization, String coordinates, String user_id, String token) {
+    public LiveData<BasicResponse> subscriptionSubscribe(String localization, String userId, String token) {
         final MutableLiveData<BasicResponse> userSubscribeResponse = new MutableLiveData<>();
 
-        myApi.subscriptionSubscribe(token, user_id, new SubscribeRequest(localization, coordinates))
+        myApi.subscriptionSubscribe(token, userId, new SubscribeRequest(localization))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
@@ -47,10 +47,10 @@ public class SubscriptionsRepository {
         return userSubscribeResponse;
     }
 
-    public LiveData<SubscriptionsResponse> getSubscriptions(String token, String user_id) {
+    public LiveData<SubscriptionsResponse> getSubscriptions(String token, String userId) {
         final MutableLiveData<SubscriptionsResponse> eventsResponse = new MutableLiveData<>();
 
-        myApi.subscriptionSubscriptions(token, user_id)
+        myApi.subscriptionSubscriptions(token, userId)
                 .enqueue(new Callback<SubscriptionsResponse>() {
                     @Override
                     public void onResponse(Call<SubscriptionsResponse> call, Response<SubscriptionsResponse> response) {

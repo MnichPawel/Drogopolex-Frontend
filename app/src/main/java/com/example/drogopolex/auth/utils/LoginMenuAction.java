@@ -1,7 +1,7 @@
 package com.example.drogopolex.auth.utils;
 
 public class LoginMenuAction {
-    public static final int SHOW_LOGIN= 0;
+    public static final int SHOW_LOGIN = 0;
     public static final int SHOW_REGISTER = 1;
     private final int mAction;
 

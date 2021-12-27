@@ -17,20 +17,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class VotesRepository {
-    private MyApi myApi;
+    private final MyApi myApi;
 
-    public VotesRepository(){
-        myApi =  RetrofitUtils.getRetrofitInstance().create(MyApi.class);
+    public VotesRepository() {
+        myApi = RetrofitUtils.getRetrofitInstance().create(MyApi.class);
     }
 
-    public LiveData<BasicResponse> votesAddVote(String user_id, String token, VoteType type, String eventId) {
+    public LiveData<BasicResponse> votesAddVote(String userId, String token, VoteType type, String eventId) {
         final MutableLiveData<BasicResponse> addVoteResponse = new MutableLiveData<>();
 
-        myApi.votesAddVote(token, user_id, new AddVoteRequest(eventId, type.getValue()))
+        myApi.votesAddVote(token, userId, new AddVoteRequest(eventId, type.getValue()))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             addVoteResponse.setValue(response.body());
                         } else {
                             addVoteResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
@@ -46,14 +46,14 @@ public class VotesRepository {
         return addVoteResponse;
     }
 
-    public LiveData<BasicResponse> votesChangeVote(String user_id, String token, VoteType type, String eventId) {
+    public LiveData<BasicResponse> votesChangeVote(String userId, String token, VoteType type, String eventId) {
         final MutableLiveData<BasicResponse> changeVoteResponse = new MutableLiveData<>();
 
-        myApi.votesChangeVote(token, user_id, new ChangeVoteRequest(eventId, type.getValue()))
+        myApi.votesChangeVote(token, userId, new ChangeVoteRequest(eventId, type.getValue()))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             changeVoteResponse.setValue(response.body());
                         } else {
                             changeVoteResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));
@@ -69,14 +69,14 @@ public class VotesRepository {
         return changeVoteResponse;
     }
 
-    public LiveData<BasicResponse> votesRemoveVote(String user_id, String token, String eventId) {
+    public LiveData<BasicResponse> votesRemoveVote(String userId, String token, String eventId) {
         final MutableLiveData<BasicResponse> removeVoteResponse = new MutableLiveData<>();
 
-        myApi.votesRemoveVote(token, user_id, new RemoveVoteRequest(eventId))
+        myApi.votesRemoveVote(token, userId, new RemoveVoteRequest(eventId))
                 .enqueue(new Callback<BasicResponse>() {
                     @Override
                     public void onResponse(Call<BasicResponse> call, Response<BasicResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             removeVoteResponse.setValue(response.body());
                         } else {
                             removeVoteResponse.setValue((BasicResponse) ErrorUtils.parseErrorResponse(response, ResponseType.BASIC_RESPONSE));

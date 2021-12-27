@@ -13,13 +13,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class RoutesListViewModel extends ViewModel {
-    private MutableLiveData<RoutesListAction> mAction = new MutableLiveData<>();
-    private LiveData<RoutesResponse> routesLiveData = new MutableLiveData<>();
-
+    private final MutableLiveData<RoutesListAction> mAction = new MutableLiveData<>();
+    private final EventsRepository eventsRepository;
     public SharedPreferencesHolder sharedPreferencesHolder = null;
     public RoutesListListener routesListListener = null;
-
-    private EventsRepository eventsRepository;
+    private LiveData<RoutesResponse> routesLiveData = new MutableLiveData<>();
 
     public RoutesListViewModel() {
         eventsRepository = new EventsRepository();

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,56 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.ViewHolder> {
     private static List<DrogopolexRoute> localDataRoutes;
     private final Context context;
-    public RoutesListListener routesListListener;
     private final EventsRepository eventsRepository;
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView routeNameTextView;
-        private final TextView sourceTextView;
-        private final TextView destinationTextView;
-        private final TextView routeLengthTextView;
-
-        public ViewHolder(View view) {
-            super(view);
-
-            routeNameTextView = (TextView) view.findViewById(R.id.routeNameText);
-            sourceTextView = (TextView) view.findViewById(R.id.sourceText);
-            destinationTextView = (TextView) view.findViewById(R.id.destinationText);
-            routeLengthTextView = (TextView) view.findViewById(R.id.routeLengthText);
-
-            ImageView deleteRouteButton = (ImageView) view.findViewById(R.id.removeRouteButton);
-            deleteRouteButton.setOnClickListener(v -> {
-                int adapterPosition = getAdapterPosition();
-                DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
-                deleteRouteRequest(drogopolexRoute.getRouteId(), adapterPosition);
-            });
-
-            ImageView showRouteButton = (ImageView) view.findViewById(R.id.showRouteButton);
-            showRouteButton.setOnClickListener(v -> {
-                int adapterPosition = getAdapterPosition();
-                DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
-                Intent showRouteOnMapIntent = new Intent(view.getContext(), MapActivity.class);
-                showRouteOnMapIntent.putExtra("routeId", drogopolexRoute.getRouteId());
-                view.getContext().startActivity(showRouteOnMapIntent);
-            });
-        }
-
-        public TextView getRouteTextView() {
-            return routeNameTextView;
-        }
-
-        public TextView getSourceTextView() {
-            return sourceTextView;
-        }
-
-        public TextView getDestinationTextView() {
-            return destinationTextView;
-        }
-
-        public TextView getRouteLengthTextView() {
-            return routeLengthTextView;
-        }
-    }
+    public RoutesListListener routesListListener;
 
     public RoutesListAdapter(List<DrogopolexRoute> data, Context context) {
         localDataRoutes = data;
@@ -127,5 +78,53 @@ public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.Vi
         int seconds = (int) (timeInSeconds % 60);
 
         return String.format("%02dh %02dm %02ds", hours, minutes, seconds);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView routeNameTextView;
+        private final TextView sourceTextView;
+        private final TextView destinationTextView;
+        private final TextView routeLengthTextView;
+
+        public ViewHolder(View view) {
+            super(view);
+
+            routeNameTextView = view.findViewById(R.id.routeNameText);
+            sourceTextView = view.findViewById(R.id.sourceText);
+            destinationTextView = view.findViewById(R.id.destinationText);
+            routeLengthTextView = view.findViewById(R.id.routeLengthText);
+
+            ImageView deleteRouteButton = view.findViewById(R.id.removeRouteButton);
+            deleteRouteButton.setOnClickListener(v -> {
+                int adapterPosition = getAdapterPosition();
+                DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
+                deleteRouteRequest(drogopolexRoute.getRouteId(), adapterPosition);
+            });
+
+            ImageView showRouteButton = view.findViewById(R.id.showRouteButton);
+            showRouteButton.setOnClickListener(v -> {
+                int adapterPosition = getAdapterPosition();
+                DrogopolexRoute drogopolexRoute = localDataRoutes.get(adapterPosition);
+                Intent showRouteOnMapIntent = new Intent(view.getContext(), MapActivity.class);
+                showRouteOnMapIntent.putExtra("routeId", drogopolexRoute.getRouteId());
+                view.getContext().startActivity(showRouteOnMapIntent);
+            });
+        }
+
+        public TextView getRouteTextView() {
+            return routeNameTextView;
+        }
+
+        public TextView getSourceTextView() {
+            return sourceTextView;
+        }
+
+        public TextView getDestinationTextView() {
+            return destinationTextView;
+        }
+
+        public TextView getRouteLengthTextView() {
+            return routeLengthTextView;
+        }
     }
 }

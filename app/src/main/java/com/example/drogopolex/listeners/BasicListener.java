@@ -6,5 +6,6 @@ import androidx.lifecycle.LiveData;
 
 public interface BasicListener {
     void onSuccess(LiveData<BasicResponse> response);
+
     void onFailure(String message);
 }

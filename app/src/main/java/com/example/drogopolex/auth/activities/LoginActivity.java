@@ -2,7 +2,6 @@ package com.example.drogopolex.auth.activities;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -35,9 +34,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 
 public class LoginActivity extends AppCompatActivity implements LoginListener, MoPubInterstitial.InterstitialAdListener {
+    private final String adIdMopub = "24534e1901884e398f1253216226017e";
+    private final int LOCATION_PERMISSION_CODE = 1;
     public MoPubInterstitial interstitialAd;
-    private String adIdMopub="24534e1901884e398f1253216226017e";
-    private int LOCATION_PERMISSION_CODE=1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,19 +64,18 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
         checkIfUserPermitedLocation();
 
     }
-    private void checkIfUserPermitedLocation(){
+
+    private void checkIfUserPermitedLocation() {
         //proszenie o zgode na udostepnienie lokalizacji
         if (ContextCompat.checkSelfPermission(LoginActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(LoginActivity.this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationPermission();
-        } else {
-            Toast.makeText(LoginActivity.this, "You have already granted this permission!",
-                    Toast.LENGTH_SHORT).show();
         }
     }
-    public void requestLocationPermission(){
+
+    public void requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) && ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)) {
@@ -85,36 +83,25 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
             new AlertDialog.Builder(this)
                     .setTitle("Potrzebna zgoda")
                     .setMessage("Do działania aplikacji potrzebna jest Twoja zgoda na sprawdzanie Twojej lokalizacji")
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(LoginActivity.this,
-                                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
-                        }
-                    })
-                    .setNegativeButton("anuluj", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
+                    .setPositiveButton("ok", (dialog, which) -> ActivityCompat.requestPermissions(LoginActivity.this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE))
+                    .setNegativeButton("anuluj", (dialog, which) -> dialog.dismiss())
                     .create().show();
 
         } else {
             ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
         }
     }
 
     private void handleAction(LoginAction loginAction) {
-
         switch (loginAction.getValue()) {
             case LoginAction.SHOW_MAP:
                 checkIfUserPermitedLocation();
-                Log.d("REK","HANDUL AKSZSZYN");
+                Log.d("REK", "HANDUL AKSZSZYN");
                 if (interstitialAd.isReady()) { //show ad if ready
                     interstitialAd.show();
-                    Log.d("REK","pokazaj wasc");
+                    Log.d("REK", "pokazaj wasc");
                 } else {
                     goToMapActivity();
                 }
@@ -126,15 +113,17 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
         }
 
     }
-    private void goToMapActivity(){
+
+    private void goToMapActivity() {
         Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
         startActivity(goToMapActivityIntent);
     }
+
     @Override
     public void onSuccess(LiveData<LoginResponse> response) {
         response.observe(this, result -> {
             if (result != null) {
-                if ("true".equals(result.getSuccess())) {
+                if(result.getError() == null) {
                     String userId = result.getUserId();
                     String token = result.getToken();
 
@@ -147,8 +136,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
 
                     handleAction(new LoginAction(LoginAction.SHOW_MAP));
                 } else {
-                    String errorMessage = result.getError();
-                    Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(LoginActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
@@ -159,28 +147,26 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
 
     @Override
     public void onInterstitialLoaded(MoPubInterstitial moPubInterstitial) {
-        Log.d("REK","zaladowana");
+        Log.d("REK", "zaladowana");
     }
 
     @Override
     public void onInterstitialFailed(MoPubInterstitial moPubInterstitial, MoPubErrorCode moPubErrorCode) {
-        Log.d("REK","fajlerd");
+        Log.d("REK", "fajlerd");
     }
 
     @Override
     public void onInterstitialShown(MoPubInterstitial moPubInterstitial) {
-        Log.d("REK","szolnienta");
+        Log.d("REK", "szolnienta");
     }
 
     @Override
     public void onInterstitialClicked(MoPubInterstitial moPubInterstitial) {
-        Log.d("REK","clkieknietea");
+        Log.d("REK", "clkieknietea");
     }
 
-    @Override
     public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-        Log.d("REK","zdmismisnowa");
-        Toast.makeText(LoginActivity.this, "Dismisnieto reklame.", Toast.LENGTH_SHORT).show();
+        Log.d("REK", "zdmismisnowa");
         // The interstitial has being dismissed. Resume / load state accordingly.
         goToMapActivity();
     }
@@ -196,25 +182,23 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
         super.onDestroy();
     }
 
-    private void initialiseMopubSDK(String idAd){
+    private void initialiseMopubSDK(String idAd) {
         Map<String, String> mediatedNetworkConfig1 = new HashMap<>();
-        mediatedNetworkConfig1.put("<custom-adapter-class-data-key>","<custom-adapter-class-data-value>");
+        mediatedNetworkConfig1.put("<custom-adapter-class-data-key>", "<custom-adapter-class-data-value>");
         Map<String, String> mediatedNetworkConfig2 = new HashMap<>();
-        mediatedNetworkConfig2.put("<custom-adapter-class-data-key>","<custom-adapter-class-data-value>");
+        mediatedNetworkConfig2.put("<custom-adapter-class-data-key>", "<custom-adapter-class-data-value>");
 
-        SdkConfiguration sdkConfiguration =new SdkConfiguration.Builder(idAd)
+        SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(idAd)
                 .withLegitimateInterestAllowed(false)
                 .build();
-        MoPub.initializeSdk(LoginActivity.this,sdkConfiguration,initialiseSdkListener());
+        MoPub.initializeSdk(LoginActivity.this, sdkConfiguration, initialiseSdkListener());
     }
-    private SdkInitializationListener initialiseSdkListener(){
-        return new SdkInitializationListener() {
-            @Override
-            public void onInitializationFinished() {
-                interstitialAd = new MoPubInterstitial(LoginActivity.this, "24534e1901884e398f1253216226017e");
-                interstitialAd.setInterstitialAdListener(LoginActivity.this);
-                interstitialAd.load();
-            }
+
+    private SdkInitializationListener initialiseSdkListener() {
+        return () -> {
+            interstitialAd = new MoPubInterstitial(LoginActivity.this, "24534e1901884e398f1253216226017e");
+            interstitialAd.setInterstitialAdListener(LoginActivity.this);
+            interstitialAd.load();
         };
     }
 }

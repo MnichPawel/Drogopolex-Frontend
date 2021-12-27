@@ -8,17 +8,17 @@ import androidx.lifecycle.ViewModel;
 
 public class LoginMenuViewModel extends ViewModel {
 
-    private MutableLiveData<LoginMenuAction> mAction = new MutableLiveData<>();
+    private final MutableLiveData<LoginMenuAction> mAction = new MutableLiveData<>();
 
-    public LiveData<LoginMenuAction> getAction(){
+    public LiveData<LoginMenuAction> getAction() {
         return mAction;
     }
 
-    public void onLoginClicked(){
+    public void onLoginClicked() {
         mAction.setValue(new LoginMenuAction(LoginMenuAction.SHOW_LOGIN));
     }
 
-    public void onRegisterClicked(){
+    public void onRegisterClicked() {
         mAction.setValue(new LoginMenuAction(LoginMenuAction.SHOW_REGISTER));
     }
 }

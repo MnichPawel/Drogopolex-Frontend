@@ -12,17 +12,15 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 
 public class LocationLiveData extends LiveData<LocationDetails> {
 
     private static final long ONE_MINUTE = 60000;
-
+    static LocationRequest mLocationRequest;
     Context context;
     FusedLocationProviderClient fusedLocationClient;
-
-    static LocationRequest mLocationRequest;
 
     public LocationLiveData(Context context) {
         this.context = context;
@@ -39,8 +37,12 @@ public class LocationLiveData extends LiveData<LocationDetails> {
     @Override
     protected void onActive() {
         super.onActive();
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED
+        ) {
             return;
         }
         startLocationUpdates();
@@ -53,27 +55,32 @@ public class LocationLiveData extends LiveData<LocationDetails> {
     }
 
     private void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED
+        ) {
             return;
         }
         fusedLocationClient.requestLocationUpdates(mLocationRequest, new MyLocationCallback(), null);
     }
 
-    private void setLocationData(Location location) {
-        if(location != null) {
-            setValue(new LocationDetails(String.valueOf(location.getLongitude()), String.valueOf(location.getLatitude())));
-        }
-    }
 
     class MyLocationCallback extends LocationCallback {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
-            if(locationResult == null) return;
+            if (locationResult == null) return;
 
-            for(Location location: locationResult.getLocations()) {
+            for (Location location : locationResult.getLocations()) {
                 setLocationData(location);
+            }
+        }
+
+        private void setLocationData(Location location) {
+            if (location != null) {
+                setValue(new LocationDetails(String.valueOf(location.getLongitude()), String.valueOf(location.getLatitude())));
             }
         }
     }

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
@@ -23,7 +24,6 @@ import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
@@ -35,34 +35,27 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import okhttp3.Route;
-
 public class MapViewModel extends AndroidViewModel implements Observable {
-    private PropertyChangeRegistry callbacks = new PropertyChangeRegistry();
-
-    private MutableLiveData<MapAction> mAction = new MutableLiveData<>();
-    private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
-    private LocationLiveData locationLiveData;
-    private LiveData<PointsOfInterestResponse> poiLiveData = new MutableLiveData<>();
-    private LiveData<RouteValue> routeRec = new MutableLiveData<>();
-
-    public MapActivityListener mapActivityListener = null;
-    public SharedPreferencesHolder sharedPreferencesHolder = null;
-
+    private static boolean isFirstLogin = true;
+    private final PropertyChangeRegistry callbacks = new PropertyChangeRegistry();
+    private final MutableLiveData<MapAction> mAction = new MutableLiveData<>();
+    private final LocationLiveData locationLiveData;
     private final EventsRepository eventsRepository;
     private final SubscriptionsRepository subscriptionsRepository;
     private final UserRepository userRepository;
     private final RecommendationRepository recommendationRepository;
-
+    private final Animation flipButtonOut;
+    public MapActivityListener mapActivityListener = null;
+    public SharedPreferencesHolder sharedPreferencesHolder = null;
     public boolean addEventButtonClicked = false;
-    public ObservableField<Boolean>  addQuickRouteClicked = new ObservableField<>(false);
-    public ObservableField<Boolean>  confirmQuickRouteClicked = new ObservableField<>(false);
+    public ObservableField<Boolean> addQuickRouteClicked = new ObservableField<>(false);
+    public ObservableField<Boolean> confirmQuickRouteClicked = new ObservableField<>(false);
+    public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
+    private LiveData<EventsResponse> eventsLiveData = new MutableLiveData<>();
+    private LiveData<PointsOfInterestResponse> poiLiveData = new MutableLiveData<>();
+    private LiveData<RouteValue> routeRec = new MutableLiveData<>();
     private boolean isOnlySubs = false;
     private boolean isChoosePointMode = false;
-    private static boolean isFirstLogin = true;
-    public ObservableField<Boolean> menuOpened = new ObservableField<>(false);
-
-    private final Animation flipButtonOut;
 
     public MapViewModel(@NonNull Application application) {
         super(application);
@@ -89,15 +82,20 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public boolean onLocationChanged(LocationDetails location) {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-        String user_id = sharedPreferences.getString("user_id", "");
+        String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
 
-        if(isFirstLogin) {
-            routeRec = recommendationRepository.getRecommendedRoute(user_id, token);
+        if (isFirstLogin) {
+            routeRec = recommendationRepository.getRecommendedRoute(userId, token);
             mapActivityListener.onGetRecommendedRoute(routeRec);
         }
 
-        poiLiveData = recommendationRepository.getPointsFromUserArea(user_id, token, location.getLatitude(), location.getLongitude());
+        poiLiveData = recommendationRepository.getPointsFromUserArea(
+                userId,
+                token,
+                location.getLatitude(),
+                location.getLongitude()
+        );
         mapActivityListener.onGetPOISuccess(poiLiveData);
         if (!isOnlySubs) {
             fetchNearbyEvents(location);
@@ -139,14 +137,14 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     public void onLogoutClicked() {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         boolean loggedIn = sharedPreferences.getBoolean("loggedIn", false);
-        String user_id = sharedPreferences.getString("user_id", "");
+        String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
 
         if (!loggedIn) {
             mapActivityListener.onLogoutFailure("Użytkownik nie jest zalogowany");
         }
 
-        LiveData<BasicResponse> response = userRepository.userLogout(user_id, token);
+        LiveData<BasicResponse> response = userRepository.userLogout(userId, token);
         mapActivityListener.onLogoutSuccess(response);
     }
 
@@ -167,19 +165,19 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         view.startAnimation(flipButtonOut);
         if (isOnlySubs) { // switch to nearby events
             isOnlySubs = false;
-            ((FloatingActionButton) view).setImageResource(R.drawable.ic_switch_left);
+            ((ImageView) view).setImageResource(R.drawable.ic_switch_left);
             fetchNearbyEvents();
         } else {  // switch to subscribed events
             isOnlySubs = true;
-            ((FloatingActionButton) view).setImageResource(R.drawable.ic_switch_right);
+            ((ImageView) view).setImageResource(R.drawable.ic_switch_right);
             fetchSubscribedEvents();
         }
     }
 
     public void onQuickNewRouteClicked() {
-        if(confirmQuickRouteClicked.get()){ //if we are already showing a route, don't make another, hide existing one instead
+        if (confirmQuickRouteClicked.get()) { //if we are already showing a route, don't make another, hide existing one instead
             onQuitQuickRouteClicked();
-        }else {
+        } else {
             addQuickRouteClicked.set(!addQuickRouteClicked.get());
             LocationDetails locationDetails = locationLiveData.getValue();
             if (locationDetails != null) {
@@ -192,25 +190,24 @@ public class MapViewModel extends AndroidViewModel implements Observable {
     }
 
     public void onConfirmQuickRouteClicked() {
-        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
         addQuickRouteClicked.set(!addQuickRouteClicked.get());
         LatLng chosenPoint = mapActivityListener.getChosenPoint();
         LocationDetails userLocation = locationLiveData.getValue();
 
         if (userLocation != null) {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String user_id = sharedPreferences.getString("user_id", "");
+            String userId = sharedPreferences.getString("user_id", "");
             String token = sharedPreferences.getString("token", "");
 
             LatLng from = new LatLng(Double.parseDouble(userLocation.getLatitude()), Double.parseDouble(userLocation.getLongitude()));
-            LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint, null, null), user_id, token);
+            LiveData<RouteValue> routeResponseLiveData = eventsRepository.generateRoute(new GenerateRouteRequest(from, chosenPoint, null, null), userId, token);
 
+            confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
             mapActivityListener.drawRoute(routeResponseLiveData);
         }
     }
 
     public void onQuitQuickRouteClicked() {
-        //addQuickRouteClicked.set(!addQuickRouteClicked.get());
         confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
         mAction.setValue(new MapAction(MapAction.RESET_ROUTE));
     }
@@ -269,7 +266,12 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
-        eventsLiveData = eventsRepository.getEventsFromUserArea(userId, token, locationDetails.getLatitude(), locationDetails.getLongitude());
+        eventsLiveData = eventsRepository.getEventsFromUserArea(
+                userId,
+                token,
+                locationDetails.getLatitude(),
+                locationDetails.getLongitude()
+        );
         mapActivityListener.onGetEventsSuccess(eventsLiveData);
     }
 
@@ -287,27 +289,27 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
     public void getRouteById(String routeId) {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-        String user_id = sharedPreferences.getString("user_id", "");
+        String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
 
-        LiveData<RouteValue> routeResponseLiveData = eventsRepository.getRoute(user_id, token, routeId);
-
+        LiveData<RouteValue> routeResponseLiveData = eventsRepository.getRoute(userId, token, routeId);
+        confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
         mapActivityListener.drawRoute(routeResponseLiveData);
     }
 
     public void getRouteFromLocToPoint(Double latitude, Double longitude) {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-        String user_id = sharedPreferences.getString("user_id", "");
+        String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
 
         LocationDetails locationDetails = locationLiveData.getValue();
-        if(locationDetails != null) {
-            LatLng from_point = new LatLng(Double.parseDouble(locationDetails.getLatitude()), Double.parseDouble(locationDetails.getLongitude()));
-            LatLng to_point = new LatLng(latitude, longitude);
-            GenerateRouteRequest generateRouteRequest = new GenerateRouteRequest(from_point, to_point, null, null);
+        if (locationDetails != null) {
+            LatLng fromPoint = new LatLng(Double.parseDouble(locationDetails.getLatitude()), Double.parseDouble(locationDetails.getLongitude()));
+            LatLng toPoint = new LatLng(latitude, longitude);
+            GenerateRouteRequest generateRouteRequest = new GenerateRouteRequest(fromPoint, toPoint, null, null);
 
-            LiveData<RouteValue> routeValueLiveData = eventsRepository.generateRoute(generateRouteRequest, user_id, token);
-
+            LiveData<RouteValue> routeValueLiveData = eventsRepository.generateRoute(generateRouteRequest, userId, token);
+            confirmQuickRouteClicked.set(!confirmQuickRouteClicked.get());
             mapActivityListener.drawRoute(routeValueLiveData);
         }
     }

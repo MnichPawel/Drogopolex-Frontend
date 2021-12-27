@@ -3,13 +3,13 @@ package com.example.drogopolex.model;
 import com.google.android.gms.maps.model.LatLng;
 
 public class DrogopolexEvent {
-    private String type;
-    private String location;
-    private String street;
-    private int id;
+    private final String type;
+    private final String location;
+    private final String street;
+    private final int id;
+    private final int valueOfVotes;
+    private final LatLng coordinates;
     private VoteType userVoteType;
-    private int valueOfVotes;
-    private LatLng coordinates;
 
     public DrogopolexEvent(String type, String location, String street, int id, LatLng coordinates, int valueOfVotes, VoteType userVoteType) {
         this.type = type;
@@ -21,11 +21,11 @@ public class DrogopolexEvent {
         this.userVoteType = userVoteType;
     }
 
-    public String getType(){
+    public String getType() {
         return type;
     }
 
-    public String getLocation(){
+    public String getLocation() {
         return location;
     }
 
@@ -33,7 +33,7 @@ public class DrogopolexEvent {
         return street;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 

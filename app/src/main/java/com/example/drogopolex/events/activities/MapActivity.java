@@ -8,14 +8,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -27,6 +25,7 @@ import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.auth.activities.ProfileActivity;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
+import com.example.drogopolex.data.network.response.LocationResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestValue;
 import com.example.drogopolex.data.network.response.RouteValue;
@@ -37,11 +36,10 @@ import com.example.drogopolex.events.utils.customInfoWindowAdapter;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
-import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.model.VoteType;
-import com.example.drogopolex.model.rules.DrogopolexNameRule;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -51,6 +49,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.internal.LinkedTreeMap;
@@ -60,7 +59,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +66,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
@@ -80,16 +79,16 @@ public class MapActivity extends FragmentActivity
         MapActivityListener,
         SharedPreferencesHolder,
         GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener,
-        GoogleMap.OnInfoWindowClickListener{
+        GoogleMap.OnInfoWindowClickListener {
 
     GoogleMap map;
     ActivityMapBinding activityMapBinding;
 
     ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
 
-    boolean firstLocalizationUpdateLoaded = false;
+    boolean moveCameraToUser = true;
     boolean displayingSelectedRoute = false;
+    boolean userCameraMove = false;
 
     private MarkerOptions routeDestinationMarkerOptions = null;
     private Marker routeDestinationMarker = null;
@@ -148,7 +147,12 @@ public class MapActivity extends FragmentActivity
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED
+        ) {
             return;
         }
         map.setMyLocationEnabled(true);
@@ -156,6 +160,23 @@ public class MapActivity extends FragmentActivity
         map.setOnMyLocationClickListener(this);
         map.setTrafficEnabled(true);
         map.setInfoWindowAdapter(new customInfoWindowAdapter(this));
+
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
+//        map.setTrafficEnabled(true);
+        map.setOnCameraMoveStartedListener(i -> {
+            if(userCameraMove) {
+                Log.d("CAMERA", "user moved");
+                moveCameraToUser = false;
+            }
+            else {
+                Log.d("CAMERA", "app moved");
+                userCameraMove = true;
+                moveCameraToUser = true;
+            }
+
+        });
+
+
 
         UiSettings mapSettings = map.getUiSettings();
         mapSettings.setZoomControlsEnabled(true);
@@ -182,8 +203,12 @@ public class MapActivity extends FragmentActivity
     }
 
     private void prepRequestLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+        ) {
 
             ActivityCompat.requestPermissions(this,
                     new String[]{
@@ -197,15 +222,14 @@ public class MapActivity extends FragmentActivity
 
     private void requestLocationUpdates() {
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
-            boolean isNearbyEvents = activityMapBinding.getViewModel().onLocationChanged(locationDetails);
+            activityMapBinding.getViewModel().onLocationChanged(locationDetails);
+            Log.d("CAMERA", "new location received");
 
-            if (!firstLocalizationUpdateLoaded || isNearbyEvents || !displayingSelectedRoute) {
-                firstLocalizationUpdateLoaded = true;
+            if (moveCameraToUser) {
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
                         Double.parseDouble(locationDetails.getLongitude()));
-                Toast.makeText(getApplicationContext(), location.latitude + " - " + location.longitude, Toast.LENGTH_SHORT).show();
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
+                moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
             }
         });
     }
@@ -219,18 +243,16 @@ public class MapActivity extends FragmentActivity
     public void onAddNewEventSuccess(LiveData<BasicResponse> response) {
         response.observe(this, basicResponse -> {
             if (basicResponse != null) {
-                if ("true".equals(basicResponse.getSuccess())) {
+                if(basicResponse.getError() == null) {
                     Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
                 } else {
-                    String errorMessage = basicResponse.getError();
-                    Toast.makeText(MapActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapActivity.this, basicResponse.getError(), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
 
     @Override
@@ -280,20 +302,13 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onLogoutSuccess(LiveData<BasicResponse> responseLiveData) {
         responseLiveData.observe(this, result -> {
-            if (result != null) {
-                if ("true".equals(result.getSuccess())) {
-                    SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                    handleAction(new MapAction(MapAction.LOGOUT));
-                } else {
-                    SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                    Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
-                    handleAction(new MapAction(MapAction.LOGOUT));
-                }
-            } else {
+            if (result == null) {
                 Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
-                SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
-                handleAction(new MapAction(MapAction.LOGOUT));
+            } else if (result.getError() != null) {
+                Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
             }
+            SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+            handleAction(new MapAction(MapAction.LOGOUT));
         });
     }
 
@@ -345,10 +360,10 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onGetPOISuccess(LiveData<PointsOfInterestResponse> pointsOfInterestResponseLiveData) {
         pointsOfInterestResponseLiveData.observe(this, pointsOfInterestResponse -> {
-            if(pointsOfInterestResponseLiveData.getValue() != null) {
+            if (pointsOfInterestResponseLiveData.getValue() != null) {
                 if (pois == null) {
                     pois = pointsOfInterestResponseLiveData.getValue().getPois();
-                    if(pois != null) {
+                    if (pois != null) {
                         pois.forEach(poi -> {
                             LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
                             addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
@@ -363,14 +378,14 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void onGetRecommendedRoute(LiveData<RouteValue> routeRec) {
-        routeRec.observe(this, RouteValue -> {
-            if(routeRec.getValue() != null) {
-                showAddRuleByNamePopup(routeRec.getValue());
+        routeRec.observe(this, routeValue -> {
+            if (routeRec.getValue() != null) {
+                showRecommendedRoutePopup(routeRec.getValue());
             }
         });
     }
 
-    public void showAddRuleByNamePopup(RouteValue routeValue) {
+    public void showRecommendedRoutePopup(RouteValue routeValue) {
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_route_recommendation, null);
@@ -381,17 +396,17 @@ public class MapActivity extends FragmentActivity
 
         popupWindow.setElevation(20);
 
-        TextView routeToTextView = (TextView) popupView.findViewById(R.id.placeNameTo);
+        TextView routeToTextView = popupView.findViewById(R.id.placeNameTo);
         routeToTextView.setText("DO: " + routeValue.getTo().getName());
 
-        Button acceptBtn = (Button) popupView.findViewById(R.id.accept_rule_by_name_popup_button);
-        Button cancelBtn = (Button) popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
+        Button acceptBtn = popupView.findViewById(R.id.accept_rule_by_name_popup_button);
+        Button cancelBtn = popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
 
         popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
 
         acceptBtn.setOnClickListener(v -> {
             activityMapBinding.getViewModel().getRouteFromLocToPoint(routeValue.getTo().getLat(), routeValue.getTo().getLng());
-            activityMapBinding.getViewModel().getRouteById(String.valueOf(routeValue.getId()));
+//            activityMapBinding.getViewModel().getRouteById(String.valueOf(routeValue.getId()));
             popupWindow.dismiss();
         });
         cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
@@ -411,120 +426,91 @@ public class MapActivity extends FragmentActivity
     private BitmapDescriptor findIconForType(String type) {
         if ("Wypadek".equals(type)) {
             return svgToBitmap(R.drawable.ic_wypadek);
-        }
-        if ("Korek".equals(type)) { //TODO TO POWINNY BYĆ ELSE IFY !!!!!!!!!11!oneone1!
+        } else if ("Korek".equals(type)) {
             return svgToBitmap(R.drawable.ic_korek);
-        }
-        if ("Patrol Policji".equals(type)) {
+        } else if ("Patrol Policji".equals(type)) {
             return svgToBitmap(R.drawable.ic_radar);
-        }
-        if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
+        } else if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
             return svgToBitmap(R.drawable.ic_roboty);
-        }
-        if ("hotel".equals(type)) {
+        } else if ("hotel".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel);
-        }
-        if ("gallery".equals(type)) {
+        } else if ("gallery".equals(type)) {
             return svgToBitmap(R.drawable.ic_galeriahandlowa);
-        }
-        if ("library".equals(type)) {
+        } else if ("library".equals(type)) {
             return svgToBitmap(R.drawable.ic_biblioteka);
-        }
-        if ("museum".equals(type)) {
+        } else if ("museum".equals(type)) {
             return svgToBitmap(R.drawable.ic_galeriasztuki);
-        }
-        if ("college".equals(type)) {
+        } else if ("college".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("kindergarten".equals(type)) {
+        } else if ("kindergarten".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("school".equals(type)) {
+        } else if ("school".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("university".equals(type)) {
+        } else if ("university".equals(type)) {
             return svgToBitmap(R.drawable.ic_uczelnia);
-        }
-        if ("bank".equals(type)) {
+        } else if ("bank".equals(type)) {
             return svgToBitmap(R.drawable.ic_bank);
-        }
-        if ("dentist".equals(type)) {
+        } else if ("dentist".equals(type)) {
             return svgToBitmap(R.drawable.ic_dentysta);
-        }
-        if ("hospital".equals(type)) {
+        } else if ("hospital".equals(type)) {
             return svgToBitmap(R.drawable.ic_szpital);
-        }
-        if ("pharmacy".equals(type)) {
+        } else if ("pharmacy".equals(type)) {
             return svgToBitmap(R.drawable.ic_szpital); //TODO: ikonka dla apteki chyba
-        }
-        if ("fitness_centre".equals(type)) {
+        } else if ("fitness_centre".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
-        }
-        if ("swimming_pool".equals(type)) {
+        } else if ("swimming_pool".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
-        }
-        if ("stadium".equals(type)) {
+        } else if ("stadium".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
-        }
-        if ("cinema".equals(type)) {
+        } else if ("cinema".equals(type)) {
             return svgToBitmap(R.drawable.ic_galeriasztuki); //TODO: ikonka dla kina (must have)
-        }
-        if ("park".equals(type)) {
+        } else if ("park".equals(type)) {
             return svgToBitmap(R.drawable.ic_park);
-        }
-        if ("zoo".equals(type)) {
+        } else if ("zoo".equals(type)) {
             return svgToBitmap(R.drawable.ic_park); //TODO: ikonka dla zoo chyba
-        }
-        if ("fire_station".equals(type)) {
+        } else if ("fire_station".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla strazy pozarnej (must have)
-        }
-        if ("police".equals(type)) {
+        } else if ("police".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla policji (must have)
-        }
-        if ("post_office".equals(type)) {
+        } else if ("post_office".equals(type)) {
             return svgToBitmap(R.drawable.ic_poczta);
-        }
-        if ("townhall".equals(type)) {
+        } else if ("townhall".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla ratusza
-        }
-        if ("hairdresser".equals(type)) {
+        } else if ("hairdresser".equals(type)) {
             return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonak dla fryzjera
-        }
-        if ("bar".equals(type)) {
+        } else if ("bar".equals(type)) {
             return svgToBitmap(R.drawable.ic_pub);
-        }
-        if ("fast_food".equals(type)) {
+        } else if ("fast_food".equals(type)) {
             return svgToBitmap(R.drawable.ic_jedzenie);
-        }
-        if ("pub".equals(type)) {
+        } else if ("pub".equals(type)) {
             return svgToBitmap(R.drawable.ic_pub);
-        }
-        if ("restaurant".equals(type)) {
+        } else if ("restaurant".equals(type)) {
             return svgToBitmap(R.drawable.ic_jedzenie);
-        }
-        if ("fuel".equals(type)) {
+        } else if ("fuel".equals(type)) {
             return svgToBitmap(R.drawable.ic_paliwo);
-        }
-        if ("parking".equals(type)) {
+        } else if ("parking".equals(type)) {
             return svgToBitmap(R.drawable.ic_parking);
-        }
-        if ("railway_station".equals(type)) {
+        } else if ("railway_station".equals(type)) {
             return svgToBitmap(R.drawable.ic_ciapolongi);
-        }
-        if ("public_transport_station".equals(type)) {
+        } else if ("public_transport_station".equals(type)) {
             return svgToBitmap(R.drawable.ic_busy);
-        }
-        else {
+        } else {
             return svgToBitmap(R.drawable.ic_fontanna); // fountain
         }
     }
 
-    private void moveCameraToBbox(String bboxStartString, String bboxEndString) {
-        LatLng bboxStart = parseCoordinatesString(bboxStartString);
-        LatLng bboxEnd = parseCoordinatesString(bboxEndString);
+    private void moveCameraToBbox(LocationResponse bboxStartResponse, LocationResponse bboxEndResponse) {
+        LatLng bboxStart = new LatLng(bboxStartResponse.getLat(), bboxStartResponse.getLng());
+        LatLng bboxEnd = new LatLng(bboxEndResponse.getLat(), bboxEndResponse.getLng());
 
         LatLngBounds bbox = new LatLngBounds(bboxStart, bboxEnd);
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
+        moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
+    }
+
+    private void moveCamera(CameraUpdate cameraUpdate) {
+        userCameraMove = false;
+        Log.d("CAMERA", "app will move");
+        map.moveCamera(cameraUpdate);
     }
 
     private LatLng parseCoordinatesString(String latLngString) {
@@ -540,15 +526,9 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public boolean onMyLocationButtonClick() {
+        userCameraMove = false;
         Toast.makeText(getApplicationContext(), "Button clicked.", Toast.LENGTH_SHORT).show();
         return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-        LatLng currentUserLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        Toast.makeText(getApplicationContext(), "onmlc " + currentUserLatLng.latitude + " - " + currentUserLatLng.longitude, Toast.LENGTH_SHORT).show();
-        map.moveCamera(CameraUpdateFactory.newLatLng(currentUserLatLng));
     }
 
     private void drawRouteOnMap(JSONObject geoJson) {
@@ -592,6 +572,6 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public void onInfoWindowClick(@NonNull Marker marker) {
-
+        //TODO to implement
     }
 }

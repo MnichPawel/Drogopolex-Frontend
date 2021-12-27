@@ -9,6 +9,9 @@ public class RetrofitUtils {
 
     private static Retrofit retrofit;
 
+    private RetrofitUtils() {
+        throw new IllegalStateException("Utility class.");
+    }
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {

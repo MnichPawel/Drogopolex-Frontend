@@ -7,7 +7,6 @@ import com.example.drogopolex.data.network.request.ChangeVoteRequest;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.request.GetEventsRequest;
 import com.example.drogopolex.data.network.request.GetRouteRequest;
-import com.example.drogopolex.data.network.request.GetPointsOfInterest;
 import com.example.drogopolex.data.network.request.LoginRequest;
 import com.example.drogopolex.data.network.request.PointsOfInterestRequest;
 import com.example.drogopolex.data.network.request.RegisterRequest;
@@ -24,7 +23,6 @@ import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.data.network.response.RoutesResponse;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 
-import androidx.viewpager2.widget.ViewPager2;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
