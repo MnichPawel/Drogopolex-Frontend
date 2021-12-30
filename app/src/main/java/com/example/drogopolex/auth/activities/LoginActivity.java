@@ -76,22 +76,26 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
     }
 
     public void requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) && ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)) {
+//        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                Manifest.permission.ACCESS_FINE_LOCATION) && ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
             new AlertDialog.Builder(this)
                     .setTitle("Potrzebna zgoda")
                     .setMessage("Do działania aplikacji potrzebna jest Twoja zgoda na sprawdzanie Twojej lokalizacji")
                     .setPositiveButton("ok", (dialog, which) -> ActivityCompat.requestPermissions(LoginActivity.this,
                             new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE))
-                    .setNegativeButton("anuluj", (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton("anuluj", (dialog, which) -> {
+                        dialog.dismiss();
+                        handleAction(new LoginAction(LoginAction.SHOW_LOGIN_MENU));
+                    }
+                    )
                     .create().show();
 
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
-        }
+//        } else {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
+//        }
     }
 
     private void handleAction(LoginAction loginAction) {
