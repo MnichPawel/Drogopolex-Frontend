@@ -461,7 +461,7 @@ public class MapActivity extends FragmentActivity
         } else if ("hospital".equals(type)) {
             return svgToBitmap(R.drawable.ic_szpital);
         } else if ("pharmacy".equals(type)) {
-            return svgToBitmap(R.drawable.ic_szpital); //TODO: ikonka dla apteki chyba
+            return svgToBitmap(R.drawable.ic_szpital); //pharmacy icon same as hospital
         } else if ("fitness_centre".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
         } else if ("swimming_pool".equals(type)) {
@@ -469,21 +469,21 @@ public class MapActivity extends FragmentActivity
         } else if ("stadium".equals(type)) {
             return svgToBitmap(R.drawable.ic_sport);
         } else if ("cinema".equals(type)) {
-            return svgToBitmap(R.drawable.ic_galeriasztuki); //TODO: ikonka dla kina (must have)
+            return svgToBitmap(R.drawable.ic_kinopinezka);
         } else if ("park".equals(type)) {
             return svgToBitmap(R.drawable.ic_park);
         } else if ("zoo".equals(type)) {
-            return svgToBitmap(R.drawable.ic_park); //TODO: ikonka dla zoo chyba
+            return svgToBitmap(R.drawable.ic_zoopinezka);
         } else if ("fire_station".equals(type)) {
-            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla strazy pozarnej (must have)
+            return svgToBitmap(R.drawable.ic_strazpinezka);
         } else if ("police".equals(type)) {
-            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla policji (must have)
+            return svgToBitmap(R.drawable.ic_policjapinezka);
         } else if ("post_office".equals(type)) {
             return svgToBitmap(R.drawable.ic_poczta);
         } else if ("townhall".equals(type)) {
-            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonka dla ratusza
+            return svgToBitmap(R.drawable.ic_ratuszpinezka);
         } else if ("hairdresser".equals(type)) {
-            return svgToBitmap(R.drawable.ic_hotel); //TODO: ikonak dla fryzjera
+            return svgToBitmap(R.drawable.ic_fryzjerpinezka);
         } else if ("bar".equals(type)) {
             return svgToBitmap(R.drawable.ic_pub);
         } else if ("fast_food".equals(type)) {
