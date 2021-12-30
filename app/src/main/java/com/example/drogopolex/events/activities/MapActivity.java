@@ -593,6 +593,20 @@ public class MapActivity extends FragmentActivity
             showVotePopup(marker);
         return true;
     }
+    public void setPopupGraphics(String voteType, ImageView downVote, ImageView upVote){
+        if(voteType.equals(VoteType.UPVOTED.getValue())) {
+            downVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_down_24_gray));
+            upVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_up_24));
+        }
+        else if(voteType.equals(VoteType.DOWNVOTED.getValue())) {
+            downVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_down_24));
+            upVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_up_24_gray));
+        }
+        else if(voteType.equals(VoteType.NO_VOTE.getValue())){
+            downVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_down_24_gray));
+            upVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_up_24_gray));
+        }
+    }
     public void showVotePopup(Marker marker) {
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -613,10 +627,12 @@ public class MapActivity extends FragmentActivity
         String numVotes = snippetMessage[2];
         TextView tW0 = popupView.findViewById(R.id.popupName);
         TextView tW1 = popupView.findViewById(R.id.popupDownvoteNumber);
-        //SharedPreferences sp = S.getSharedPreferences();
         VotesRepository vr = new VotesRepository();
         ImageView downVote = popupView.findViewById(R.id.popupDownvote);
-
+        ImageView upVote = popupView.findViewById(R.id.popupUpvote);
+        //setting the graphics:
+        setPopupGraphics(voteType,downVote,upVote);
+        //voting
         downVote.setOnClickListener(v -> {
             String snippet = "";
             if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
@@ -626,6 +642,7 @@ public class MapActivity extends FragmentActivity
                         VoteType.DOWNVOTED,
                         eventId);
                 snippet = eventId + "," + VoteType.DOWNVOTED + "," + (Integer.parseInt(numVotes) - 2);
+                setPopupGraphics(VoteType.DOWNVOTED.getValue(),downVote,upVote);
             }
             else if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
                 vr.votesRemoveVote(
@@ -633,6 +650,7 @@ public class MapActivity extends FragmentActivity
                         getSharedPreferences().getString("token",""),
                         eventId);
                 snippet = eventId + "," + VoteType.DOWNVOTED + "," + (Integer.parseInt(numVotes) + 1);
+                setPopupGraphics(VoteType.NO_VOTE.getValue(),downVote,upVote);
             }
             else if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
                 vr.votesAddVote(getSharedPreferences().getString("user_id",""),
@@ -640,12 +658,13 @@ public class MapActivity extends FragmentActivity
                         VoteType.DOWNVOTED,
                         eventId);
                 snippet = eventId + "," + VoteType.DOWNVOTED + "," + (Integer.parseInt(numVotes) - 1);
+                setPopupGraphics(VoteType.DOWNVOTED.getValue(),downVote,upVote);
             }
 //            marker.setSnippet(snippet);
             popupWindow.dismiss();
         });
 
-        ImageView upVote = popupView.findViewById(R.id.popupUpvote);
+
         upVote.setOnClickListener(v -> {
             String snippet = "";
             if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
@@ -654,6 +673,7 @@ public class MapActivity extends FragmentActivity
                         getSharedPreferences().getString("token",""),
                         eventId);
                 snippet = eventId + "," + VoteType.UPVOTED + "," + (Integer.parseInt(numVotes) - 1);
+                setPopupGraphics(VoteType.NO_VOTE.getValue(),downVote,upVote);
             }
             else if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
                 vr.votesChangeVote(
@@ -662,6 +682,7 @@ public class MapActivity extends FragmentActivity
                         VoteType.UPVOTED,
                         eventId);
                 snippet = eventId + "," + VoteType.UPVOTED + "," + (Integer.parseInt(numVotes) + 2);
+                setPopupGraphics(VoteType.UPVOTED.getValue(),downVote,upVote);
             }
             else if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
                 vr.votesAddVote(
@@ -670,6 +691,7 @@ public class MapActivity extends FragmentActivity
                         VoteType.UPVOTED,
                         eventId);
                 snippet = eventId + "," + VoteType.UPVOTED + "," + (Integer.parseInt(numVotes) + 1);
+                setPopupGraphics(VoteType.UPVOTED.getValue(),downVote,upVote);
             }
 //            marker.setSnippet(snippet);
            popupWindow.dismiss();
