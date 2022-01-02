@@ -32,7 +32,6 @@ public class EventsRepository {
     public LiveData<EventsResponse> getEventsFromUserArea(String userId, String token, LatLngBounds latLngBounds) {
         final MutableLiveData<EventsResponse> eventsResponse = new MutableLiveData<>();
 
-//        Log.d("EventsRepository", latitude + "  " + longitude);
         myApi.eventsGetEvents(userId, token, new GetEventsBbox(latLngBounds))
                 .enqueue(new Callback<EventsResponse>() {
                     @Override

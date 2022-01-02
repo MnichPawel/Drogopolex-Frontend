@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import com.example.drogopolex.auth.utils.ProfileAction;
 import com.example.drogopolex.auth.utils.UserDataType;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.ProfileResponse;
 import com.example.drogopolex.data.repositories.UserRepository;
@@ -34,10 +35,10 @@ public class ProfileViewModel extends ViewModel {
 
     public LiveData<ProfileResponse> getUserData() {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-        String user_id = sharedPreferences.getString("user_id", "");
-        String token = sharedPreferences.getString("token", "");
+        String userId = sharedPreferences.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+        String token = sharedPreferences.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
 
-        return userRepository.userGetUserData(user_id, token);
+        return userRepository.userGetUserData(userId, token);
     }
 
     public void onReturnClicked() {
@@ -50,8 +51,8 @@ public class ProfileViewModel extends ViewModel {
             basicListener.onFailure("Niepoprawna nazwa użytkownika.");
         } else {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String userId = sharedPreferences.getString("user_id", "");
-            String token = sharedPreferences.getString("token", "");
+            String userId = sharedPreferences.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+            String token = sharedPreferences.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
             LiveData<BasicResponse> response = userRepository.userChangeUserData(userId, token, UserDataType.USERNAME.getType(), usernameValue);
             basicListener.onSuccess(response);
         }
@@ -68,8 +69,8 @@ public class ProfileViewModel extends ViewModel {
             basicListener.onFailure("Podane hasła różnią się.");
         } else {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String userId = sharedPreferences.getString("user_id", "");
-            String token = sharedPreferences.getString("token", "");
+            String userId = sharedPreferences.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+            String token = sharedPreferences.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
             LiveData<BasicResponse> response = userRepository.userChangeUserData(userId, token, UserDataType.PASSWORD.getType(), passwordValue);
             basicListener.onSuccess(response);
         }
@@ -81,8 +82,8 @@ public class ProfileViewModel extends ViewModel {
             basicListener.onFailure("Niepoprawny adres email.");
         } else {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-            String userId = sharedPreferences.getString("user_id", "");
-            String token = sharedPreferences.getString("token", "");
+            String userId = sharedPreferences.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+            String token = sharedPreferences.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
             LiveData<BasicResponse> response = userRepository.userChangeUserData(userId, token, UserDataType.EMAIL.getType(), emailValue);
             basicListener.onSuccess(response);
         }

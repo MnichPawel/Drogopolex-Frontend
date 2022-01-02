@@ -2,6 +2,7 @@ package com.example.drogopolex.subscription.viewModel;
 
 import android.content.SharedPreferences;
 
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
@@ -30,8 +31,8 @@ public class SubscribeViewModel extends ViewModel {
 
     public void onSubscribeClicked() {
         SharedPreferences sp = sharedPreferencesHolder.getSharedPreferences();
-        String userId = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
+        String userId = sp.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+        String token = sp.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
 
         String localizationValue = localization.getValue();
         if (localizationValue == null || localizationValue.isEmpty()) {

@@ -13,6 +13,7 @@ import com.example.drogopolex.R;
 import com.example.drogopolex.auth.listeners.LoginListener;
 import com.example.drogopolex.auth.utils.LoginAction;
 import com.example.drogopolex.auth.viewModel.LoginViewModel;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.LoginResponse;
 import com.example.drogopolex.databinding.ActivityLoginBinding;
 import com.example.drogopolex.events.activities.MapActivity;
@@ -34,8 +35,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 
 public class LoginActivity extends AppCompatActivity implements LoginListener, MoPubInterstitial.InterstitialAdListener {
-    private final String adIdMopub = "24534e1901884e398f1253216226017e";
-    private final int LOCATION_PERMISSION_CODE = 1;
+    private static final String adIdMopub = "24534e1901884e398f1253216226017e";
+    private static final int LOCATION_PERMISSION_CODE = 1;
     public MoPubInterstitial interstitialAd;
 
     @Override
@@ -56,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
             }
         });
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (sp.getBoolean("loggedIn", false)) {
             Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
             startActivity(goToMapActivityIntent);
@@ -76,10 +77,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
     }
 
     public void requestLocationPermission() {
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION) && ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION)) {
-
             new AlertDialog.Builder(this)
                     .setTitle("Potrzebna zgoda")
                     .setMessage("Do działania aplikacji potrzebna jest Twoja zgoda na sprawdzanie Twojej lokalizacji")
@@ -91,11 +88,6 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
                     }
                     )
                     .create().show();
-
-//        } else {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
-//        }
     }
 
     private void handleAction(LoginAction loginAction) {
@@ -114,6 +106,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
                 Intent goToLoginMenuActivityIntent = new Intent(this, LoginMenuActivity.class);
                 startActivity(goToLoginMenuActivityIntent);
                 break;
+            default:
+                Log.e("LoginActivity", "Unknown action.");
         }
 
     }
@@ -131,10 +125,10 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
                     String userId = result.getUserId();
                     String token = result.getToken();
 
-                    SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+                    SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
                     SharedPreferences.Editor spEditor = sp.edit();
-                    spEditor.putString("token", token);
-                    spEditor.putString("user_id", userId);
+                    spEditor.putString(AppConstant.TOKEN_SHARED_PREFERENCES, token);
+                    spEditor.putString(AppConstant.USER_ID_SHARED_PREFERENCES, userId);
                     spEditor.putBoolean("loggedIn", true);
                     spEditor.apply();
 

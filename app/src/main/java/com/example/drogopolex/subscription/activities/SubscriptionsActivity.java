@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.SubscriptionsListAdapter;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.SubscriptionsResponse;
 import com.example.drogopolex.databinding.ActivitySubscriptionsBinding;
 import com.example.drogopolex.events.activities.MapActivity;
@@ -52,7 +54,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
 
         subscriptionsRecyclerView = findViewById(R.id.subscriptionsView);
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (!sp.getBoolean("loggedIn", false)) {
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
@@ -63,7 +65,7 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
 
     @Override
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        return getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
     }
 
     private void handleAction(SubscriptionsAction subscriptionsAction) {
@@ -76,6 +78,8 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
                 Intent goToSubscribeIntent = new Intent(this, SubscribeActivity.class);
                 startActivity(goToSubscribeIntent);
                 break;
+            default:
+                Log.e("SubscriptionsActivity", "Unknown action.");
         }
     }
 

@@ -26,7 +26,7 @@ public interface MapActivityListener {
 
     void onGetPOISuccess(LiveData<PointsOfInterestResponse> pointsOfInterestResponseLiveData);
 
-    void onGetRecommendedRoute(LiveData<RouteValue> routeRec);
+    void recommendRoute(LiveData<RouteValue> routeRec);
 
     LatLngBounds getMapBounds();
 }

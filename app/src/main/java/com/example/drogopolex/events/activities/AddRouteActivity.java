@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.RulesListAdapter;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.example.drogopolex.databinding.ActivityAddRouteBinding;
 import com.example.drogopolex.events.listeners.AddRouteActivityListener;
@@ -108,7 +110,7 @@ public class AddRouteActivity extends AppCompatActivity
         activityAddRouteBinding.rulesView.setLayoutManager(new LinearLayoutManager(AddRouteActivity.this));
         activityAddRouteBinding.rulesView.setAdapter(listAdapter);
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (!sp.getBoolean("loggedIn", false)) {
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
@@ -144,6 +146,8 @@ public class AddRouteActivity extends AppCompatActivity
             case AddRouteAction.SHOW_ADD_RULE_POPUP:
                 showAddRulePopup();
                 break;
+            default:
+                Log.e("AddRouteActivity", "Unknown action.");
         }
     }
 
@@ -284,6 +288,8 @@ public class AddRouteActivity extends AppCompatActivity
                 if (checked)
                     addAvoidEventTypeRule("omijaj wypadki", "Wypadek");
                 break;
+            default:
+                Log.e("AddRuleByEventTypeRadioButtonClicked", "Unknown case.");
         }
     }
 
@@ -324,7 +330,7 @@ public class AddRouteActivity extends AppCompatActivity
 
     @Override
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        return getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
     }
 
     @Override
@@ -354,7 +360,7 @@ public class AddRouteActivity extends AppCompatActivity
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         map.setMyLocationEnabled(true);

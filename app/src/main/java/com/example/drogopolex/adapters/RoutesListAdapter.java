@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.drogopolex.R;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.events.activities.MapActivity;
@@ -64,9 +65,9 @@ public class RoutesListAdapter extends RecyclerView.Adapter<RoutesListAdapter.Vi
     }
 
     public void deleteRouteRequest(String routeId, int routeIndex) {
-        SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String userId = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
+        SharedPreferences sp = context.getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        String userId = sp.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+        String token = sp.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
 
         LiveData<BasicResponse> responseLiveData = eventsRepository.removeRoute(userId, token, routeId);
         routesListListener.onRouteDeleteSuccess(responseLiveData, routeIndex);

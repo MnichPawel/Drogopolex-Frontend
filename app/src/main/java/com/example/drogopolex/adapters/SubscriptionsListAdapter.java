@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.drogopolex.R;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.repositories.SubscriptionsRepository;
 import com.example.drogopolex.model.DrogopolexSubscription;
 
@@ -86,18 +87,18 @@ public class SubscriptionsListAdapter extends RecyclerView.Adapter<Subscriptions
 
     @SuppressLint("NotifyDataSetChanged")
     public void unsubscribeRequest(String subId) {
-        SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String userId = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
+        SharedPreferences sp = context.getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        String userId = sp.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+        String token = sp.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
 
         subscriptionsRepository.unsubscribeSubscriptions(token, userId, subId);
     }
 
     @SuppressLint("NotifyDataSetChanged")
     public void subscribeRequest(String localization) {
-        SharedPreferences sp = context.getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
-        String userId = sp.getString("user_id", "");
-        String token = sp.getString("token", "");
+        SharedPreferences sp = context.getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        String userId = sp.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+        String token = sp.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
 
         subscriptionsRepository.subscriptionSubscribe(localization, userId, token);
     }

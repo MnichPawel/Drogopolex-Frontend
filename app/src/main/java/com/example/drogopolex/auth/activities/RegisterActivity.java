@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.utils.RegisterAction;
 import com.example.drogopolex.auth.viewModel.RegisterViewModel;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityRegisterBinding;
 import com.example.drogopolex.events.activities.MapActivity;
@@ -34,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity implements BasicListener
             }
         });
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (sp.getBoolean("loggedIn", false)) {
             Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
             startActivity(goToMapActivityIntent);
@@ -51,6 +53,8 @@ public class RegisterActivity extends AppCompatActivity implements BasicListener
                 Intent goToLoginMenuActivityIntent = new Intent(this, LoginMenuActivity.class);
                 startActivity(goToLoginMenuActivityIntent);
                 break;
+            default:
+                Log.e("RegisterActivity", "Unknown action.");
         }
     }
 

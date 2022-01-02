@@ -1,5 +1,7 @@
 package com.example.drogopolex.model;
 
+import com.example.drogopolex.data.network.response.EventsValue;
+import com.example.drogopolex.utils.CoordinatesUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 public class DrogopolexEvent {
@@ -10,6 +12,22 @@ public class DrogopolexEvent {
     private final int valueOfVotes;
     private final LatLng coordinates;
     private VoteType userVoteType;
+
+    public DrogopolexEvent(EventsValue eventsValue) {
+        if ("1".equals(eventsValue.getUserVote()))
+            this.userVoteType = VoteType.UPVOTED;
+        else if ("-1".equals(eventsValue.getUserVote()))
+            this.userVoteType = VoteType.DOWNVOTED;
+        else
+            this.userVoteType = VoteType.NO_VOTE;
+
+        this.type = eventsValue.getType();
+        this.location = eventsValue.getCountry();
+        this.street = eventsValue.getStreet();
+        this.id = Integer.parseInt(eventsValue.getId());
+        this.coordinates = CoordinatesUtils.parseCoordinatesString(eventsValue.getCoordinates());
+        this.valueOfVotes = Integer.parseInt(eventsValue.getValueOfVotes());
+    }
 
     public DrogopolexEvent(String type, String location, String street, int id, LatLng coordinates, int valueOfVotes, VoteType userVoteType) {
         this.type = type;

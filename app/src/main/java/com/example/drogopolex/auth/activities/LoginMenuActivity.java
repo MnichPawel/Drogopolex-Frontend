@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.utils.LoginMenuAction;
 import com.example.drogopolex.auth.viewModel.LoginMenuViewModel;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.databinding.ActivityLoginMenuBinding;
 import com.example.drogopolex.events.activities.MapActivity;
 
@@ -30,7 +32,7 @@ public class LoginMenuActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (sp.getBoolean("loggedIn", false)) {
             Intent goToMapActivityIntent = new Intent(this, MapActivity.class);
             startActivity(goToMapActivityIntent);
@@ -47,6 +49,8 @@ public class LoginMenuActivity extends AppCompatActivity {
                 Intent goToRegisterActivityIntent = new Intent(this, RegisterActivity.class);
                 startActivity(goToRegisterActivityIntent);
                 break;
+            default:
+                Log.e("LoginMenuActivity", "Unknown action.");
         }
     }
 }

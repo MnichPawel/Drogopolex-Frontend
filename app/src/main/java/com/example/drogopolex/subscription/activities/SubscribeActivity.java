@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivitySubscribeBinding;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
@@ -33,7 +34,7 @@ public class SubscribeActivity extends AppCompatActivity implements SharedPrefer
 
         activitySubscribeBinding.getViewModel().getAction().observe(this, this::handleAction);
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (!sp.getBoolean("loggedIn", false)) {
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
@@ -70,6 +71,6 @@ public class SubscribeActivity extends AppCompatActivity implements SharedPrefer
 
     @Override
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        return getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
     }
 }

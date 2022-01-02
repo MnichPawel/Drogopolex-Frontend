@@ -2,6 +2,7 @@ package com.example.drogopolex.events.viewModel;
 
 import android.content.SharedPreferences;
 
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.RoutesResponse;
 import com.example.drogopolex.data.repositories.EventsRepository;
 import com.example.drogopolex.events.listeners.RoutesListListener;
@@ -37,8 +38,8 @@ public class RoutesListViewModel extends ViewModel {
 
     public void fetchRoutes() {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-        String userId = sharedPreferences.getString("user_id", "");
-        String token = sharedPreferences.getString("token", "");
+        String userId = sharedPreferences.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+        String token = sharedPreferences.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
 
         routesLiveData = eventsRepository.getRoutes(userId, token);
         routesListListener.onGetRoutesSuccess(routesLiveData);

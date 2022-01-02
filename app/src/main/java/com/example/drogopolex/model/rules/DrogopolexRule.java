@@ -4,7 +4,7 @@ public abstract class DrogopolexRule {
     private final boolean isAvoid;
     private final String description;
 
-    public DrogopolexRule(boolean isAvoid, String description) {
+    protected DrogopolexRule(boolean isAvoid, String description) {
         this.isAvoid = isAvoid;
         this.description = description;
     }

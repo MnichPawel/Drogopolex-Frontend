@@ -5,17 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -25,21 +20,22 @@ import android.widget.Toast;
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
 import com.example.drogopolex.auth.activities.ProfileActivity;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.LocationResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestValue;
 import com.example.drogopolex.data.network.response.RouteValue;
-import com.example.drogopolex.data.repositories.VotesRepository;
 import com.example.drogopolex.databinding.ActivityMapBinding;
 import com.example.drogopolex.events.listeners.MapActivityListener;
+import com.example.drogopolex.events.utils.IconUtils;
 import com.example.drogopolex.events.utils.MapAction;
 import com.example.drogopolex.events.viewModel.MapViewModel;
 import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.DrogopolexEvent;
-import com.example.drogopolex.model.VoteType;
 import com.example.drogopolex.subscription.activities.SubscriptionsActivity;
+import com.example.drogopolex.utils.CoordinatesUtils;
 import com.example.drogopolex.utils.SharedPreferencesUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,8 +43,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -60,17 +54,12 @@ import com.google.maps.android.data.geojson.GeoJsonLayer;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
@@ -82,26 +71,25 @@ public class MapActivity extends FragmentActivity
         MapActivityListener,
         SharedPreferencesHolder,
         GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener,
         GoogleMap.OnMarkerClickListener {
 
+    private ActivityMapBinding activityMapBinding;
+    private GoogleMap map;
+
+    /* Constants */
     private static final String CAMERA_TAG = "CAMERA";
-    private static final String DROGOPOLEX_SETTINGS = "DrogopolexSettings";
     private static final String UNKNOWN_MESSAGE = "Nie udało się przetworzyć odpowiedzi.";
 
-    GoogleMap map;
-    ActivityMapBinding activityMapBinding;
+    /* Camera state flags */
+    private boolean moveCameraToUser = true;
+    private boolean userCameraMove = false;
 
-    ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
-
-    boolean moveCameraToUser = true;
-    boolean displayingSelectedRoute = false;
-    boolean userCameraMove = false;
+    /* Map assets to restore after reset */
+    private final ArrayList<DrogopolexEvent> eventListData = new ArrayList<>();
 
     private MarkerOptions routeDestinationMarkerOptions = null;
     private Marker routeDestinationMarker = null;
-    private List<PointsOfInterestValue> pois = null;
-
+    private List<PointsOfInterestValue> pointsOfInterest = null;
     private JSONObject routeGeoJson = null;
 
     @Override
@@ -122,6 +110,7 @@ public class MapActivity extends FragmentActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
     }
 
@@ -151,69 +140,13 @@ public class MapActivity extends FragmentActivity
         }
     }
 
+    /* Shared Prefences Holder */
     @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        map = googleMap;
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED
-        ) {
-            return;
-        }
-        map.setMyLocationEnabled(true);
-        map.setOnMyLocationButtonClickListener(this);
-        map.setOnMyLocationClickListener(this);
-        map.setTrafficEnabled(true);
-        map.setOnMarkerClickListener(this);
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
-//        map.setTrafficEnabled(true);
-        map.setOnCameraMoveStartedListener(this::onCameraMoveStarted);
-        map.setOnCameraIdleListener(this::onCameraIdle);
-
-
-
-        UiSettings mapSettings = map.getUiSettings();
-        mapSettings.setZoomControlsEnabled(true);
-        mapSettings.setMapToolbarEnabled(false);
-
-        mapSettings.setMyLocationButtonEnabled(true);
-        changePositionOfMyLocationButton();
-
-        if (getIntent().hasExtra("routeId")) {
-            displayingSelectedRoute = true;
-            String selectedRouteId = (String) getIntent().getSerializableExtra("routeId");
-            activityMapBinding.getViewModel().getRouteById(selectedRouteId);
-        }
-
-        prepRequestLocationUpdates();
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
     }
 
-    private void onCameraMoveStarted(int i) {
-            Log.d(CAMERA_TAG, "move started");
-            if(userCameraMove) {
-                moveCameraToUser = false;
-            }
-            else {
-                userCameraMove = true;
-                moveCameraToUser = true;
-            }
-    }
-
-    private void onCameraIdle() {
-        Log.d(CAMERA_TAG, "camera idle");
-        LatLngBounds latLngBounds = map.getProjection().getVisibleRegion().latLngBounds;
-        activityMapBinding.getViewModel().onLocationChanged(latLngBounds);
-    }
-
-    private void changePositionOfMyLocationButton() { //TODO better location of button
-        View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-    }
-
+    /* Location */
     private void prepRequestLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -245,93 +178,164 @@ public class MapActivity extends FragmentActivity
         });
     }
 
+    /* Map */
     @Override
-    public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences(DROGOPOLEX_SETTINGS, Context.MODE_PRIVATE);
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        map = googleMap;
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED
+        ) {
+            return;
+        }
+        map.setMyLocationEnabled(true);
+        map.setOnMyLocationButtonClickListener(this);
+        map.setTrafficEnabled(true);
+        map.setOnMarkerClickListener(this);
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
+        map.setOnCameraMoveStartedListener(this::onCameraMoveStarted);
+        map.setOnCameraIdleListener(this::onCameraIdle);
+
+        UiSettings mapSettings = map.getUiSettings();
+        mapSettings.setZoomControlsEnabled(true);
+        mapSettings.setMapToolbarEnabled(false);
+
+        mapSettings.setMyLocationButtonEnabled(true);
+        changePositionOfMyLocationButton();
+
+        if (getIntent().hasExtra("routeId")) {
+            String selectedRouteId = (String) getIntent().getSerializableExtra("routeId");
+            activityMapBinding.getViewModel().getRouteById(selectedRouteId);
+        }
+
+        prepRequestLocationUpdates();
+    }
+
+    private void resetMapEvents() {
+        eventListData.clear();
+        map.clear();
+
+        restoreDestinationMarker();
+        restoreDisplayedRoute();
+        restorePointsOfInterest();
+    }
+
+    private void restorePointsOfInterest() {
+        if (pointsOfInterest != null)
+            pointsOfInterest.forEach(poi -> {
+                LatLng coordinates = CoordinatesUtils.parseCoordinatesString(poi.getCoordinates());
+                addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
+            });
+    }
+
+    private void restoreDisplayedRoute() {
+        if (routeGeoJson != null)
+            drawRouteOnMap(routeGeoJson);
+    }
+
+    private void restoreDestinationMarker() {
+        if (routeDestinationMarkerOptions != null)
+            routeDestinationMarker = map.addMarker(routeDestinationMarkerOptions);
     }
 
     @Override
-    public void onAddNewEventSuccess(LiveData<BasicResponse> response) {
-        response.observe(this, basicResponse -> {
-            if (basicResponse != null) {
-                if(basicResponse.getError() == null) {
-                    Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MapActivity.this, basicResponse.getError(), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
-            }
-        });
+    public LatLngBounds getMapBounds() {
+        return map.getProjection().getVisibleRegion().latLngBounds;
     }
 
+    private void drawRouteOnMap(JSONObject geoJson) {
+        GeoJsonLayer geoJsonLayer = new GeoJsonLayer(map, geoJson);
+        geoJsonLayer.addLayerToMap();
+    }
+
+    private void resetMap() {
+        routeDestinationMarkerOptions = null;
+        routeDestinationMarker = null;
+        routeGeoJson = null;
+        map.clear();
+
+        restorePointsOfInterest();
+
+        for (DrogopolexEvent event : eventListData) {
+            String snippetMsg = event.getId()
+                    + "," + event.getUserVoteType() + "," + event.getValueOfVotes();
+            addEventToMap(event.getCoordinates(), event.getType(), snippetMsg);
+        }
+    }
+
+    private void addEventToMap(LatLng coordinates, String type, String snippetMsg) {
+        map.addMarker(new MarkerOptions()
+                .position(coordinates)
+                .title(type)
+                .snippet(snippetMsg)
+                .icon(IconUtils.findIconForType(type, this)));
+    }
+
+    private void addPOIToMap(LatLng coordinates, String name, String type) {
+        map.addMarker(new MarkerOptions()
+                .position(coordinates)
+                .title(name)
+                .snippet("notEvent")
+                .icon(IconUtils.findIconForType(type, this)));
+    }
+
+    /* Camera */
+    private void onCameraMoveStarted(int i) {
+        Log.d(CAMERA_TAG, "move started");
+        if (userCameraMove) {
+            moveCameraToUser = false;
+        } else {
+            userCameraMove = true;
+            moveCameraToUser = true;
+        }
+    }
+
+    private void onCameraIdle() {
+        Log.d(CAMERA_TAG, "camera idle");
+        LatLngBounds latLngBounds = map.getProjection().getVisibleRegion().latLngBounds;
+        activityMapBinding.getViewModel().onLocationChanged(latLngBounds);
+    }
+
+    private void moveCameraToBbox(LocationResponse bboxStartResponse, LocationResponse bboxEndResponse) {
+        LatLng bboxStart = new LatLng(bboxStartResponse.getLat(), bboxStartResponse.getLng());
+        LatLng bboxEnd = new LatLng(bboxEndResponse.getLat(), bboxEndResponse.getLng());
+
+        LatLngBounds bbox = new LatLngBounds(bboxStart, bboxEnd);
+        moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
+    }
+
+    private void moveCamera(CameraUpdate cameraUpdate) {
+        userCameraMove = false;
+        Log.d(CAMERA_TAG, "app will move");
+        map.moveCamera(cameraUpdate);
+    }
+
+    /* View */
+    private void changePositionOfMyLocationButton() { //TODO better location of button
+        View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+    }
 
     @Override
-    public void onGetEventsSuccess(LiveData<EventsResponse> eventsResponseLiveData) {
-        eventsResponseLiveData.observe(this, eventsResponse -> {
-            if (eventsResponse != null) {
-                eventListData.clear();
-                map.clear();
-                if (routeDestinationMarkerOptions != null)
-                    routeDestinationMarker = map.addMarker(routeDestinationMarkerOptions);
-                if (routeGeoJson != null)
-                    drawRouteOnMap(routeGeoJson);
-                if (pois != null)
-                    pois.forEach(poi -> {
-                        LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
-                        addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
-                    });
-                eventsResponse.getEvents()
-                        .forEach(event -> {
-                            VoteType userVoteType;
-                            if ("1".equals(event.getUserVote())) userVoteType = VoteType.UPVOTED;
-                            else if ("-1".equals(event.getUserVote()))
-                                userVoteType = VoteType.DOWNVOTED;
-                            else userVoteType = VoteType.NO_VOTE;
-
-                            LatLng coordinates = parseCoordinatesString(event.getCoordinates());
-
-                            eventListData.add(new DrogopolexEvent(
-                                    event.getType(),
-                                    event.getCountry(),
-                                    event.getStreet(),
-                                    Integer.parseInt(event.getId()),
-                                    coordinates,
-                                    Integer.parseInt(event.getValueOfVotes()),
-                                    userVoteType
-                            ));
-
-
-                            String snippetMsg =event.getId()+","+userVoteType.getValue()+","+event.getValueOfVotes();
-                            addEventToMap(coordinates, event.getType(),snippetMsg);
-                        });
-
-            } else {
-                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
-            }
-        });
+    public boolean onMyLocationButtonClick() {
+        Log.d(CAMERA_TAG, "MyLocationButton clicked.");
+        userCameraMove = false;
+        return false;
     }
 
     @Override
-    public void onLogoutSuccess(LiveData<BasicResponse> responseLiveData) {
-        responseLiveData.observe(this, result -> {
-            if (result == null) {
-                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
-            } else if (result.getError() != null) {
-                Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
-            }
-            SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences(DROGOPOLEX_SETTINGS, Context.MODE_PRIVATE));
-            handleAction(new MapAction(MapAction.LOGOUT));
-        });
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        marker.hideInfoWindow();
+        if (marker.getSnippet() != null && !marker.getSnippet().equals("notEvent"))
+            VotesPopup.showVotePopup(this, activityMapBinding.getRoot(), marker);
+        return true;
     }
 
-    @Override
-    public void onLogoutFailure(String message) {
-        Toast.makeText(MapActivity.this, message, Toast.LENGTH_SHORT).show();
-        SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences(DROGOPOLEX_SETTINGS, Context.MODE_PRIVATE));
-        handleAction(new MapAction(MapAction.LOGOUT));
-    }
-
+    /* Choose point mode */
     @Override
     public void onChoosePointModeEntered(LatLng location) {
         routeDestinationMarkerOptions = new MarkerOptions()
@@ -350,6 +354,102 @@ public class MapActivity extends FragmentActivity
     @Override
     public LatLng getChosenPoint() {
         return routeDestinationMarker.getPosition();
+    }
+
+    /* Route recommendation */
+    @Override
+    public void recommendRoute(LiveData<RouteValue> routeRec) {
+        routeRec.observe(this, routeValue -> {
+            if (routeRec.getValue() != null) {
+                showRecommendedRoutePopup(routeRec.getValue());
+            }
+        });
+    }
+
+    public void showRecommendedRoutePopup(RouteValue routeValue) {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_route_recommendation, null);
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        activityMapBinding.getViewModel().setFirstLoginToFalse();
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        popupWindow.setElevation(20);
+
+        TextView routeToTextView = popupView.findViewById(R.id.placeNameTo);
+        String routeRecommendationText = "DO: " + routeValue.getTo().getName();
+        routeToTextView.setText(routeRecommendationText);
+
+        Button acceptBtn = popupView.findViewById(R.id.accept_rule_by_name_popup_button);
+        Button cancelBtn = popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
+
+        popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
+
+        acceptBtn.setOnClickListener(v -> {
+            activityMapBinding.getViewModel().getRouteFromLocToPoint(routeValue.getTo().getLat(), routeValue.getTo().getLng());
+            popupWindow.dismiss();
+        });
+        cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
+    }
+
+    /* Request response callbacks */
+    @Override
+    public void onAddNewEventSuccess(LiveData<BasicResponse> response) {
+        response.observe(this, basicResponse -> {
+            if (basicResponse != null) {
+                if (basicResponse.getError() == null) {
+                    Toast.makeText(MapActivity.this, "Operacja powiodła się.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MapActivity.this, basicResponse.getError(), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onGetEventsSuccess(LiveData<EventsResponse> eventsResponseLiveData) {
+        eventsResponseLiveData.observe(this, eventsResponse -> {
+            if (eventsResponse != null) {
+                resetMapEvents();
+
+                eventsResponse.getEvents()
+                        .forEach(event -> {
+                            DrogopolexEvent drogopolexEvent = new DrogopolexEvent(event);
+                            eventListData.add(drogopolexEvent);
+
+                            String snippetMsg = drogopolexEvent.getId() + ","
+                                    + drogopolexEvent.getUserVoteType().getValue() + ","
+                                    + drogopolexEvent.getValueOfVotes();
+                            addEventToMap(drogopolexEvent.getCoordinates(), drogopolexEvent.getType(), snippetMsg);
+                        });
+
+            } else {
+                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onLogoutSuccess(LiveData<BasicResponse> responseLiveData) {
+        responseLiveData.observe(this, result -> {
+            if (result == null) {
+                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
+            } else if (result.getError() != null) {
+                Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
+            }
+            SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE));
+            handleAction(new MapAction(MapAction.LOGOUT));
+        });
+    }
+
+    @Override
+    public void onLogoutFailure(String message) {
+        Toast.makeText(MapActivity.this, message, Toast.LENGTH_SHORT).show();
+        SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE));
+        handleAction(new MapAction(MapAction.LOGOUT));
     }
 
     @Override
@@ -374,348 +474,14 @@ public class MapActivity extends FragmentActivity
     public void onGetPOISuccess(LiveData<PointsOfInterestResponse> pointsOfInterestResponseLiveData) {
         pointsOfInterestResponseLiveData.observe(this, pointsOfInterestResponse -> {
             if (pointsOfInterestResponseLiveData.getValue() != null) {
-                if (pois == null) {
-                    pois = pointsOfInterestResponseLiveData.getValue().getPois();
-                    if (pois != null) {
-                        pois.forEach(poi -> {
-                            LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
-                            addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
-                        });
-                    }
+                if (pointsOfInterest == null) {
+                    pointsOfInterest = pointsOfInterestResponseLiveData.getValue().getPois();
+
+                    restorePointsOfInterest();
                 } else {
-                    pois = pointsOfInterestResponseLiveData.getValue().getPois();
+                    pointsOfInterest = pointsOfInterestResponseLiveData.getValue().getPois();
                 }
             }
         });
-    }
-
-    @Override
-    public void onGetRecommendedRoute(LiveData<RouteValue> routeRec) {
-        routeRec.observe(this, routeValue -> {
-            if (routeRec.getValue() != null) {
-                showRecommendedRoutePopup(routeRec.getValue());
-            }
-        });
-    }
-
-    @Override
-    public LatLngBounds getMapBounds() {
-        return map.getProjection().getVisibleRegion().latLngBounds;
-    }
-
-    public void showRecommendedRoutePopup(RouteValue routeValue) {
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_route_recommendation, null);
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        activityMapBinding.getViewModel().setFirstLoginToFalse();
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
-
-        popupWindow.setElevation(20);
-
-        TextView routeToTextView = popupView.findViewById(R.id.placeNameTo);
-        routeToTextView.setText("DO: " + routeValue.getTo().getName());
-
-        Button acceptBtn = popupView.findViewById(R.id.accept_rule_by_name_popup_button);
-        Button cancelBtn = popupView.findViewById(R.id.cancel_rule_by_name_popup_button);
-
-        popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
-
-        acceptBtn.setOnClickListener(v -> {
-            activityMapBinding.getViewModel().getRouteFromLocToPoint(routeValue.getTo().getLat(), routeValue.getTo().getLng());
-            popupWindow.dismiss();
-        });
-        cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
-    }
-
-    private BitmapDescriptor svgToBitmap(@DrawableRes int id) {
-        Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
-        assert vectorDrawable != null;
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
-    private BitmapDescriptor findIconForType(String type) {
-        if ("Wypadek".equals(type)) {
-            return svgToBitmap(R.drawable.ic_wypadek);
-        } else if ("Korek".equals(type)) {
-            return svgToBitmap(R.drawable.ic_korek);
-        } else if ("Patrol Policji".equals(type)) {
-            return svgToBitmap(R.drawable.ic_radar);
-        } else if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
-            return svgToBitmap(R.drawable.ic_roboty);
-        } else if ("hotel".equals(type)) {
-            return svgToBitmap(R.drawable.ic_hotel);
-        } else if ("gallery".equals(type)) {
-            return svgToBitmap(R.drawable.ic_galeriahandlowa);
-        } else if ("library".equals(type)) {
-            return svgToBitmap(R.drawable.ic_biblioteka);
-        } else if ("museum".equals(type)) {
-            return svgToBitmap(R.drawable.ic_galeriasztuki);
-        } else if ("college".equals(type)) {
-            return svgToBitmap(R.drawable.ic_uczelnia);
-        } else if ("kindergarten".equals(type)) {
-            return svgToBitmap(R.drawable.ic_uczelnia);
-        } else if ("school".equals(type)) {
-            return svgToBitmap(R.drawable.ic_uczelnia);
-        } else if ("university".equals(type)) {
-            return svgToBitmap(R.drawable.ic_uczelnia);
-        } else if ("bank".equals(type)) {
-            return svgToBitmap(R.drawable.ic_bank);
-        } else if ("dentist".equals(type)) {
-            return svgToBitmap(R.drawable.ic_dentysta);
-        } else if ("hospital".equals(type)) {
-            return svgToBitmap(R.drawable.ic_szpital);
-        } else if ("pharmacy".equals(type)) {
-            return svgToBitmap(R.drawable.ic_szpital); //pharmacy icon same as hospital
-        } else if ("fitness_centre".equals(type)) {
-            return svgToBitmap(R.drawable.ic_sport);
-        } else if ("swimming_pool".equals(type)) {
-            return svgToBitmap(R.drawable.ic_sport);
-        } else if ("stadium".equals(type)) {
-            return svgToBitmap(R.drawable.ic_sport);
-        } else if ("cinema".equals(type)) {
-            return svgToBitmap(R.drawable.ic_kinopinezka);
-        } else if ("park".equals(type)) {
-            return svgToBitmap(R.drawable.ic_park);
-        } else if ("zoo".equals(type)) {
-            return svgToBitmap(R.drawable.ic_zoopinezka);
-        } else if ("fire_station".equals(type)) {
-            return svgToBitmap(R.drawable.ic_strazpinezka);
-        } else if ("police".equals(type)) {
-            return svgToBitmap(R.drawable.ic_policjapinezka);
-        } else if ("post_office".equals(type)) {
-            return svgToBitmap(R.drawable.ic_poczta);
-        } else if ("townhall".equals(type)) {
-            return svgToBitmap(R.drawable.ic_ratuszpinezka);
-        } else if ("hairdresser".equals(type)) {
-            return svgToBitmap(R.drawable.ic_fryzjerpinezka);
-        } else if ("bar".equals(type)) {
-            return svgToBitmap(R.drawable.ic_pub);
-        } else if ("fast_food".equals(type)) {
-            return svgToBitmap(R.drawable.ic_jedzenie);
-        } else if ("pub".equals(type)) {
-            return svgToBitmap(R.drawable.ic_pub);
-        } else if ("restaurant".equals(type)) {
-            return svgToBitmap(R.drawable.ic_jedzenie);
-        } else if ("fuel".equals(type)) {
-            return svgToBitmap(R.drawable.ic_paliwo);
-        } else if ("parking".equals(type)) {
-            return svgToBitmap(R.drawable.ic_parking);
-        } else if ("railway_station".equals(type)) {
-            return svgToBitmap(R.drawable.ic_ciapolongi);
-        } else if ("public_transport_station".equals(type)) {
-            return svgToBitmap(R.drawable.ic_busy);
-        } else {
-            return svgToBitmap(R.drawable.ic_fontanna); // fountain
-        }
-    }
-
-    private void moveCameraToBbox(LocationResponse bboxStartResponse, LocationResponse bboxEndResponse) {
-        LatLng bboxStart = new LatLng(bboxStartResponse.getLat(), bboxStartResponse.getLng());
-        LatLng bboxEnd = new LatLng(bboxEndResponse.getLat(), bboxEndResponse.getLng());
-
-        LatLngBounds bbox = new LatLngBounds(bboxStart, bboxEnd);
-        moveCamera(CameraUpdateFactory.newLatLngBounds(bbox, 0));
-    }
-
-    private void moveCamera(CameraUpdate cameraUpdate) {
-        userCameraMove = false;
-        Log.d(CAMERA_TAG, "app will move");
-        map.moveCamera(cameraUpdate);
-    }
-
-    private LatLng parseCoordinatesString(String latLngString) {
-        Pattern pattern = Pattern.compile("(.+),(.+)");
-        Matcher matcher = pattern.matcher(latLngString.replace("(", "").replace(")", ""));
-        if (matcher.find()) {
-            return new LatLng(
-                    Double.parseDouble(matcher.group(1)),
-                    Double.parseDouble(matcher.group(2)));
-        }
-        return new LatLng(0.0, 0.0);
-    }
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        userCameraMove = false;
-        Toast.makeText(getApplicationContext(), "Button clicked.", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-
-    private void drawRouteOnMap(JSONObject geoJson) {
-        GeoJsonLayer geoJsonLayer = new GeoJsonLayer(map, geoJson);
-        geoJsonLayer.addLayerToMap();
-    }
-
-    private void resetMap() {
-        routeDestinationMarkerOptions = null;
-        routeDestinationMarker = null;
-        routeGeoJson = null;
-        map.clear();
-
-        if (pois != null) {
-            pois.forEach(poi -> {
-                LatLng coordinates = parseCoordinatesString(poi.getCoordinates());
-                addPOIToMap(coordinates, poi.getName(), poi.getCategory_name());
-            });
-        }
-
-        for (DrogopolexEvent event : eventListData) {
-            String snippetMsg =event.getId()
-                    +","+event.getUserVoteType()+","+event.getValueOfVotes();
-            addEventToMap(event.getCoordinates(), event.getType(),snippetMsg);
-        }
-    }
-
-    private void addEventToMap(LatLng coordinates, String type, String snippetMsg) {
-        map.addMarker(new MarkerOptions()
-                .position(coordinates)
-                .title(type)
-                .snippet(snippetMsg)
-                .icon(findIconForType(type)));
-    }
-
-    private void addPOIToMap(LatLng coordinates, String name, String type) {
-        map.addMarker(new MarkerOptions()
-                .position(coordinates)
-                .title(name)
-                .snippet("notEvent")
-                .icon(findIconForType(type)));
-    }
-
-
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-
-    }
-
-    @Override
-    public boolean onMarkerClick(@NonNull Marker marker) {
-        marker.hideInfoWindow();
-        if(marker.getSnippet() != null && !marker.getSnippet().equals("notEvent"))
-            showVotePopup(marker);
-        return true;
-    }
-
-    public void setPopupGraphics(String voteType, ImageView downVote, ImageView upVote){
-        if(voteType.equals(VoteType.UPVOTED.getValue())) {
-            Log.d("WOŁTY", "setPopupGraphics UpVote");
-            downVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_down_24_gray));
-            upVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_up_24));
-        }
-        else if(voteType.equals(VoteType.DOWNVOTED.getValue())) {
-            Log.d("WOŁTY", "setPopupGraphics DownVote");
-            downVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_down_24));
-            upVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_up_24_gray));
-        }
-        else if(voteType.equals(VoteType.NO_VOTE.getValue())){
-            Log.d("WOŁTY", "setPopupGraphics NoVote");
-            downVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_down_24_gray));
-            upVote.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_thumb_up_24_gray));
-        }
-    }
-
-    public void showVotePopup(Marker marker) {
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.custom_marker_popup, null);
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
-
-        popupWindow.setElevation(20);
-
-
-        popupWindow.showAtLocation(activityMapBinding.getRoot(), Gravity.CENTER, 0, 0);
-
-        String[] snippetMessage = marker.getSnippet().split(",");
-        String eventId = snippetMessage[0];
-        String voteType = snippetMessage[1];
-        String numVotes = snippetMessage[2];
-        TextView tW0 = popupView.findViewById(R.id.popupName);
-        TextView tW1 = popupView.findViewById(R.id.popupDownvoteNumber);
-        VotesRepository vr = new VotesRepository();
-        ImageView downVote = popupView.findViewById(R.id.popupDownvote);
-        ImageView upVote = popupView.findViewById(R.id.popupUpvote);
-        //setting the graphics:
-        Log.d("WOŁTY", "setPopupGraphics przy pokazywania calego tego" + voteType + " " + Arrays.toString(snippetMessage));
-        setPopupGraphics(voteType,downVote,upVote);
-        //voting
-        downVote.setOnClickListener(v -> {
-            Log.d("WOŁTY", "downvote click");
-            String snippet = "";
-            if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
-                vr.votesChangeVote(
-                        getSharedPreferences().getString("user_id",""),
-                        getSharedPreferences().getString("token",""),
-                        VoteType.DOWNVOTED,
-                        eventId);
-                snippet = eventId + "," + VoteType.DOWNVOTED.getValue() + "," + (Integer.parseInt(numVotes) - 2);
-                setPopupGraphics(VoteType.DOWNVOTED.getValue(),downVote,upVote);
-            }
-            else if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
-                vr.votesRemoveVote(
-                        getSharedPreferences().getString("user_id",""),
-                        getSharedPreferences().getString("token",""),
-                        eventId);
-                snippet = eventId + "," + VoteType.NO_VOTE.getValue()  + "," + (Integer.parseInt(numVotes) + 1);
-                setPopupGraphics(VoteType.NO_VOTE.getValue(),downVote,upVote);
-            }
-            else if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
-                vr.votesAddVote(getSharedPreferences().getString("user_id",""),
-                        getSharedPreferences().getString("token",""),
-                        VoteType.DOWNVOTED,
-                        eventId);
-                snippet = eventId + "," + VoteType.DOWNVOTED.getValue() + "," + (Integer.parseInt(numVotes) - 1);
-                setPopupGraphics(VoteType.DOWNVOTED.getValue(),downVote,upVote);
-            }
-            marker.setSnippet(snippet);
-            popupWindow.dismiss();
-        });
-
-
-        upVote.setOnClickListener(v -> {
-            Log.d("WOŁTY", "UpVote click");
-            String snippet = "";
-            if(voteType.equals(VoteType.UPVOTED.getValue())){ //event is upvoted by this user
-                vr.votesRemoveVote(
-                        getSharedPreferences().getString("user_id",""),
-                        getSharedPreferences().getString("token",""),
-                        eventId);
-                snippet = eventId + "," + VoteType.NO_VOTE.getValue()  + "," + (Integer.parseInt(numVotes) - 1);
-                setPopupGraphics(VoteType.NO_VOTE.getValue(),downVote,upVote);
-            }
-            else if(voteType.equals(VoteType.DOWNVOTED.getValue())){ //event is downvoted by this user
-                vr.votesChangeVote(
-                        getSharedPreferences().getString("user_id",""),
-                        getSharedPreferences().getString("token",""),
-                        VoteType.UPVOTED,
-                        eventId);
-                snippet = eventId + "," + VoteType.UPVOTED.getValue()  + "," + (Integer.parseInt(numVotes) + 2);
-                setPopupGraphics(VoteType.UPVOTED.getValue(),downVote,upVote);
-            }
-            else if(voteType.equals(VoteType.NO_VOTE.getValue())){ //event has not been voted yet by this user
-                vr.votesAddVote(
-                        getSharedPreferences().getString("user_id",""),
-                        getSharedPreferences().getString("token",""),
-                        VoteType.UPVOTED,
-                        eventId);
-                snippet = eventId + "," + VoteType.UPVOTED.getValue()  + "," + (Integer.parseInt(numVotes) + 1);
-                setPopupGraphics(VoteType.UPVOTED.getValue(),downVote,upVote);
-            }
-            marker.setSnippet(snippet);
-           popupWindow.dismiss();
-        });
-
-        tW0.setText(marker.getTitle());
-        tW1.setText(numVotes);
     }
 }

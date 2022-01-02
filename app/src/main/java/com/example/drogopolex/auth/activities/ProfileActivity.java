@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.drogopolex.R;
 import com.example.drogopolex.auth.utils.ProfileAction;
 import com.example.drogopolex.auth.viewModel.ProfileViewModel;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.databinding.ActivityProfileBinding;
 import com.example.drogopolex.events.activities.MapActivity;
@@ -27,7 +28,8 @@ import androidx.lifecycle.LiveData;
 
 public class ProfileActivity extends AppCompatActivity implements SharedPreferencesHolder, BasicListener, MoPubView.BannerAdListener {
     //ads
-    private final String adIdMopub = "b195f8dd8ded45fe847ad89ed1d016da";
+    private static final String ADS_PROFILE_TAG = "ADS_PROFILE";
+    private static final String adIdMopub = "b195f8dd8ded45fe847ad89ed1d016da";
     MoPubView adBanner;
     MoPubView adBanner2;
 
@@ -71,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
             }
         });
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (!sp.getBoolean("loggedIn", false)) {
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
@@ -107,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
 
     @Override
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        return getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
     }
 
 
@@ -121,26 +123,26 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
 
     @Override
     public void onBannerLoaded(@NonNull MoPubView moPubView) {
-        Log.d("ADS_PROFILE", "Banner loaded.");
+        Log.d(ADS_PROFILE_TAG, "Banner loaded.");
     }
 
     @Override
     public void onBannerFailed(MoPubView moPubView, MoPubErrorCode moPubErrorCode) {
-        Log.d("ADS_PROFILE", "Banner load failed " + moPubErrorCode.toString());
+        Log.d(ADS_PROFILE_TAG, "Banner load failed " + moPubErrorCode.toString());
     }
 
     @Override
     public void onBannerClicked(MoPubView moPubView) {
-        Log.d("ADS_PROFILE", "Banner clicked.");
+        Log.d(ADS_PROFILE_TAG, "Banner clicked.");
     }
 
     @Override
     public void onBannerExpanded(MoPubView moPubView) {
-        Log.d("ADS_PROFILE", "Banner expanded.");
+        Log.d(ADS_PROFILE_TAG, "Banner expanded.");
     }
 
     @Override
     public void onBannerCollapsed(MoPubView moPubView) {
-        Log.d("ADS_PROFILE", "Banner collapsed.");
+        Log.d(ADS_PROFILE_TAG, "Banner collapsed.");
     }
 }

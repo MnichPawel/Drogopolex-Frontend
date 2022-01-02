@@ -3,6 +3,7 @@ package com.example.drogopolex.events.viewModel;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
 import com.example.drogopolex.data.network.request.LocationRequest;
 import com.example.drogopolex.data.network.response.RouteValue;
@@ -65,8 +66,8 @@ public class AddRouteViewModel extends AndroidViewModel {
 
     public void onAddRouteClicked() {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-        String userId = sharedPreferences.getString("user_id", "");
-        String token = sharedPreferences.getString("token", "");
+        String userId = sharedPreferences.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
+        String token = sharedPreferences.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
 
         LatLng sourceLatLng = addRouteActivityListener.getLatLngOfChosenPoint(true);
         LatLng destinationLatLng = addRouteActivityListener.getLatLngOfChosenPoint(false);

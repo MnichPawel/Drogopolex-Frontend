@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.drogopolex.R;
 import com.example.drogopolex.adapters.RoutesListAdapter;
 import com.example.drogopolex.auth.activities.LoginMenuActivity;
+import com.example.drogopolex.constants.AppConstant;
 import com.example.drogopolex.data.network.response.BasicResponse;
 import com.example.drogopolex.data.network.response.RoutesResponse;
 import com.example.drogopolex.databinding.ActivityRoutesListBinding;
@@ -52,7 +54,7 @@ public class RoutesListActivity extends AppCompatActivity implements SharedPrefe
 
         routesRecyclerView = findViewById(R.id.routesView);
 
-        SharedPreferences sp = getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         if (!sp.getBoolean("loggedIn", false)) {
             Intent goToMainActivityIntent = new Intent(this, LoginMenuActivity.class);
             startActivity(goToMainActivityIntent);
@@ -71,6 +73,8 @@ public class RoutesListActivity extends AppCompatActivity implements SharedPrefe
                 Intent goToAddRouteIntent = new Intent(this, AddRouteActivity.class);
                 startActivity(goToAddRouteIntent);
                 break;
+            default:
+                Log.e("RoutesListActivity", "Unknown action.");
         }
     }
 
@@ -121,6 +125,6 @@ public class RoutesListActivity extends AppCompatActivity implements SharedPrefe
 
     @Override
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        return getSharedPreferences(AppConstant.DROGOPOLEX_SETTINGS_SHARED_PREFERENCES, Context.MODE_PRIVATE);
     }
 }
