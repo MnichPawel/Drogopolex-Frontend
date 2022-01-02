@@ -1,11 +1,9 @@
 package com.example.drogopolex.data.repositories;
 
-import android.util.Log;
-
 import com.example.drogopolex.data.network.MyApi;
 import com.example.drogopolex.data.network.request.AddEventRequest;
-import com.example.drogopolex.data.network.request.EventsByGpsRequest;
 import com.example.drogopolex.data.network.request.GenerateRouteRequest;
+import com.example.drogopolex.data.network.request.GetEventsBbox;
 import com.example.drogopolex.data.network.request.GetRouteRequest;
 import com.example.drogopolex.data.network.request.RemoveRouteRequest;
 import com.example.drogopolex.data.network.response.BasicResponse;
@@ -16,6 +14,7 @@ import com.example.drogopolex.data.network.response.RoutesResponse;
 import com.example.drogopolex.data.network.utils.ErrorUtils;
 import com.example.drogopolex.data.network.utils.RetrofitUtils;
 import com.example.drogopolex.model.LocationDetails;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -30,11 +29,11 @@ public class EventsRepository {
         myApi = RetrofitUtils.getRetrofitInstance().create(MyApi.class);
     }
 
-    public LiveData<EventsResponse> getEventsFromUserArea(String userId, String token, String latitude, String longitude) {
+    public LiveData<EventsResponse> getEventsFromUserArea(String userId, String token, LatLngBounds latLngBounds) {
         final MutableLiveData<EventsResponse> eventsResponse = new MutableLiveData<>();
 
-        Log.d("EventsRepository", latitude + "  " + longitude);
-        myApi.eventsGetEvents(userId, token, new EventsByGpsRequest(latitude, longitude))
+//        Log.d("EventsRepository", latitude + "  " + longitude);
+        myApi.eventsGetEvents(userId, token, new GetEventsBbox(latLngBounds))
                 .enqueue(new Callback<EventsResponse>() {
                     @Override
                     public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {

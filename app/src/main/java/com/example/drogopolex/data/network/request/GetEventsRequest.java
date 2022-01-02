@@ -6,4 +6,5 @@ public class GetEventsRequest {
     String latitude;
     String longitude;
     String only_subs;
+    BboxRequest bbox;
 }

@@ -5,6 +5,7 @@ import com.example.drogopolex.data.network.response.EventsResponse;
 import com.example.drogopolex.data.network.response.PointsOfInterestResponse;
 import com.example.drogopolex.data.network.response.RouteValue;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import androidx.lifecycle.LiveData;
 
@@ -26,4 +27,6 @@ public interface MapActivityListener {
     void onGetPOISuccess(LiveData<PointsOfInterestResponse> pointsOfInterestResponseLiveData);
 
     void onGetRecommendedRoute(LiveData<RouteValue> routeRec);
+
+    LatLngBounds getMapBounds();
 }

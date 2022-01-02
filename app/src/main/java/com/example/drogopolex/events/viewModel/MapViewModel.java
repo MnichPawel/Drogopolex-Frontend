@@ -24,6 +24,7 @@ import com.example.drogopolex.listeners.SharedPreferencesHolder;
 import com.example.drogopolex.model.LocationDetails;
 import com.example.drogopolex.services.LocationLiveData;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
@@ -80,25 +81,28 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         isFirstLogin = false;
     }
 
-    public boolean onLocationChanged(LocationDetails location) {
-        SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
-        String userId = sharedPreferences.getString("user_id", "");
-        String token = sharedPreferences.getString("token", "");
+    public boolean onLocationChanged(LatLngBounds latLngBounds) {
+        LocationDetails location = locationLiveData.getValue();
+        if (location != null) {
+            SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
+            String userId = sharedPreferences.getString("user_id", "");
+            String token = sharedPreferences.getString("token", "");
 
-        if (isFirstLogin) {
-            routeRec = recommendationRepository.getRecommendedRoute(userId, token);
-            mapActivityListener.onGetRecommendedRoute(routeRec);
+            if (isFirstLogin) {
+                routeRec = recommendationRepository.getRecommendedRoute(userId, token);
+                mapActivityListener.onGetRecommendedRoute(routeRec);
+            }
+
+            poiLiveData = recommendationRepository.getPointsFromUserArea(
+                    userId,
+                    token,
+                    location.getLatitude(),
+                    location.getLongitude()
+            );
+            mapActivityListener.onGetPOISuccess(poiLiveData);
         }
-
-        poiLiveData = recommendationRepository.getPointsFromUserArea(
-                userId,
-                token,
-                location.getLatitude(),
-                location.getLongitude()
-        );
-        mapActivityListener.onGetPOISuccess(poiLiveData);
         if (!isOnlySubs) {
-            fetchNearbyEvents(location);
+            fetchNearbyEvents(latLngBounds);
         }
         return !(isOnlySubs || isChoosePointMode);
     }
@@ -166,7 +170,8 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         if (isOnlySubs) { // switch to nearby events
             isOnlySubs = false;
             ((ImageView) view).setImageResource(R.drawable.ic_switch_left);
-            fetchNearbyEvents();
+            LatLngBounds latLngBounds = mapActivityListener.getMapBounds();
+            fetchNearbyEvents(latLngBounds);
         } else {  // switch to subscribed events
             isOnlySubs = true;
             ((ImageView) view).setImageResource(R.drawable.ic_switch_right);
@@ -255,22 +260,21 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         mapActivityListener.onGetEventsSuccess(eventsLiveData);
     }
 
-    private void fetchNearbyEvents() {
-        LocationDetails locationDetails = locationLiveData.getValue();
-        if (locationDetails != null) {
-            fetchNearbyEvents(locationDetails);
-        }
-    }
+//    private void fetchNearbyEvents(LatLngBounds latLngBounds) {
+//        LocationDetails locationDetails = locationLiveData.getValue();
+//        if (locationDetails != null) {
+//            fetchNearbyEvents(locationDetails);
+//        }
+//    }
 
-    private void fetchNearbyEvents(LocationDetails locationDetails) {
+    private void fetchNearbyEvents(LatLngBounds latLngBounds) {
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         String userId = sharedPreferences.getString("user_id", "");
         String token = sharedPreferences.getString("token", "");
         eventsLiveData = eventsRepository.getEventsFromUserArea(
                 userId,
                 token,
-                locationDetails.getLatitude(),
-                locationDetails.getLongitude()
+                latLngBounds
         );
         mapActivityListener.onGetEventsSuccess(eventsLiveData);
     }

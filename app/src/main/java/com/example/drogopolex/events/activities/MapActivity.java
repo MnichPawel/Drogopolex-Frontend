@@ -85,6 +85,10 @@ public class MapActivity extends FragmentActivity
         GoogleMap.OnMyLocationClickListener,
         GoogleMap.OnMarkerClickListener {
 
+    private static final String CAMERA_TAG = "CAMERA";
+    private static final String DROGOPOLEX_SETTINGS = "DrogopolexSettings";
+    private static final String UNKNOWN_MESSAGE = "Nie udało się przetworzyć odpowiedzi.";
+
     GoogleMap map;
     ActivityMapBinding activityMapBinding;
 
@@ -163,23 +167,11 @@ public class MapActivity extends FragmentActivity
         map.setOnMyLocationButtonClickListener(this);
         map.setOnMyLocationClickListener(this);
         map.setTrafficEnabled(true);
-//        map.setInfoWindowAdapter(new CustomInfoWindowAdapter(this,this));
-//        map.setInfoWindowAdapter(null);
         map.setOnMarkerClickListener(this);
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
 //        map.setTrafficEnabled(true);
-        map.setOnCameraMoveStartedListener(i -> {
-            if(userCameraMove) {
-                Log.d("CAMERA", "user moved");
-                moveCameraToUser = false;
-            }
-            else {
-                Log.d("CAMERA", "app moved");
-                userCameraMove = true;
-                moveCameraToUser = true;
-            }
-
-        });
+        map.setOnCameraMoveStartedListener(this::onCameraMoveStarted);
+        map.setOnCameraIdleListener(this::onCameraIdle);
 
 
 
@@ -197,8 +189,23 @@ public class MapActivity extends FragmentActivity
         }
 
         prepRequestLocationUpdates();
+    }
 
-        //googleMap.setOnInfoWindowClickListener(this);//popup windows
+    private void onCameraMoveStarted(int i) {
+            Log.d(CAMERA_TAG, "move started");
+            if(userCameraMove) {
+                moveCameraToUser = false;
+            }
+            else {
+                userCameraMove = true;
+                moveCameraToUser = true;
+            }
+    }
+
+    private void onCameraIdle() {
+        Log.d(CAMERA_TAG, "camera idle");
+        LatLngBounds latLngBounds = map.getProjection().getVisibleRegion().latLngBounds;
+        activityMapBinding.getViewModel().onLocationChanged(latLngBounds);
     }
 
     private void changePositionOfMyLocationButton() { //TODO better location of button
@@ -208,10 +215,10 @@ public class MapActivity extends FragmentActivity
     }
 
     private void prepRequestLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
 
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
         ) {
 
@@ -227,8 +234,7 @@ public class MapActivity extends FragmentActivity
 
     private void requestLocationUpdates() {
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
-            activityMapBinding.getViewModel().onLocationChanged(locationDetails);
-            Log.d("CAMERA", "new location received");
+            Log.d(CAMERA_TAG, "new location received");
 
             if (moveCameraToUser) {
                 LatLng location = new LatLng(
@@ -241,7 +247,7 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE);
+        return getSharedPreferences(DROGOPOLEX_SETTINGS, Context.MODE_PRIVATE);
     }
 
     @Override
@@ -254,7 +260,7 @@ public class MapActivity extends FragmentActivity
                     Toast.makeText(MapActivity.this, basicResponse.getError(), Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -301,7 +307,7 @@ public class MapActivity extends FragmentActivity
                         });
 
             } else {
-                Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -310,11 +316,11 @@ public class MapActivity extends FragmentActivity
     public void onLogoutSuccess(LiveData<BasicResponse> responseLiveData) {
         responseLiveData.observe(this, result -> {
             if (result == null) {
-                Toast.makeText(MapActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapActivity.this, UNKNOWN_MESSAGE, Toast.LENGTH_SHORT).show();
             } else if (result.getError() != null) {
                 Toast.makeText(MapActivity.this, result.getError(), Toast.LENGTH_SHORT).show();
             }
-            SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+            SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences(DROGOPOLEX_SETTINGS, Context.MODE_PRIVATE));
             handleAction(new MapAction(MapAction.LOGOUT));
         });
     }
@@ -322,7 +328,7 @@ public class MapActivity extends FragmentActivity
     @Override
     public void onLogoutFailure(String message) {
         Toast.makeText(MapActivity.this, message, Toast.LENGTH_SHORT).show();
-        SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences("DrogopolexSettings", Context.MODE_PRIVATE));
+        SharedPreferencesUtils.resetSharedPreferences(getSharedPreferences(DROGOPOLEX_SETTINGS, Context.MODE_PRIVATE));
         handleAction(new MapAction(MapAction.LOGOUT));
     }
 
@@ -392,6 +398,11 @@ public class MapActivity extends FragmentActivity
         });
     }
 
+    @Override
+    public LatLngBounds getMapBounds() {
+        return map.getProjection().getVisibleRegion().latLngBounds;
+    }
+
     public void showRecommendedRoutePopup(RouteValue routeValue) {
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -413,7 +424,6 @@ public class MapActivity extends FragmentActivity
 
         acceptBtn.setOnClickListener(v -> {
             activityMapBinding.getViewModel().getRouteFromLocToPoint(routeValue.getTo().getLat(), routeValue.getTo().getLng());
-//            activityMapBinding.getViewModel().getRouteById(String.valueOf(routeValue.getId()));
             popupWindow.dismiss();
         });
         cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
@@ -516,7 +526,7 @@ public class MapActivity extends FragmentActivity
 
     private void moveCamera(CameraUpdate cameraUpdate) {
         userCameraMove = false;
-        Log.d("CAMERA", "app will move");
+        Log.d(CAMERA_TAG, "app will move");
         map.moveCamera(cameraUpdate);
     }
 
@@ -564,8 +574,6 @@ public class MapActivity extends FragmentActivity
     }
 
     private void addEventToMap(LatLng coordinates, String type, String snippetMsg) {
-        //snippetMsg format: "[eventId]^[voteType]^[numVotes]"
-        //Log.d("MARK", snippetMsg);
         map.addMarker(new MarkerOptions()
                 .position(coordinates)
                 .title(type)
@@ -709,9 +717,5 @@ public class MapActivity extends FragmentActivity
 
         tW0.setText(marker.getTitle());
         tW1.setText(numVotes);
-
-
-
-
     }
 }
