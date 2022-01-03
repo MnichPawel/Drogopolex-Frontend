@@ -18,6 +18,10 @@
         <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/popup_route_recommendation.xml" value="1.3963815789473684" />
         <entry key="..\:/drogopolex/Drogopolex-Frontend/app/src/main/res/layout/row_subscriptions_list.xml" value="1.1332236842105263" />
         <entry key="app/src/main/res/drawable/ic_pedal.xml" value="0.22432432432432434" />
+        <entry key="app/src/main/res/drawable/ic_radarround.xml" value="0.226953125" />
+        <entry key="app/src/main/res/drawable/ic_subscriptions.xml" value="0.226953125" />
+        <entry key="app/src/main/res/drawable/ic_switch_left.xml" value="0.226953125" />
+        <entry key="app/src/main/res/drawable/ic_switch_right.xml" value="0.226953125" />
         <entry key="app/src/main/res/drawable/ic_wypadekround.xml" value="0.22432432432432434" />
         <entry key="app/src/main/res/layout/activity_add_route.xml" value="0.1403688524590164" />
         <entry key="app/src/main/res/layout/activity_events.xml" value="0.1" />
