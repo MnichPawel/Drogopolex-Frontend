@@ -25,6 +25,7 @@
 
         <activity android:name="com.example.drogopolex.auth.activities.ProfileActivity" />
         <activity android:name="com.example.drogopolex.subscription.activities.SubscribeActivity" />
+        <activity android:name="com.example.drogopolex.subscription.activities.SubscribedEventsActivity" />
         <activity android:name="com.example.drogopolex.auth.activities.RegisterActivity" />
         <activity android:name="com.example.drogopolex.events.activities.MapActivity" />
         <activity android:name="com.example.drogopolex.events.activities.RoutesListActivity" />

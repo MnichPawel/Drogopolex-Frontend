@@ -78,6 +78,10 @@ public class SubscriptionsActivity extends AppCompatActivity implements SharedPr
                 Intent goToSubscribeIntent = new Intent(this, SubscribeActivity.class);
                 startActivity(goToSubscribeIntent);
                 break;
+            case SubscriptionsAction.SHOW_SUBSCRIBED_EVENTS:
+                Intent goToSubscribedEventsIntent = new Intent(this, SubscribedEventsActivity.class);
+                startActivity(goToSubscribedEventsIntent);
+                break;
             default:
                 Log.e("SubscriptionsActivity", "Unknown action.");
         }
