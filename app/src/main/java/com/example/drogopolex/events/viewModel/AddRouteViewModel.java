@@ -65,6 +65,7 @@ public class AddRouteViewModel extends AndroidViewModel {
     }
 
     public void onAddRouteClicked() {
+
         SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
         String userId = sharedPreferences.getString(AppConstant.USER_ID_SHARED_PREFERENCES, "");
         String token = sharedPreferences.getString(AppConstant.TOKEN_SHARED_PREFERENCES, "");
@@ -75,52 +76,55 @@ public class AddRouteViewModel extends AndroidViewModel {
         String name = nameOfRoute.getValue();
         String source = sourcePlace.getValue();
         String dest = destinationPlace.getValue();
+        if(name== null || name.isEmpty() || source ==null || source.isEmpty() || dest==null || dest.isEmpty()){
+            addRouteActivityListener.onFailure("Wybierz dwa punkty i nazwij trasę.");
+        }else {
+            List<DrogopolexRule> rules = addRouteActivityListener.getRules();
 
-        List<DrogopolexRule> rules = addRouteActivityListener.getRules();
+            List<LocationRequest> viaPoints = rules.stream()
+                    .filter(rule -> !rule.isAvoid())
+                    .map(this::drogopolexRuleToLocationRequest)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            List<GenerateRouteRequest.PointToAvoid> avoidPoints = rules.stream()
+                    .filter(DrogopolexRule::isAvoid)
+                    .map(this::drogopolexRuleToPointToAvoid)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            List<String> avoidEvents = rules.stream()
+                    .filter(DrogopolexEventTypeRule.class::isInstance)
+                    .map(rule -> ((DrogopolexEventTypeRule) rule).getEventType())
+                    .collect(Collectors.toList());
+            GenerateRouteRequest.Avoid avoid = new GenerateRouteRequest.Avoid(avoidPoints, avoidEvents);
 
-        List<LocationRequest> viaPoints = rules.stream()
-                .filter(rule -> !rule.isAvoid())
-                .map(this::drogopolexRuleToLocationRequest)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<GenerateRouteRequest.PointToAvoid> avoidPoints = rules.stream()
-                .filter(DrogopolexRule::isAvoid)
-                .map(this::drogopolexRuleToPointToAvoid)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        List<String> avoidEvents = rules.stream()
-                .filter(DrogopolexEventTypeRule.class::isInstance)
-                .map(rule -> ((DrogopolexEventTypeRule) rule).getEventType())
-                .collect(Collectors.toList());
-        GenerateRouteRequest.Avoid avoid = new GenerateRouteRequest.Avoid(avoidPoints, avoidEvents);
+            LiveData<RouteValue> routeResponseLiveData;
+            if (!isLatLngActive(sourceLatLng, source) && !isLatLngActive(destinationLatLng, dest)) {
+                routeResponseLiveData =
+                        eventsRepository.generateRoute(
+                                new GenerateRouteRequest(name, source, dest, avoid, viaPoints),
+                                userId, token);
 
-        LiveData<RouteValue> routeResponseLiveData;
-        if (!isLatLngActive(sourceLatLng, source) && !isLatLngActive(destinationLatLng, dest)) {
-            routeResponseLiveData =
-                    eventsRepository.generateRoute(
-                            new GenerateRouteRequest(name, source, dest, avoid, viaPoints),
-                            userId, token);
+            } else if (isLatLngActive(sourceLatLng, source) && !isLatLngActive(destinationLatLng, dest)) {
+                routeResponseLiveData =
+                        eventsRepository.generateRoute(
+                                new GenerateRouteRequest(name, sourceLatLng, dest, avoid, viaPoints),
+                                userId, token);
 
-        } else if (isLatLngActive(sourceLatLng, source) && !isLatLngActive(destinationLatLng, dest)) {
-            routeResponseLiveData =
-                    eventsRepository.generateRoute(
-                            new GenerateRouteRequest(name, sourceLatLng, dest, avoid, viaPoints),
-                            userId, token);
+            } else if (!isLatLngActive(sourceLatLng, source) && isLatLngActive(destinationLatLng, dest)) {
+                routeResponseLiveData =
+                        eventsRepository.generateRoute(
+                                new GenerateRouteRequest(name, source, destinationLatLng, avoid, viaPoints),
+                                userId, token);
 
-        } else if (!isLatLngActive(sourceLatLng, source) && isLatLngActive(destinationLatLng, dest)) {
-            routeResponseLiveData =
-                    eventsRepository.generateRoute(
-                            new GenerateRouteRequest(name, source, destinationLatLng, avoid, viaPoints),
-                            userId, token);
+            } else {
+                routeResponseLiveData =
+                        eventsRepository.generateRoute(
+                                new GenerateRouteRequest(name, sourceLatLng, destinationLatLng, avoid, viaPoints),
+                                userId, token);
+            }
 
-        } else {
-            routeResponseLiveData =
-                    eventsRepository.generateRoute(
-                            new GenerateRouteRequest(name, sourceLatLng, destinationLatLng, avoid, viaPoints),
-                            userId, token);
+            addRouteActivityListener.onSuccessAddRoute(routeResponseLiveData);
         }
-
-        addRouteActivityListener.onSuccessAddRoute(routeResponseLiveData);
     }
 
     private boolean isLatLngActive(LatLng latLng, String stringLocation) {

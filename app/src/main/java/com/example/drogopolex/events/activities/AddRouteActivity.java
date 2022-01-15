@@ -246,9 +246,13 @@ public class AddRouteActivity extends AppCompatActivity
 
         acceptBtn.setOnClickListener(v -> {
             String placeName = placeNameEditText.getText().toString();
-            drogopolexRules.add(new DrogopolexNameRule(false, "prowadź przez " + placeName, placeName));
-            listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
-            popupWindow.dismiss();
+            if(placeName==null ||placeName.isEmpty()){
+                Toast.makeText(this, "Podaj nazwę miejsca", Toast.LENGTH_SHORT).show();
+            }else {
+                drogopolexRules.add(new DrogopolexNameRule(false, "prowadź przez " + placeName, placeName));
+                listAdapter.notifyItemInserted(drogopolexRules.size() - 1);
+                popupWindow.dismiss();
+            }
         });
         cancelBtn.setOnClickListener(v -> popupWindow.dismiss());
     }
@@ -385,5 +389,10 @@ public class AddRouteActivity extends AppCompatActivity
             chosenPointMarker.remove();
             chosenPointMarker = map.addMarker(chosenPointMarkerOptions);
         });
+    }
+
+    @Override
+    public void onFailure(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

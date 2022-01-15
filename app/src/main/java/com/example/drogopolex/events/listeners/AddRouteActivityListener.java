@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData;
 
 public interface AddRouteActivityListener {
     void onSuccessAddRoute(LiveData<RouteValue> routeResponseLiveData);
-
+    void onFailure(String message);
     LatLng getLatLngOfChosenPoint(boolean isSource);
 
     List<DrogopolexRule> getRules();
