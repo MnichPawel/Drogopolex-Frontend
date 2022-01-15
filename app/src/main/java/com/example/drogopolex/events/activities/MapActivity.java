@@ -198,7 +198,7 @@ public class MapActivity extends FragmentActivity
         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style));
         map.setOnCameraMoveStartedListener(this::onCameraMoveStarted);
         map.setOnCameraIdleListener(this::onCameraIdle);
-
+        map.setTrafficEnabled(false);
         UiSettings mapSettings = map.getUiSettings();
         mapSettings.setZoomControlsEnabled(true);
         mapSettings.setMapToolbarEnabled(false);
