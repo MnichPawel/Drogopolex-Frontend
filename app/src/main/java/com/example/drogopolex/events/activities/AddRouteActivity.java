@@ -343,6 +343,8 @@ public class AddRouteActivity extends AppCompatActivity
             if (routeResponse != null) {
                 Toast.makeText(AddRouteActivity.this, "Wyznaczono trasę.", Toast.LENGTH_SHORT).show();
                 handleAction(new AddRouteAction(AddRouteAction.SHOW_ROUTES_LIST));
+            } else {
+                Toast.makeText(AddRouteActivity.this, "Nie udało się przetworzyć odpowiedzi.", Toast.LENGTH_SHORT).show();
             }
         });
     }
