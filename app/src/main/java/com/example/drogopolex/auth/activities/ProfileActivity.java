@@ -48,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity implements SharedPreferen
         adBanner2.setBannerAdListener(this);
         adBanner2.loadAd();
         adBanner = findViewById(R.id.profileAdBanner);
-        adBanner.setAdUnitId(adIdMopub); // Enter your Ad Unit ID from www.mopub.com
+        adBanner.setAdUnitId(adIdMopub);
         adBanner.setBannerAdListener(this);
         adBanner.loadAd();
 
