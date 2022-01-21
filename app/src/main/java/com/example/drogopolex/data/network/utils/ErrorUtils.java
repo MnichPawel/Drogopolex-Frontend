@@ -47,6 +47,7 @@ public class ErrorUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return response;
     }
