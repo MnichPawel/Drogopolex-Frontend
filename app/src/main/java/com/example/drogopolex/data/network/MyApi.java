@@ -80,7 +80,7 @@ public interface MyApi {
             @Header("User-Id") String userId,
             @Body GenerateRouteRequest body);
 
-    @POST("getUserRoute")
+    @POST("regenerateRoute")
     Call<RouteValue> eventsGetRoute(
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
@@ -128,13 +128,13 @@ public interface MyApi {
             @Body AddVoteRequest body
     );
 
-    @POST("change_vote")
+    @POST("changeVote")
     Call<BasicResponse> votesChangeVote(
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
             @Body ChangeVoteRequest body);
 
-    @POST("remove_vote")
+    @POST("removeVote")
     Call<BasicResponse> votesRemoveVote(
             @Header("Authorization-Token") String token,
             @Header("User-Id") String userId,
