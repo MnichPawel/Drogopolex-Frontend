@@ -323,7 +323,7 @@ public class MapActivity extends FragmentActivity
     }
 
     /* View */
-    private void changePositionOfMyLocationButton() { //TODO better location of button
+    private void changePositionOfMyLocationButton() {
         View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
         rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);

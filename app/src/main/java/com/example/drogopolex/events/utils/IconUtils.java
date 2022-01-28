@@ -28,7 +28,7 @@ public class IconUtils {
             drawableId = R.drawable.ic_korek;
         } else if ("Patrol Policji".equals(type)) {
             drawableId = R.drawable.ic_radar;
-        } else if ("Roboty Drogowe".equals(type)) { //Roboty Drogowe
+        } else if ("Roboty Drogowe".equals(type)) {
             drawableId = R.drawable.ic_roboty;
         } else if ("hotel".equals(type)) {
             drawableId = R.drawable.ic_hotel;
@@ -53,7 +53,7 @@ public class IconUtils {
         } else if ("hospital".equals(type)) {
             drawableId = R.drawable.ic_szpital;
         } else if ("pharmacy".equals(type)) {
-            drawableId = R.drawable.ic_szpital; //pharmacy icon same as hospital
+            drawableId = R.drawable.ic_szpital;
         } else if ("fitness_centre".equals(type)) {
             drawableId = R.drawable.ic_sport;
         } else if ("swimming_pool".equals(type)) {
@@ -93,7 +93,7 @@ public class IconUtils {
         } else if ("public_transport_station".equals(type)) {
             drawableId = R.drawable.ic_busy;
         } else {
-            drawableId = R.drawable.ic_fontanna; // fountain
+            drawableId = R.drawable.ic_fontanna;
         }
         return svgToBitmap(drawableId, context);
     }

@@ -94,10 +94,8 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
         switch (loginAction.getValue()) {
             case LoginAction.SHOW_MAP:
                 checkIfUserPermitedLocation();
-                Log.d("REK", "HANDUL AKSZSZYN");
                 if (interstitialAd.isReady()) { //show ad if ready
                     interstitialAd.show();
-                    Log.d("REK", "pokazaj wasc");
                 } else {
                     goToMapActivity();
                 }
@@ -145,26 +143,26 @@ public class LoginActivity extends AppCompatActivity implements LoginListener, M
 
     @Override
     public void onInterstitialLoaded(MoPubInterstitial moPubInterstitial) {
-        Log.d("REK", "zaladowana");
+        Log.d("REK", "Interstitial ad loaded.");
     }
 
     @Override
     public void onInterstitialFailed(MoPubInterstitial moPubInterstitial, MoPubErrorCode moPubErrorCode) {
-        Log.d("REK", "fajlerd");
+        Log.d("REK", "Interstitial ad loading failed.");
     }
 
     @Override
     public void onInterstitialShown(MoPubInterstitial moPubInterstitial) {
-        Log.d("REK", "szolnienta");
+        Log.d("REK", "Interstitial ad shown.");
     }
 
     @Override
     public void onInterstitialClicked(MoPubInterstitial moPubInterstitial) {
-        Log.d("REK", "clkieknietea");
+        Log.d("REK", "Interstitial ad clicked.");
     }
 
     public void onInterstitialDismissed(MoPubInterstitial interstitial) {
-        Log.d("REK", "zdmismisnowa");
+        Log.d("REK", "Interstitial ad dismissed.");
         // The interstitial has being dismissed. Resume / load state accordingly.
         goToMapActivity();
     }
