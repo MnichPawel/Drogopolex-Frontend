@@ -173,8 +173,8 @@ public class MapActivity extends FragmentActivity
         activityMapBinding.getViewModel().getLocationLiveData().observe(this, locationDetails -> {
             Log.d(CAMERA_TAG, "new location received");
 
+            updatePOIs = true;
             if (moveCameraToUser) {
-                updatePOIs = true;
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
                         Double.parseDouble(locationDetails.getLongitude()));
