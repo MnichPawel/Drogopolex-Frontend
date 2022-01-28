@@ -55,6 +55,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -77,6 +78,7 @@ public class MapActivity extends FragmentActivity
     private GoogleMap map;
 
     private boolean updatePOIs = false;
+    private boolean ignoreCameraMove = false;
 
     /* Constants */
     private static final String CAMERA_TAG = "CAMERA";
@@ -297,10 +299,13 @@ public class MapActivity extends FragmentActivity
     }
 
     private void onCameraIdle() {
-        Log.d(CAMERA_TAG, "camera idle");
-        LatLngBounds latLngBounds = map.getProjection().getVisibleRegion().latLngBounds;
-        activityMapBinding.getViewModel().onLocationChanged(latLngBounds, updatePOIs);
-        updatePOIs = false;
+        if(!ignoreCameraMove) {
+            Log.d(CAMERA_TAG, "camera idle");
+            LatLngBounds latLngBounds = map.getProjection().getVisibleRegion().latLngBounds;
+            activityMapBinding.getViewModel().onLocationChanged(latLngBounds, updatePOIs);
+            updatePOIs = false;
+        }
+        else ignoreCameraMove = false;
     }
 
     private void moveCameraToBbox(LocationResponse bboxStartResponse, LocationResponse bboxEndResponse) {
@@ -333,10 +338,14 @@ public class MapActivity extends FragmentActivity
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        marker.hideInfoWindow();
-        if (marker.getSnippet() != null && !marker.getSnippet().equals("notEvent"))
+        ignoreCameraMove = true;
+        if (marker.getSnippet() != null && !Objects.equals(marker.getSnippet(), "notEvent")) {
+            Log.d("SNIPPET", marker.getSnippet());
+            marker.hideInfoWindow();
             VotesPopup.showVotePopup(this, activityMapBinding.getRoot(), marker);
-        return true;
+            return true;
+        }
+        return false;
     }
 
     /* Choose point mode */
