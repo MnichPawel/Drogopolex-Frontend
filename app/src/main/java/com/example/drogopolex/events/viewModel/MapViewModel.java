@@ -80,7 +80,7 @@ public class MapViewModel extends AndroidViewModel implements Observable {
         isFirstLogin = false;
     }
 
-    public boolean onLocationChanged(LatLngBounds latLngBounds) {
+    public boolean onLocationChanged(LatLngBounds latLngBounds, boolean updatePOIs) {
         LocationDetails location = locationLiveData.getValue();
         if (location != null) {
             SharedPreferences sharedPreferences = sharedPreferencesHolder.getSharedPreferences();
@@ -90,15 +90,18 @@ public class MapViewModel extends AndroidViewModel implements Observable {
             if (isFirstLogin) {
                 LiveData<RouteValue> routeRec = recommendationRepository.getRecommendedRoute(userId, token);
                 mapActivityListener.recommendRoute(routeRec);
+                isFirstLogin = false;
             }
 
-            LiveData<PointsOfInterestResponse> poiLiveData = recommendationRepository.getPointsFromUserArea(
-                    userId,
-                    token,
-                    location.getLatitude(),
-                    location.getLongitude()
-            );
-            mapActivityListener.onGetPOISuccess(poiLiveData);
+            if(updatePOIs) {
+                LiveData<PointsOfInterestResponse> poiLiveData = recommendationRepository.getPointsFromUserArea(
+                        userId,
+                        token,
+                        location.getLatitude(),
+                        location.getLongitude()
+                );
+                mapActivityListener.onGetPOISuccess(poiLiveData);
+            }
         }
         if (!isOnlySubs) {
             fetchNearbyEvents(latLngBounds);

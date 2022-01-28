@@ -76,6 +76,8 @@ public class MapActivity extends FragmentActivity
     private ActivityMapBinding activityMapBinding;
     private GoogleMap map;
 
+    private boolean updatePOIs = false;
+
     /* Constants */
     private static final String CAMERA_TAG = "CAMERA";
     private static final String UNKNOWN_MESSAGE = "Nie udało się przetworzyć odpowiedzi.";
@@ -170,6 +172,7 @@ public class MapActivity extends FragmentActivity
             Log.d(CAMERA_TAG, "new location received");
 
             if (moveCameraToUser) {
+                updatePOIs = true;
                 LatLng location = new LatLng(
                         Double.parseDouble(locationDetails.getLatitude()),
                         Double.parseDouble(locationDetails.getLongitude()));
@@ -296,7 +299,8 @@ public class MapActivity extends FragmentActivity
     private void onCameraIdle() {
         Log.d(CAMERA_TAG, "camera idle");
         LatLngBounds latLngBounds = map.getProjection().getVisibleRegion().latLngBounds;
-        activityMapBinding.getViewModel().onLocationChanged(latLngBounds);
+        activityMapBinding.getViewModel().onLocationChanged(latLngBounds, updatePOIs);
+        updatePOIs = false;
     }
 
     private void moveCameraToBbox(LocationResponse bboxStartResponse, LocationResponse bboxEndResponse) {
