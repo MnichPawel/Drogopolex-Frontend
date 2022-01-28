@@ -14,3 +14,4 @@
 .cxx
 local.properties
 .idea/misc.xml
+app/src/main/res/values/map_api.xml
