@@ -283,7 +283,7 @@ public class MapActivity extends FragmentActivity
         map.addMarker(new MarkerOptions()
                 .position(coordinates)
                 .title(name)
-                .snippet("notEvent")
+                .snippet("Ciekawe miejsce")
                 .icon(IconUtils.findIconForType(type, this)));
     }
 
@@ -339,7 +339,7 @@ public class MapActivity extends FragmentActivity
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         ignoreCameraMove = true;
-        if (marker.getSnippet() != null && !Objects.equals(marker.getSnippet(), "notEvent")) {
+        if (marker.getSnippet() != null && !Objects.equals(marker.getSnippet(), "Ciekawe miejsce")) {
             Log.d("SNIPPET", marker.getSnippet());
             marker.hideInfoWindow();
             VotesPopup.showVotePopup(this, activityMapBinding.getRoot(), marker);

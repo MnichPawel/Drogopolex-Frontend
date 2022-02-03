@@ -149,6 +149,8 @@ public class MapViewModel extends AndroidViewModel implements Observable {
 
         LiveData<BasicResponse> response = userRepository.userLogout(userId, token);
         mapActivityListener.onLogoutSuccess(response);
+
+        isFirstLogin = true;
     }
 
     public void onGoToSubsClicked() {
