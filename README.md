@@ -19,7 +19,7 @@ Used technologies:
 * MoPub
 * MVVM pattern
 
-App requires the server to function properly.
+App requires [the server](https://github.com/MnichPawel/Drogopolex-Backend) to function properly.
 
 ## Screenshots
 <img src="https://github.com/MnichPawel/Drogopolex-Frontend/blob/master/img/ekran_mapy.png" width="600" />
