@@ -66,7 +66,7 @@ public class GenerateRouteRequest {
         double latitude;
         int radius;
 
-        public PointToAvoid(double longitude, double latitude, int radius) {
+        public PointToAvoid(double latitude, double longitude, int radius) {
             this.latitude = latitude;
             this.longitude = longitude;
             this.radius = radius;
